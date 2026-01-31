@@ -1,13 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { getPunkSongs } from '@/data/demo.punk-songs'
+import { createFileRoute } from '@tanstack/react-router';
+
+import { getPunkSongs } from '@/data/demo.punk-songs';
 
 export const Route = createFileRoute('/demo/start/ssr/full-ssr')({
   component: RouteComponent,
   loader: async () => await getPunkSongs(),
-})
+});
 
 function RouteComponent() {
-  const punkSongs = Route.useLoaderData()
+  const punkSongs = Route.useLoaderData();
 
   return (
     <div
@@ -36,5 +37,5 @@ function RouteComponent() {
         </ul>
       </div>
     </div>
-  )
+  );
 }

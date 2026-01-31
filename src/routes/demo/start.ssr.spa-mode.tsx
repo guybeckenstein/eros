@@ -1,20 +1,16 @@
-import { useEffect, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { getPunkSongs } from '@/data/demo.punk-songs'
+import { createFileRoute } from '@tanstack/react-router';
+
+import { getPunkSongs } from '@/data/demo.punk-songs';
 
 export const Route = createFileRoute('/demo/start/ssr/spa-mode')({
   ssr: false,
+  loader: () => getPunkSongs(), // Fetch data before the route renders
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  const [punkSongs, setPunkSongs] = useState<
-    Awaited<ReturnType<typeof getPunkSongs>>
-  >([])
-
-  useEffect(() => {
-    getPunkSongs().then(setPunkSongs)
-  }, [])
+  // This hook automatically gets the type-safe data from the loader
+  const punkSongs = Route.useLoaderData();
 
   return (
     <div
@@ -43,5 +39,5 @@ function RouteComponent() {
         </ul>
       </div>
     </div>
-  )
+  );
 }

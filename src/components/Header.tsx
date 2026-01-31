@@ -1,6 +1,7 @@
-import { Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router';
 
-import { useState } from 'react'
+import { useState } from 'react';
+
 import {
   ChevronDown,
   ChevronRight,
@@ -12,13 +13,13 @@ import {
   StickyNote,
   Table,
   X,
-} from 'lucide-react'
+} from 'lucide-react';
 
 export default function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
-  >({})
+  >({});
 
   return (
     <>
@@ -227,5 +228,5 @@ export default function Header() {
         </nav>
       </aside>
     </>
-  )
+  );
 }

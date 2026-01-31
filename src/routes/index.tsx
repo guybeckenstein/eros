@@ -7,9 +7,7 @@
 //   Waves,
 //   Zap,
 // } from 'lucide-react'
-
 // export const Route = createFileRoute('/')({ component: App })
-
 // function App() {
 //   const features = [
 //     {
@@ -49,7 +47,6 @@
 //         'Built from the ground up for modern web applications. Deploy anywhere JavaScript runs.',
 //     },
 //   ]
-
 //   return (
 //     <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
 //       <section className="relative py-20 px-6 text-center overflow-hidden">
@@ -94,7 +91,6 @@
 //           </div>
 //         </div>
 //       </section>
-
 //       <section className="py-16 px-6 max-w-7xl mx-auto">
 //         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 //           {features.map((feature, index) => (
@@ -116,20 +112,21 @@
 //     </div>
 //   )
 // }
-import { createFileRoute } from '@tanstack/react-router'
-import { supabase } from '../utils/supabase'
+import { createFileRoute } from '@tanstack/react-router';
+
+import { supabase } from '../utils/supabase';
 
 export const Route = createFileRoute('/')({
   loader: async () => {
-    const { data: instruments } = await supabase.from('instruments').select()
-    return { instruments }
+    const { data: instruments } = await supabase.from('instruments').select();
+    return { instruments };
   },
   component: Home,
-})
+});
 
 function Home() {
-  const { instruments } = Route.useLoaderData()
-  console.log(instruments)
+  const { instruments } = Route.useLoaderData();
+  console.log(instruments);
 
   return (
     <ul>
@@ -137,5 +134,5 @@ function Home() {
         <li key={instrument.name}>{instrument.name}</li>
       ))}
     </ul>
-  )
+  );
 }
