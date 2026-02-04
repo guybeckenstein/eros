@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { useAppForm } from '@/hooks/demo.form';
 
-export const Route = createFileRoute('/demo/form/simple')({
+export const Route = createFileRoute('/tanstack/demo/form/simple')({
   component: SimpleForm,
 });
 

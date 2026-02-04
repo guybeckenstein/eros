@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { useCallback, useState } from 'react';
 
-export const Route = createFileRoute('/demo/tanstack-query')({
+export const Route = createFileRoute('/tanstack/demo/tanstack-query')({
   component: TanStackQueryDemo,
 });
 

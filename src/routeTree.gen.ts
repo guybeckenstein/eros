@@ -10,193 +10,356 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoTableRouteImport } from './routes/demo/table'
-import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
-import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
-import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
-import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
-import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
-import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
-import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
-import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
-import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as SeekerPlaceholderRouteImport } from './routes/seeker/placeholder'
+import { Route as RecruiterJobsRouteImport } from './routes/recruiter/jobs'
+import { Route as RecruiterHomepageRouteImport } from './routes/recruiter/homepage'
+import { Route as RecruiterDiscoverRouteImport } from './routes/recruiter/discover'
+import { Route as GeneralLandingPageRouteImport } from './routes/general/landing-page'
+import { Route as GeneralCreateProfileRouteImport } from './routes/general/create-profile'
+import { Route as GeneralChatRouteImport } from './routes/general/chat'
+import { Route as AuthSettingsRouteImport } from './routes/auth/settings'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthProfileRouteImport } from './routes/auth/profile'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as TanstackDemoTanstackQueryRouteImport } from './routes/tanstack/demo/tanstack-query'
+import { Route as TanstackDemoTableRouteImport } from './routes/tanstack/demo/table'
+import { Route as TanstackDemoStartServerFuncsRouteImport } from './routes/tanstack/demo/start.server-funcs'
+import { Route as TanstackDemoStartApiRequestRouteImport } from './routes/tanstack/demo/start.api-request'
+import { Route as TanstackDemoFormSimpleRouteImport } from './routes/tanstack/demo/form.simple'
+import { Route as TanstackDemoFormAddressRouteImport } from './routes/tanstack/demo/form.address'
+import { Route as TanstackDemoApiTqTodosRouteImport } from './routes/tanstack/demo/api.tq-todos'
+import { Route as TanstackDemoApiNamesRouteImport } from './routes/tanstack/demo/api.names'
+import { Route as TanstackDemoStartSsrIndexRouteImport } from './routes/tanstack/demo/start.ssr.index'
+import { Route as TanstackDemoStartSsrSpaModeRouteImport } from './routes/tanstack/demo/start.ssr.spa-mode'
+import { Route as TanstackDemoStartSsrFullSsrRouteImport } from './routes/tanstack/demo/start.ssr.full-ssr'
+import { Route as TanstackDemoStartSsrDataOnlyRouteImport } from './routes/tanstack/demo/start.ssr.data-only'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
+const SeekerPlaceholderRoute = SeekerPlaceholderRouteImport.update({
+  id: '/seeker/placeholder',
+  path: '/seeker/placeholder',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoTableRoute = DemoTableRouteImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
+const RecruiterJobsRoute = RecruiterJobsRouteImport.update({
+  id: '/recruiter/jobs',
+  path: '/recruiter/jobs',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
+const RecruiterHomepageRoute = RecruiterHomepageRouteImport.update({
+  id: '/recruiter/homepage',
+  path: '/recruiter/homepage',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
+const RecruiterDiscoverRoute = RecruiterDiscoverRouteImport.update({
+  id: '/recruiter/discover',
+  path: '/recruiter/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
-  id: '/demo/form/simple',
-  path: '/demo/form/simple',
+const GeneralLandingPageRoute = GeneralLandingPageRouteImport.update({
+  id: '/general/landing-page',
+  path: '/general/landing-page',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
+const GeneralCreateProfileRoute = GeneralCreateProfileRouteImport.update({
+  id: '/general/create-profile',
+  path: '/general/create-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoApiTqTodosRoute = DemoApiTqTodosRouteImport.update({
-  id: '/demo/api/tq-todos',
-  path: '/demo/api/tq-todos',
+const GeneralChatRoute = GeneralChatRouteImport.update({
+  id: '/general/chat',
+  path: '/general/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
-  id: '/demo/api/names',
-  path: '/demo/api/names',
+const AuthSettingsRoute = AuthSettingsRouteImport.update({
+  id: '/auth/settings',
+  path: '/auth/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
-  id: '/demo/start/ssr/',
-  path: '/demo/start/ssr/',
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
-  id: '/demo/start/ssr/spa-mode',
-  path: '/demo/start/ssr/spa-mode',
+const AuthProfileRoute = AuthProfileRouteImport.update({
+  id: '/auth/profile',
+  path: '/auth/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({
-  id: '/demo/start/ssr/full-ssr',
-  path: '/demo/start/ssr/full-ssr',
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
-  id: '/demo/start/ssr/data-only',
-  path: '/demo/start/ssr/data-only',
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TanstackDemoTanstackQueryRoute =
+  TanstackDemoTanstackQueryRouteImport.update({
+    id: '/tanstack/demo/tanstack-query',
+    path: '/tanstack/demo/tanstack-query',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoTableRoute = TanstackDemoTableRouteImport.update({
+  id: '/tanstack/demo/table',
+  path: '/tanstack/demo/table',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TanstackDemoStartServerFuncsRoute =
+  TanstackDemoStartServerFuncsRouteImport.update({
+    id: '/tanstack/demo/start/server-funcs',
+    path: '/tanstack/demo/start/server-funcs',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoStartApiRequestRoute =
+  TanstackDemoStartApiRequestRouteImport.update({
+    id: '/tanstack/demo/start/api-request',
+    path: '/tanstack/demo/start/api-request',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoFormSimpleRoute = TanstackDemoFormSimpleRouteImport.update({
+  id: '/tanstack/demo/form/simple',
+  path: '/tanstack/demo/form/simple',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TanstackDemoFormAddressRoute = TanstackDemoFormAddressRouteImport.update({
+  id: '/tanstack/demo/form/address',
+  path: '/tanstack/demo/form/address',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TanstackDemoApiTqTodosRoute = TanstackDemoApiTqTodosRouteImport.update({
+  id: '/tanstack/demo/api/tq-todos',
+  path: '/tanstack/demo/api/tq-todos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TanstackDemoApiNamesRoute = TanstackDemoApiNamesRouteImport.update({
+  id: '/tanstack/demo/api/names',
+  path: '/tanstack/demo/api/names',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TanstackDemoStartSsrIndexRoute =
+  TanstackDemoStartSsrIndexRouteImport.update({
+    id: '/tanstack/demo/start/ssr/',
+    path: '/tanstack/demo/start/ssr/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoStartSsrSpaModeRoute =
+  TanstackDemoStartSsrSpaModeRouteImport.update({
+    id: '/tanstack/demo/start/ssr/spa-mode',
+    path: '/tanstack/demo/start/ssr/spa-mode',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoStartSsrFullSsrRoute =
+  TanstackDemoStartSsrFullSsrRouteImport.update({
+    id: '/tanstack/demo/start/ssr/full-ssr',
+    path: '/tanstack/demo/start/ssr/full-ssr',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TanstackDemoStartSsrDataOnlyRoute =
+  TanstackDemoStartSsrDataOnlyRouteImport.update({
+    id: '/tanstack/demo/start/ssr/data-only',
+    path: '/tanstack/demo/start/ssr/data-only',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/profile': typeof AuthProfileRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/settings': typeof AuthSettingsRoute
+  '/general/chat': typeof GeneralChatRoute
+  '/general/create-profile': typeof GeneralCreateProfileRoute
+  '/general/landing-page': typeof GeneralLandingPageRoute
+  '/recruiter/discover': typeof RecruiterDiscoverRoute
+  '/recruiter/homepage': typeof RecruiterHomepageRoute
+  '/recruiter/jobs': typeof RecruiterJobsRoute
+  '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/tanstack/demo/table': typeof TanstackDemoTableRoute
+  '/tanstack/demo/tanstack-query': typeof TanstackDemoTanstackQueryRoute
+  '/tanstack/demo/api/names': typeof TanstackDemoApiNamesRoute
+  '/tanstack/demo/api/tq-todos': typeof TanstackDemoApiTqTodosRoute
+  '/tanstack/demo/form/address': typeof TanstackDemoFormAddressRoute
+  '/tanstack/demo/form/simple': typeof TanstackDemoFormSimpleRoute
+  '/tanstack/demo/start/api-request': typeof TanstackDemoStartApiRequestRoute
+  '/tanstack/demo/start/server-funcs': typeof TanstackDemoStartServerFuncsRoute
+  '/tanstack/demo/start/ssr/data-only': typeof TanstackDemoStartSsrDataOnlyRoute
+  '/tanstack/demo/start/ssr/full-ssr': typeof TanstackDemoStartSsrFullSsrRoute
+  '/tanstack/demo/start/ssr/spa-mode': typeof TanstackDemoStartSsrSpaModeRoute
+  '/tanstack/demo/start/ssr/': typeof TanstackDemoStartSsrIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/profile': typeof AuthProfileRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/settings': typeof AuthSettingsRoute
+  '/general/chat': typeof GeneralChatRoute
+  '/general/create-profile': typeof GeneralCreateProfileRoute
+  '/general/landing-page': typeof GeneralLandingPageRoute
+  '/recruiter/discover': typeof RecruiterDiscoverRoute
+  '/recruiter/homepage': typeof RecruiterHomepageRoute
+  '/recruiter/jobs': typeof RecruiterJobsRoute
+  '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/tanstack/demo/table': typeof TanstackDemoTableRoute
+  '/tanstack/demo/tanstack-query': typeof TanstackDemoTanstackQueryRoute
+  '/tanstack/demo/api/names': typeof TanstackDemoApiNamesRoute
+  '/tanstack/demo/api/tq-todos': typeof TanstackDemoApiTqTodosRoute
+  '/tanstack/demo/form/address': typeof TanstackDemoFormAddressRoute
+  '/tanstack/demo/form/simple': typeof TanstackDemoFormSimpleRoute
+  '/tanstack/demo/start/api-request': typeof TanstackDemoStartApiRequestRoute
+  '/tanstack/demo/start/server-funcs': typeof TanstackDemoStartServerFuncsRoute
+  '/tanstack/demo/start/ssr/data-only': typeof TanstackDemoStartSsrDataOnlyRoute
+  '/tanstack/demo/start/ssr/full-ssr': typeof TanstackDemoStartSsrFullSsrRoute
+  '/tanstack/demo/start/ssr/spa-mode': typeof TanstackDemoStartSsrSpaModeRoute
+  '/tanstack/demo/start/ssr': typeof TanstackDemoStartSsrIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/demo/table': typeof DemoTableRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/form/simple': typeof DemoFormSimpleRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/profile': typeof AuthProfileRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/settings': typeof AuthSettingsRoute
+  '/general/chat': typeof GeneralChatRoute
+  '/general/create-profile': typeof GeneralCreateProfileRoute
+  '/general/landing-page': typeof GeneralLandingPageRoute
+  '/recruiter/discover': typeof RecruiterDiscoverRoute
+  '/recruiter/homepage': typeof RecruiterHomepageRoute
+  '/recruiter/jobs': typeof RecruiterJobsRoute
+  '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/tanstack/demo/table': typeof TanstackDemoTableRoute
+  '/tanstack/demo/tanstack-query': typeof TanstackDemoTanstackQueryRoute
+  '/tanstack/demo/api/names': typeof TanstackDemoApiNamesRoute
+  '/tanstack/demo/api/tq-todos': typeof TanstackDemoApiTqTodosRoute
+  '/tanstack/demo/form/address': typeof TanstackDemoFormAddressRoute
+  '/tanstack/demo/form/simple': typeof TanstackDemoFormSimpleRoute
+  '/tanstack/demo/start/api-request': typeof TanstackDemoStartApiRequestRoute
+  '/tanstack/demo/start/server-funcs': typeof TanstackDemoStartServerFuncsRoute
+  '/tanstack/demo/start/ssr/data-only': typeof TanstackDemoStartSsrDataOnlyRoute
+  '/tanstack/demo/start/ssr/full-ssr': typeof TanstackDemoStartSsrFullSsrRoute
+  '/tanstack/demo/start/ssr/spa-mode': typeof TanstackDemoStartSsrSpaModeRoute
+  '/tanstack/demo/start/ssr/': typeof TanstackDemoStartSsrIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr/'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/profile'
+    | '/auth/register'
+    | '/auth/settings'
+    | '/general/chat'
+    | '/general/create-profile'
+    | '/general/landing-page'
+    | '/recruiter/discover'
+    | '/recruiter/homepage'
+    | '/recruiter/jobs'
+    | '/seeker/placeholder'
+    | '/tanstack/demo/table'
+    | '/tanstack/demo/tanstack-query'
+    | '/tanstack/demo/api/names'
+    | '/tanstack/demo/api/tq-todos'
+    | '/tanstack/demo/form/address'
+    | '/tanstack/demo/form/simple'
+    | '/tanstack/demo/start/api-request'
+    | '/tanstack/demo/start/server-funcs'
+    | '/tanstack/demo/start/ssr/data-only'
+    | '/tanstack/demo/start/ssr/full-ssr'
+    | '/tanstack/demo/start/ssr/spa-mode'
+    | '/tanstack/demo/start/ssr/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/profile'
+    | '/auth/register'
+    | '/auth/settings'
+    | '/general/chat'
+    | '/general/create-profile'
+    | '/general/landing-page'
+    | '/recruiter/discover'
+    | '/recruiter/homepage'
+    | '/recruiter/jobs'
+    | '/seeker/placeholder'
+    | '/tanstack/demo/table'
+    | '/tanstack/demo/tanstack-query'
+    | '/tanstack/demo/api/names'
+    | '/tanstack/demo/api/tq-todos'
+    | '/tanstack/demo/form/address'
+    | '/tanstack/demo/form/simple'
+    | '/tanstack/demo/start/api-request'
+    | '/tanstack/demo/start/server-funcs'
+    | '/tanstack/demo/start/ssr/data-only'
+    | '/tanstack/demo/start/ssr/full-ssr'
+    | '/tanstack/demo/start/ssr/spa-mode'
+    | '/tanstack/demo/start/ssr'
   id:
     | '__root__'
     | '/'
-    | '/demo/table'
-    | '/demo/tanstack-query'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/form/simple'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr/'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/profile'
+    | '/auth/register'
+    | '/auth/settings'
+    | '/general/chat'
+    | '/general/create-profile'
+    | '/general/landing-page'
+    | '/recruiter/discover'
+    | '/recruiter/homepage'
+    | '/recruiter/jobs'
+    | '/seeker/placeholder'
+    | '/tanstack/demo/table'
+    | '/tanstack/demo/tanstack-query'
+    | '/tanstack/demo/api/names'
+    | '/tanstack/demo/api/tq-todos'
+    | '/tanstack/demo/form/address'
+    | '/tanstack/demo/form/simple'
+    | '/tanstack/demo/start/api-request'
+    | '/tanstack/demo/start/server-funcs'
+    | '/tanstack/demo/start/ssr/data-only'
+    | '/tanstack/demo/start/ssr/full-ssr'
+    | '/tanstack/demo/start/ssr/spa-mode'
+    | '/tanstack/demo/start/ssr/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemoTableRoute: typeof DemoTableRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
-  DemoApiNamesRoute: typeof DemoApiNamesRoute
-  DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoFormSimpleRoute: typeof DemoFormSimpleRoute
-  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
-  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
-  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
-  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
-  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
-  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthProfileRoute: typeof AuthProfileRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthSettingsRoute: typeof AuthSettingsRoute
+  GeneralChatRoute: typeof GeneralChatRoute
+  GeneralCreateProfileRoute: typeof GeneralCreateProfileRoute
+  GeneralLandingPageRoute: typeof GeneralLandingPageRoute
+  RecruiterDiscoverRoute: typeof RecruiterDiscoverRoute
+  RecruiterHomepageRoute: typeof RecruiterHomepageRoute
+  RecruiterJobsRoute: typeof RecruiterJobsRoute
+  SeekerPlaceholderRoute: typeof SeekerPlaceholderRoute
+  TanstackDemoTableRoute: typeof TanstackDemoTableRoute
+  TanstackDemoTanstackQueryRoute: typeof TanstackDemoTanstackQueryRoute
+  TanstackDemoApiNamesRoute: typeof TanstackDemoApiNamesRoute
+  TanstackDemoApiTqTodosRoute: typeof TanstackDemoApiTqTodosRoute
+  TanstackDemoFormAddressRoute: typeof TanstackDemoFormAddressRoute
+  TanstackDemoFormSimpleRoute: typeof TanstackDemoFormSimpleRoute
+  TanstackDemoStartApiRequestRoute: typeof TanstackDemoStartApiRequestRoute
+  TanstackDemoStartServerFuncsRoute: typeof TanstackDemoStartServerFuncsRoute
+  TanstackDemoStartSsrDataOnlyRoute: typeof TanstackDemoStartSsrDataOnlyRoute
+  TanstackDemoStartSsrFullSsrRoute: typeof TanstackDemoStartSsrFullSsrRoute
+  TanstackDemoStartSsrSpaModeRoute: typeof TanstackDemoStartSsrSpaModeRoute
+  TanstackDemoStartSsrIndexRoute: typeof TanstackDemoStartSsrIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -208,88 +371,172 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
+    '/seeker/placeholder': {
+      id: '/seeker/placeholder'
+      path: '/seeker/placeholder'
+      fullPath: '/seeker/placeholder'
+      preLoaderRoute: typeof SeekerPlaceholderRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/table': {
-      id: '/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof DemoTableRouteImport
+    '/recruiter/jobs': {
+      id: '/recruiter/jobs'
+      path: '/recruiter/jobs'
+      fullPath: '/recruiter/jobs'
+      preLoaderRoute: typeof RecruiterJobsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/server-funcs': {
-      id: '/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof DemoStartServerFuncsRouteImport
+    '/recruiter/homepage': {
+      id: '/recruiter/homepage'
+      path: '/recruiter/homepage'
+      fullPath: '/recruiter/homepage'
+      preLoaderRoute: typeof RecruiterHomepageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/api-request': {
-      id: '/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof DemoStartApiRequestRouteImport
+    '/recruiter/discover': {
+      id: '/recruiter/discover'
+      path: '/recruiter/discover'
+      fullPath: '/recruiter/discover'
+      preLoaderRoute: typeof RecruiterDiscoverRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/form/simple': {
-      id: '/demo/form/simple'
-      path: '/demo/form/simple'
-      fullPath: '/demo/form/simple'
-      preLoaderRoute: typeof DemoFormSimpleRouteImport
+    '/general/landing-page': {
+      id: '/general/landing-page'
+      path: '/general/landing-page'
+      fullPath: '/general/landing-page'
+      preLoaderRoute: typeof GeneralLandingPageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressRouteImport
+    '/general/create-profile': {
+      id: '/general/create-profile'
+      path: '/general/create-profile'
+      fullPath: '/general/create-profile'
+      preLoaderRoute: typeof GeneralCreateProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/api/tq-todos': {
-      id: '/demo/api/tq-todos'
-      path: '/demo/api/tq-todos'
-      fullPath: '/demo/api/tq-todos'
-      preLoaderRoute: typeof DemoApiTqTodosRouteImport
+    '/general/chat': {
+      id: '/general/chat'
+      path: '/general/chat'
+      fullPath: '/general/chat'
+      preLoaderRoute: typeof GeneralChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/api/names': {
-      id: '/demo/api/names'
-      path: '/demo/api/names'
-      fullPath: '/demo/api/names'
-      preLoaderRoute: typeof DemoApiNamesRouteImport
+    '/auth/settings': {
+      id: '/auth/settings'
+      path: '/auth/settings'
+      fullPath: '/auth/settings'
+      preLoaderRoute: typeof AuthSettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/': {
-      id: '/demo/start/ssr/'
-      path: '/demo/start/ssr'
-      fullPath: '/demo/start/ssr/'
-      preLoaderRoute: typeof DemoStartSsrIndexRouteImport
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/spa-mode': {
-      id: '/demo/start/ssr/spa-mode'
-      path: '/demo/start/ssr/spa-mode'
-      fullPath: '/demo/start/ssr/spa-mode'
-      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport
+    '/auth/profile': {
+      id: '/auth/profile'
+      path: '/auth/profile'
+      fullPath: '/auth/profile'
+      preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/full-ssr': {
-      id: '/demo/start/ssr/full-ssr'
-      path: '/demo/start/ssr/full-ssr'
-      fullPath: '/demo/start/ssr/full-ssr'
-      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/data-only': {
-      id: '/demo/start/ssr/data-only'
-      path: '/demo/start/ssr/data-only'
-      fullPath: '/demo/start/ssr/data-only'
-      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/tanstack-query': {
+      id: '/tanstack/demo/tanstack-query'
+      path: '/tanstack/demo/tanstack-query'
+      fullPath: '/tanstack/demo/tanstack-query'
+      preLoaderRoute: typeof TanstackDemoTanstackQueryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/table': {
+      id: '/tanstack/demo/table'
+      path: '/tanstack/demo/table'
+      fullPath: '/tanstack/demo/table'
+      preLoaderRoute: typeof TanstackDemoTableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/server-funcs': {
+      id: '/tanstack/demo/start/server-funcs'
+      path: '/tanstack/demo/start/server-funcs'
+      fullPath: '/tanstack/demo/start/server-funcs'
+      preLoaderRoute: typeof TanstackDemoStartServerFuncsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/api-request': {
+      id: '/tanstack/demo/start/api-request'
+      path: '/tanstack/demo/start/api-request'
+      fullPath: '/tanstack/demo/start/api-request'
+      preLoaderRoute: typeof TanstackDemoStartApiRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/form/simple': {
+      id: '/tanstack/demo/form/simple'
+      path: '/tanstack/demo/form/simple'
+      fullPath: '/tanstack/demo/form/simple'
+      preLoaderRoute: typeof TanstackDemoFormSimpleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/form/address': {
+      id: '/tanstack/demo/form/address'
+      path: '/tanstack/demo/form/address'
+      fullPath: '/tanstack/demo/form/address'
+      preLoaderRoute: typeof TanstackDemoFormAddressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/api/tq-todos': {
+      id: '/tanstack/demo/api/tq-todos'
+      path: '/tanstack/demo/api/tq-todos'
+      fullPath: '/tanstack/demo/api/tq-todos'
+      preLoaderRoute: typeof TanstackDemoApiTqTodosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/api/names': {
+      id: '/tanstack/demo/api/names'
+      path: '/tanstack/demo/api/names'
+      fullPath: '/tanstack/demo/api/names'
+      preLoaderRoute: typeof TanstackDemoApiNamesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/ssr/': {
+      id: '/tanstack/demo/start/ssr/'
+      path: '/tanstack/demo/start/ssr'
+      fullPath: '/tanstack/demo/start/ssr/'
+      preLoaderRoute: typeof TanstackDemoStartSsrIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/ssr/spa-mode': {
+      id: '/tanstack/demo/start/ssr/spa-mode'
+      path: '/tanstack/demo/start/ssr/spa-mode'
+      fullPath: '/tanstack/demo/start/ssr/spa-mode'
+      preLoaderRoute: typeof TanstackDemoStartSsrSpaModeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/ssr/full-ssr': {
+      id: '/tanstack/demo/start/ssr/full-ssr'
+      path: '/tanstack/demo/start/ssr/full-ssr'
+      fullPath: '/tanstack/demo/start/ssr/full-ssr'
+      preLoaderRoute: typeof TanstackDemoStartSsrFullSsrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tanstack/demo/start/ssr/data-only': {
+      id: '/tanstack/demo/start/ssr/data-only'
+      path: '/tanstack/demo/start/ssr/data-only'
+      fullPath: '/tanstack/demo/start/ssr/data-only'
+      preLoaderRoute: typeof TanstackDemoStartSsrDataOnlyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -297,18 +544,30 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemoTableRoute: DemoTableRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
-  DemoApiNamesRoute: DemoApiNamesRoute,
-  DemoApiTqTodosRoute: DemoApiTqTodosRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoFormSimpleRoute: DemoFormSimpleRoute,
-  DemoStartApiRequestRoute: DemoStartApiRequestRoute,
-  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
-  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
-  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
-  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
-  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthProfileRoute: AuthProfileRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthSettingsRoute: AuthSettingsRoute,
+  GeneralChatRoute: GeneralChatRoute,
+  GeneralCreateProfileRoute: GeneralCreateProfileRoute,
+  GeneralLandingPageRoute: GeneralLandingPageRoute,
+  RecruiterDiscoverRoute: RecruiterDiscoverRoute,
+  RecruiterHomepageRoute: RecruiterHomepageRoute,
+  RecruiterJobsRoute: RecruiterJobsRoute,
+  SeekerPlaceholderRoute: SeekerPlaceholderRoute,
+  TanstackDemoTableRoute: TanstackDemoTableRoute,
+  TanstackDemoTanstackQueryRoute: TanstackDemoTanstackQueryRoute,
+  TanstackDemoApiNamesRoute: TanstackDemoApiNamesRoute,
+  TanstackDemoApiTqTodosRoute: TanstackDemoApiTqTodosRoute,
+  TanstackDemoFormAddressRoute: TanstackDemoFormAddressRoute,
+  TanstackDemoFormSimpleRoute: TanstackDemoFormSimpleRoute,
+  TanstackDemoStartApiRequestRoute: TanstackDemoStartApiRequestRoute,
+  TanstackDemoStartServerFuncsRoute: TanstackDemoStartServerFuncsRoute,
+  TanstackDemoStartSsrDataOnlyRoute: TanstackDemoStartSsrDataOnlyRoute,
+  TanstackDemoStartSsrFullSsrRoute: TanstackDemoStartSsrFullSsrRoute,
+  TanstackDemoStartSsrSpaModeRoute: TanstackDemoStartSsrSpaModeRoute,
+  TanstackDemoStartSsrIndexRoute: TanstackDemoStartSsrIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

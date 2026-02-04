@@ -2,14 +2,12 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { getPunkSongs } from '@/data/demo.punk-songs';
 
-export const Route = createFileRoute('/demo/start/ssr/spa-mode')({
-  ssr: false,
-  loader: () => getPunkSongs(), // Fetch data before the route renders
+export const Route = createFileRoute('/tanstack/demo/start/ssr/full-ssr')({
   component: RouteComponent,
+  loader: async () => await getPunkSongs(),
 });
 
 function RouteComponent() {
-  // This hook automatically gets the type-safe data from the loader
   const punkSongs = Route.useLoaderData();
 
   return (
@@ -21,8 +19,8 @@ function RouteComponent() {
       }}
     >
       <div className="w-full max-w-2xl p-8 rounded-xl backdrop-blur-md bg-black/50 shadow-xl border-8 border-black/10">
-        <h1 className="text-3xl font-bold mb-6 text-green-400">
-          SPA Mode - Punk Songs
+        <h1 className="text-3xl font-bold mb-6 text-purple-400">
+          Full SSR - Punk Songs
         </h1>
         <ul className="space-y-3">
           {punkSongs.map((song) => (

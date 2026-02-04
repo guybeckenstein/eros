@@ -23,7 +23,7 @@ import React from 'react';
 import { makeData } from '@/data/demo-table-data';
 import type { Person } from '@/data/demo-table-data';
 
-export const Route = createFileRoute('/demo/table')({
+export const Route = createFileRoute('/tanstack/demo/table')({
   component: TableDemo,
 });
 
