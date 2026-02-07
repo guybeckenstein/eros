@@ -62,7 +62,9 @@ function RootComponent() {
   return (
     <>
       <Navbar />
-      <Outlet />
+      <div className="p-4">
+        <Outlet />
+      </div>
     </>
   );
 }
