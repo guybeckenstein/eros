@@ -14,6 +14,8 @@ import { Route as SeekerPlaceholderRouteImport } from './routes/seeker/placehold
 import { Route as RecruiterJobsRouteImport } from './routes/recruiter/jobs'
 import { Route as RecruiterHomepageRouteImport } from './routes/recruiter/homepage'
 import { Route as RecruiterDiscoverRouteImport } from './routes/recruiter/discover'
+import { Route as GeneralSignUpRouteImport } from './routes/general/sign-up'
+import { Route as GeneralSignInRouteImport } from './routes/general/sign-in'
 import { Route as GeneralLandingPageRouteImport } from './routes/general/landing-page'
 import { Route as GeneralCreateProfileRouteImport } from './routes/general/create-profile'
 import { Route as GeneralChatRouteImport } from './routes/general/chat'
@@ -58,6 +60,16 @@ const RecruiterHomepageRoute = RecruiterHomepageRouteImport.update({
 const RecruiterDiscoverRoute = RecruiterDiscoverRouteImport.update({
   id: '/recruiter/discover',
   path: '/recruiter/discover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeneralSignUpRoute = GeneralSignUpRouteImport.update({
+  id: '/general/sign-up',
+  path: '/general/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeneralSignInRoute = GeneralSignInRouteImport.update({
+  id: '/general/sign-in',
+  path: '/general/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GeneralLandingPageRoute = GeneralLandingPageRouteImport.update({
@@ -178,6 +190,8 @@ export interface FileRoutesByFullPath {
   '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
+  '/general/sign-in': typeof GeneralSignInRoute
+  '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/recruiter/jobs': typeof RecruiterJobsRoute
@@ -205,6 +219,8 @@ export interface FileRoutesByTo {
   '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
+  '/general/sign-in': typeof GeneralSignInRoute
+  '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/recruiter/jobs': typeof RecruiterJobsRoute
@@ -233,6 +249,8 @@ export interface FileRoutesById {
   '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
+  '/general/sign-in': typeof GeneralSignInRoute
+  '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/recruiter/jobs': typeof RecruiterJobsRoute
@@ -262,6 +280,8 @@ export interface FileRouteTypes {
     | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
+    | '/general/sign-in'
+    | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/recruiter/jobs'
@@ -289,6 +309,8 @@ export interface FileRouteTypes {
     | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
+    | '/general/sign-in'
+    | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/recruiter/jobs'
@@ -316,6 +338,8 @@ export interface FileRouteTypes {
     | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
+    | '/general/sign-in'
+    | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/recruiter/jobs'
@@ -344,6 +368,8 @@ export interface RootRouteChildren {
   GeneralChatRoute: typeof GeneralChatRoute
   GeneralCreateProfileRoute: typeof GeneralCreateProfileRoute
   GeneralLandingPageRoute: typeof GeneralLandingPageRoute
+  GeneralSignInRoute: typeof GeneralSignInRoute
+  GeneralSignUpRoute: typeof GeneralSignUpRoute
   RecruiterDiscoverRoute: typeof RecruiterDiscoverRoute
   RecruiterHomepageRoute: typeof RecruiterHomepageRoute
   RecruiterJobsRoute: typeof RecruiterJobsRoute
@@ -397,6 +423,20 @@ declare module '@tanstack/react-router' {
       path: '/recruiter/discover'
       fullPath: '/recruiter/discover'
       preLoaderRoute: typeof RecruiterDiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/general/sign-up': {
+      id: '/general/sign-up'
+      path: '/general/sign-up'
+      fullPath: '/general/sign-up'
+      preLoaderRoute: typeof GeneralSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/general/sign-in': {
+      id: '/general/sign-in'
+      path: '/general/sign-in'
+      fullPath: '/general/sign-in'
+      preLoaderRoute: typeof GeneralSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/general/landing-page': {
@@ -552,6 +592,8 @@ const rootRouteChildren: RootRouteChildren = {
   GeneralChatRoute: GeneralChatRoute,
   GeneralCreateProfileRoute: GeneralCreateProfileRoute,
   GeneralLandingPageRoute: GeneralLandingPageRoute,
+  GeneralSignInRoute: GeneralSignInRoute,
+  GeneralSignUpRoute: GeneralSignUpRoute,
   RecruiterDiscoverRoute: RecruiterDiscoverRoute,
   RecruiterHomepageRoute: RecruiterHomepageRoute,
   RecruiterJobsRoute: RecruiterJobsRoute,
