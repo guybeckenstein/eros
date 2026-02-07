@@ -17,14 +17,14 @@ function NavItem({ item, isActive }: NavItemProps) {
     <Link
       to={item.href}
       className={classNames(
-        'p-2.5 gap-1 items-center justify-center flex-col inline-flex',
+        'inline-flex flex-col items-center justify-center gap-1 p-2.5',
         isActive ? 'w-14 border-b-[3px] border-black' : 'w-20',
       )}
     >
-      <div className="w-6 h-6 relative overflow-hidden">{item.icon}</div>
+      <div className="relative h-6 w-6 overflow-hidden">{item.icon}</div>
       <div
         className={classNames(
-          'justify-start text-black text-lg tracking-wide',
+          'justify-start text-lg tracking-wide text-black',
           isActive ? 'font-semibold' : 'font-medium',
         )}
       >
@@ -41,12 +41,12 @@ export default function Navbar() {
   }, [navigationItems]);
 
   return (
-    <nav className="flex justify-between h-18 w-full items-center px-6">
+    <nav className="flex h-18 w-full items-center justify-between px-6 shadow-lg">
       <Link to="/" className="flex gap-2">
         <img src="/logo.png" alt="TanStack Logo" className="" />
         <img src="/logo-words.png" alt="TanStack Word Logo" className="w-23" />
       </Link>
-      <div className="flex gap-8 items-center justify-center">
+      <div className="flex items-center justify-center gap-8">
         {navigationItemsMemoed.map((item) => {
           const isActive = Boolean(matchRoute({ to: item.href, fuzzy: false }));
           return <NavItem key={item.name} item={item} isActive={isActive} />;
