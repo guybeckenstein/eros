@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { ROUTE_PATHS } from '@/shared/constants/route-paths';
-
-export const Route = createFileRoute(ROUTE_PATHS.AUTH.SETTINGS)({
+export const Route = createFileRoute('/auth/settings')({
   component: SettingsPage,
 });
 

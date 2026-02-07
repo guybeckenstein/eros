@@ -2,9 +2,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { getDiscoverCandidates } from '@/server/recruiter/recruiter-api';
-import { ROUTE_PATHS } from '@/shared/constants/route-paths';
 
-export const Route = createFileRoute(ROUTE_PATHS.RECRUITER.DISCOVER.INDEX)({
+export const Route = createFileRoute('/recruiter/discover')({
   component: DiscoverPage,
   pendingComponent: DiscoverPageSkeleton,
   loader: async ({ context, params }) => {

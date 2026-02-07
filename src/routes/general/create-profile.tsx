@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { ROUTE_PATHS } from '@/shared/constants/route-paths';
-
-export const Route = createFileRoute(ROUTE_PATHS.GENERAL.CREATE_PROFILE)({
+export const Route = createFileRoute('/general/create-profile')({
   component: CreateProfilePage,
 });
 
