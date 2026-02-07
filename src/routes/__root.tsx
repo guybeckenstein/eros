@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
-import Header from '../components/Header';
+import Navbar from '../components/navigation/Navbar';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import appCss from '../styles.css?url';
 
@@ -61,7 +61,7 @@ function NotFound() {
 function RootComponent() {
   return (
     <>
-      <Header />
+      <Navbar />
       <Outlet />
     </>
   );

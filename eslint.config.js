@@ -6,6 +6,13 @@ export default [
   // Override or add custom rules here
   {
     rules: {
+      '@typescript-eslint/array-type': [
+        'error',
+        {
+          default: 'array',
+        },
+      ],
+      '@typescript-eslint/consistent-type-imports': 'off',
       'import/order': [
         'error',
         {

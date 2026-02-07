@@ -7,7 +7,9 @@ import tailwindcss from '@tailwindcss/vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
 import { defineConfig } from 'vite';
+import svgr from "vite-plugin-svgr";
 import viteTsConfigPaths from 'vite-tsconfig-paths';
+
 
 const config = defineConfig({
   resolve: {
@@ -25,6 +27,7 @@ const config = defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    svgr(),
   ],
 });
 
