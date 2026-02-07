@@ -14,17 +14,17 @@ function DiscoverPage() {
   const { data: candidates } = useSuspenseQuery(discoverCandidatesQueryOptions);
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4">
       <h1 className="text-2xl font-bold">Discover Candidates</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {candidates.map((candidate) => (
           <div
             key={candidate.id}
-            className="p-4 border rounded-lg shadow-sm bg-card text-card-foreground"
+            className="bg-card text-card-foreground rounded-lg border p-4 shadow-sm"
           >
             <h2 className="text-xl font-semibold">{candidate.name}</h2>
             <p className="text-muted-foreground">{candidate.role}</p>
-            <p className="text-sm mt-2">Experience: {candidate.experience}</p>
+            <p className="mt-2 text-sm">Experience: {candidate.experience}</p>
           </div>
         ))}
       </div>
@@ -34,13 +34,13 @@ function DiscoverPage() {
 
 function DiscoverPageSkeleton() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4">
       <h1 className="text-2xl font-bold">Discover Candidates</h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-32 p-4 border rounded-lg bg-muted animate-pulse"
+            className="bg-muted h-32 animate-pulse rounded-lg border p-4"
           />
         ))}
       </div>
