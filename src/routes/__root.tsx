@@ -1,5 +1,5 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
-import type { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   HeadContent,
   Link,
@@ -28,7 +28,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Eros',
       },
     ],
     links: [
@@ -59,13 +59,14 @@ function NotFound() {
 }
 
 function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Navbar />
       <div className="p-4">
         <Outlet />
       </div>
-    </>
+    </QueryClientProvider>
   );
 }
 

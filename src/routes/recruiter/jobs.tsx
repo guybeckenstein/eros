@@ -1,7 +1,7 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 import { TextField } from '@radix-ui/themes';
-import { Root, Slot } from '@radix-ui/themes/components/text-field';
 import {
   Archive,
   BriefcaseBusiness,
@@ -14,14 +14,9 @@ import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { ClickableButton } from '@/components/buttons/ClickableButton';
 import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
+import { jobsQueryOptions } from '@/server/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
-import RecruiterJobItem from '@/shared/types/recruiter';
-import { supabase } from '@/utils/supabase';
-
-type JobSearch = {
-  text: string;
-  sort: 'Date' | 'Name' | 'Status';
-};
+import JobSearch from '@/shared/types/jobs';
 
 export const Route = createFileRoute('/recruiter/jobs')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
@@ -30,48 +25,15 @@ export const Route = createFileRoute('/recruiter/jobs')({
       sort: (search.sort as JobSearch['sort']) || 'Date',
     };
   },
-  loaderDeps: ({ search: { text, sort } }: { search: JobSearch }) => ({
-    text,
-    sort,
-  }),
-  loader: async ({ deps }) => {
-    const { text, sort } = deps;
-    const query = supabase.from('jobs').select(`
-        job_id, 
-        date_uploaded, 
-        is_active, 
-        job_titles_ref!inner (title),
-        job_seeker_status(count)
-        `);
-
-    if (text) {
-      query.ilike('job_titles_ref.title', `%${deps.text}%`);
-    }
-
-    if (sort === 'Name') {
-      query.order('title', {
-        referencedTable: 'job_titles_ref',
-        ascending: true,
-      });
-    } else if (sort === 'Status') {
-      query.order('is_active', { ascending: false });
-    } else {
-      query.order('date_uploaded', { ascending: false });
-    }
-
-    const { data, error } = await query;
-    if (error) {
-      throw error;
-    }
-
-    return { data: data as unknown as RecruiterJobItem[] };
-  },
+  loaderDeps: ({ search }: { search: JobSearch }) => ({ search }),
+  loader: async ({ context: { queryClient }, deps: { search } }) =>
+    queryClient.ensureQueryData(jobsQueryOptions(search)),
   component: JobsPage,
 });
 
 function JobsPage() {
   const { text, sort } = Route.useSearch();
-  const { data } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
 
   const handleSort = (
@@ -180,15 +142,29 @@ function JobsPage() {
               </div>
               <div className="flex items-center gap-24">
                 <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
-                <Ellipsis
-                  size="24"
-                  className="cursor-pointer text-neutral-500"
-                  onClick={() =>
-                    console.log(
-                      `TODO: add edit and delete ${job.job_titles_ref.title}. URL: https://itzikmish135.atlassian.net/browse/EROS-61`,
-                    )
-                  }
-                />
+                <div className="relative">
+                  <Ellipsis
+                    size="24"
+                    className="cursor-pointer text-neutral-500"
+                    onClick={() =>
+                      console.log(
+                        `TODO: add edit and delete ${job.job_titles_ref.title}. URL: https://itzikmish135.atlassian.net/browse/EROS-61`,
+                      )
+                    }
+                  />
+
+                  <Dropdown label="">
+                    <Dropdown.Item onClick={() => handleSort(text, 'Date')}>
+                      Sort by: Date
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort(text, 'Name')}>
+                      Sort by: Name
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleSort(text, 'Status')}>
+                      Sort by: Status
+                    </Dropdown.Item>
+                  </Dropdown>
+                </div>
               </div>
             </div>
           ))
