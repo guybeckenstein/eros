@@ -1,8 +1,8 @@
-import React from 'react';
+import { ComponentProps, ReactNode } from 'react';
 
-interface ClickableButtonProps extends React.ComponentProps<'button'> {
+interface ClickableButtonProps extends ComponentProps<'button'> {
   label: string;
-  svgIcon?: React.ReactNode;
+  svgIcon?: ReactNode;
 }
 
 export function ClickableButton({

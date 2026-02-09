@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { SVGProps } from 'react';
 
-export function AddIcon(props: React.SVGProps<SVGSVGElement>) {
+export function AddIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
       <path
