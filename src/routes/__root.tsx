@@ -9,9 +9,13 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
+import { Theme } from '@radix-ui/themes';
+
 import Navbar from '../components/navigation/Navbar';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 import appCss from '../styles.css?url';
+
+import '@radix-ui/themes/styles.css';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -62,10 +66,12 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Navbar />
-      <div className="p-4">
-        <Outlet />
-      </div>
+      <Theme>
+        <Navbar />
+        <div className="p-4">
+          <Outlet />
+        </div>
+      </Theme>
     </QueryClientProvider>
   );
 }

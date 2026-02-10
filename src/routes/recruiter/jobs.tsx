@@ -1,6 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
+import { useDeferredValue, useEffect, useState } from 'react';
+
 import { TextField } from '@radix-ui/themes';
 import {
   Archive,
@@ -14,6 +16,7 @@ import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { ClickableButton } from '@/components/buttons/ClickableButton';
 import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
+import { Input } from '@/components/ui/form/Input';
 import { jobsQueryOptions } from '@/server/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
 import JobSearch from '@/shared/types/jobs';
@@ -22,7 +25,7 @@ export const Route = createFileRoute('/recruiter/jobs')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
     return {
       text: (search.text as string) || '',
-      sort: (search.sort as JobSearch['sort']) || 'Date',
+      sort: search.sort as JobSearch['sort'],
     };
   },
   loaderDeps: ({ search }: { search: JobSearch }) => ({ search }),
@@ -35,6 +38,25 @@ function JobsPage() {
   const { text, sort } = Route.useSearch();
   const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
+  const [searchValue, setSearchValue] = useState(text);
+
+  const deferredSearchValue = useDeferredValue(searchValue);
+
+  useEffect(() => {
+    setSearchValue(text);
+  }, [text]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchValue === text) return;
+      navigate({
+        search: (prev) => ({ ...prev, text: searchValue }),
+        replace: true,
+      });
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [navigate, searchValue, text]);
 
   const handleSort = (
     newText: JobSearch['text'],
@@ -50,21 +72,23 @@ function JobsPage() {
     <div className="flex-col">
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-10">
+          <Input
+            value={deferredSearchValue}
+            placeholder="Search jobs..."
+            onChange={(e) => setSearchValue(e.target.value)}
+            className="w-96 rounded-full border p-2"
+          />
           <TextField.Root
             placeholder="Search jobs..."
-            value={text}
+            value={deferredSearchValue}
             onChange={(e) => {
-              navigate({
-                search: (prev) => ({ ...prev, text: e.target.value }),
-              });
+              setSearchValue(e.target.value);
             }}
-            className="relative flex w-96 items-center gap-2 rounded-md border border-neutral-900 bg-white px-8 py-3 text-base font-medium transition-colors hover:bg-neutral-50"
+            radius="large"
+            className="h-full w-96"
           >
-            <TextField.Slot>
-              <Search
-                size="18"
-                className="absolute top-1/2 left-2 -translate-y-1/2 text-neutral-400"
-              />
+            <TextField.Slot gap={'9'}>
+              <Search size="18" />
             </TextField.Slot>
           </TextField.Root>
           <Dropdown label={`Sort by: ${sort}`}>
