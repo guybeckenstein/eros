@@ -75,7 +75,9 @@ function JobsPage() {
           <Input
             value={deferredSearchValue}
             placeholder="Search jobs..."
-            onChange={(e) => setSearchValue(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchValue(e.target.value)
+            }
             className="w-96 rounded-full border p-2"
           />
           <TextField.Root
