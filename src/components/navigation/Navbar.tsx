@@ -17,16 +17,18 @@ function NavItem({ item, isActive }: NavItemProps) {
     <Link
       to={item.href}
       className={classNames(
-        'inline-flex flex-col items-center justify-center gap-1 p-2.5',
-        isActive ? 'w-14 border-b-[3px] border-black' : 'w-20',
+        'inline-flex h-full flex-col items-center justify-end px-3.5 pb-2.5',
+        isActive ? 'shadow-[inset_0_-3px_0_0_rgba(0,0,0,1)]' : '',
       )}
     >
-      <div className="relative h-6 w-6 overflow-hidden">{item.icon}</div>
+      <div className="relative size-6 overflow-hidden">{item.icon}</div>
       <div
         className={classNames(
-          'justify-start text-lg tracking-wide text-black',
-          isActive ? 'font-semibold' : 'font-medium',
+          'text-center text-lg tracking-wide text-black transition-all',
+          'after:block after:h-0 after:overflow-hidden after:font-semibold after:content-[attr(data-text)]',
+          isActive ? 'font-semibold' : 'font-normal',
         )}
+        data-text={item.name}
       >
         {item.name}
       </div>
@@ -41,20 +43,21 @@ export default function Navbar() {
   }, [navigationItems]);
 
   return (
-    <nav className="flex h-18 w-full items-center justify-between px-6 shadow-lg">
-      <Link to="/" className="flex gap-2">
+    <nav className="flex h-18 w-full items-stretch justify-between px-6 shadow-lg">
+      <Link to="/" className="flex items-center gap-2">
+        {/* TODO: use one file for logo, not two */}
         <img src="/logo.png" alt="TanStack Logo" className="" />
         <img src="/logo-words.png" alt="TanStack Word Logo" className="w-23" />
       </Link>
-      <div className="flex items-center justify-center gap-8">
+      <div className={`flex items-center gap-4`}>
         {navigationItemsMemoed.map((item) => {
           const isActive = Boolean(matchRoute({ to: item.href, fuzzy: false }));
           return <NavItem key={item.name} item={item} isActive={isActive} />;
         })}
       </div>
-      <div className="flex gap-3">
-        <AlertsIcon className="h-6 w-6 cursor-pointer" />
-        <ProfileIcon className="h-6 w-6 cursor-pointer" />
+      <div className="flex items-center gap-6">
+        <AlertsIcon className="size-7 cursor-pointer" />
+        <ProfileIcon className="size-7 cursor-pointer" />
       </div>
     </nav>
   );
