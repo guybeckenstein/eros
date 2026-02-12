@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 
 import JobSearch from '@/shared/types/jobs';
 import RecruiterJobItem from '@/shared/types/recruiter';

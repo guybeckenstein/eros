@@ -20,15 +20,15 @@ import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
 import { MyDropdown } from '@/components/ui/form/Dropdown';
 import { Input } from '@/components/ui/form/Input';
-import { jobsQueryOptions } from '@/server/jobs-queries';
+import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
 import JobSearch from '@/shared/types/jobs';
 
 export const Route = createFileRoute('/recruiter/jobs')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
     return {
-      text: (search.text as string) || '',
-      sort: search.sort as JobSearch['sort'],
+      text: (search.text as string) || undefined,
+      sort: search.sort as JobSearch['sort'] | undefined,
     };
   },
   loaderDeps: ({ search }: { search: JobSearch }) => ({ search }),
@@ -38,7 +38,7 @@ export const Route = createFileRoute('/recruiter/jobs')({
 });
 
 function JobsPage() {
-  const { text, sort } = Route.useSearch();
+  const { text = '', sort = 'Date' } = Route.useSearch();
   const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
   const [searchValue, setSearchValue] = useState(text);
@@ -137,7 +137,7 @@ function JobsPage() {
           data.map((job) => (
             <div
               key={job.job_id}
-              className="grid grid-cols-[0.5fr_1fr_max-content] items-start rounded-md border bg-white px-7 py-9"
+              className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
             >
               <div className="flex items-center gap-4">
                 <BriefcaseBusiness size="22" className="mt-1" />
@@ -185,7 +185,7 @@ function JobsPage() {
                   <PopoverPanel
                     anchor="bottom end"
                     transition
-                    className="original-top rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
+                    className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
                   >
                     {jobDropdownOptions.map((o) => (
                       <div className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 transition-colors hover:bg-neutral-100">
