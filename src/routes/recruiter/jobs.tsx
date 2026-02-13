@@ -257,6 +257,7 @@ function JobsPage() {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Create New Job"
+        className={'h-217.25 w-279.25'}
       >
         test
       </Modal>

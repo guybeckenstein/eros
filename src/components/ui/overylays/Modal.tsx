@@ -31,14 +31,15 @@ export const Modal = ({
       className={'relative z-50'}
       {...props}
     >
+      <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
         <DialogPanel
           className={classNames(
-            'relative overflow-auto rounded-[20px] bg-white px-6 py-5',
+            'relative overflow-auto rounded-[20px] bg-white py-5',
             className,
           )}
         >
-          <DialogTitle className="inline-flex w-full items-center justify-between border-b border-zinc-400 bg-white pb-5">
+          <DialogTitle className="inline-flex w-full items-center justify-between border-b border-zinc-400 bg-white px-6 pb-5">
             <span className="justify-start text-2xl font-semibold tracking-wide text-black">
               {title}
             </span>
@@ -48,12 +49,7 @@ export const Modal = ({
               </button>
             )}
           </DialogTitle>
-          {description && (
-            <Description className="mt-2 text-sm text-gray-500">
-              {description}
-            </Description>
-          )}
-          {props.children}
+          <div className="px-6 pt-5">{props.children}</div>
         </DialogPanel>
       </div>
     </Dialog>
