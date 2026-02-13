@@ -15,11 +15,11 @@ import {
 } from 'lucide-react';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
-import { ClickableButton } from '@/components/buttons/ClickableButton';
 import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
-import { MyDropdown } from '@/components/ui/form/Dropdown';
+import Button from '@/components/ui/buttons/button';
 import { Input } from '@/components/ui/form/Input';
+import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
 import JobSearch from '@/shared/types/jobs';
@@ -42,6 +42,7 @@ function JobsPage() {
   const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
   const [searchValue, setSearchValue] = useState(text);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const deferredSearchValue = useDeferredValue(searchValue);
 
@@ -87,31 +88,40 @@ function JobsPage() {
   ];
 
   return (
-    <div className="flex-col">
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-10">
-          <Input
-            value={deferredSearchValue}
-            placeholder="Search jobs..."
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearchValue(e.target.value)
-            }
-            className="w-96 rounded-md border border-neutral-900 p-2"
-          />
-          <Dropdown label={`Sort by: ${sort}`}>
-            <Dropdown.Item onClick={() => handleSort(text, 'Date')}>
-              Sort by: Date
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleSort(text, 'Name')}>
-              Sort by: Name
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleSort(text, 'Status')}>
-              Sort by: Status
-            </Dropdown.Item>
-          </Dropdown>
-        </div>
-        <div className="flex items-center gap-4">
-          <ClickableButton
+    <>
+      <div className="flex-col">
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-10">
+            <Input
+              value={deferredSearchValue}
+              placeholder="Search jobs..."
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchValue(e.target.value)
+              }
+              startIcon={<Search size="22" className="text-neutral-900" />}
+              className="w-96"
+            />
+            <Dropdown label={`Sort by: ${sort}`}>
+              <Dropdown.Item onClick={() => handleSort(text, 'Date')}>
+                Sort by: Date
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleSort(text, 'Name')}>
+                Sort by: Name
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleSort(text, 'Status')}>
+                Sort by: Status
+              </Dropdown.Item>
+            </Dropdown>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              className={'h-12 w-56'}
+              onClick={() => setIsModalOpen(true)}
+            >
+              <Plus size="24" className="text-white" />
+              Add New Job
+            </Button>
+            {/* <ClickableButton
             className="w-56 min-w-36 px-9 py-4"
             onClick={() =>
               console.log(
@@ -120,122 +130,136 @@ function JobsPage() {
             }
             label="Add New Job"
             svgIcon={<Plus size="24" className="text-white" />}
-          />
-          <Archive
-            size="24"
-            className="cursor-pointer text-neutral-900 transition-colors hover:text-neutral-600"
-            onClick={() =>
-              console.log(
-                'TODO: add archive functionality for jobs. URL: https://itzikmish135.atlassian.net/browse/EROS-57',
-              )
-            }
-          />
-        </div>
-      </div>
-      <div className="mt-6 flex flex-col gap-4">
-        {data.length > 0 ? (
-          data.map((job) => (
-            <div
-              key={job.job_id}
-              className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
-            >
-              <div className="flex items-center gap-4">
-                <BriefcaseBusiness size="22" className="mt-1" />
-                <h2 className="text-2xl font-bold text-neutral-900">
-                  {job.job_titles_ref.title}
-                </h2>
-              </div>
-              <div className="flex gap-16">
-                <div>
-                  <h3 className="mb-2 text-xl font-medium text-neutral-900">
-                    Status:
-                  </h3>
-                  <StatusButton isActive={job.is_active} />
-                </div>
-                <div>
-                  <h3 className="mb-2 text-xl font-medium text-neutral-900">
-                    Date Uploaded:
-                  </h3>
-                  <p className="font-medium text-neutral-900">
-                    {new Date(job.date_uploaded).toLocaleDateString(
-                      'en-IL',
-                      DATE_OPTIONS,
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <h3 className="mb-2 text-xl font-medium text-neutral-900">
-                    Total Applicants:
-                  </h3>
-                  <p className="font-medium text-neutral-900">
-                    {job.job_seeker_status[0]?.count ?? 0}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-24">
-                <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
-                {/* TODO: use the global interface instead of this one */}
-                <Popover data-slot="dropdown">
-                  <PopoverButton>
-                    <Ellipsis
-                      size="24"
-                      className="cursor-pointer text-neutral-500"
-                    />
-                  </PopoverButton>
-                  <PopoverPanel
-                    anchor="bottom end"
-                    transition
-                    className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
-                  >
-                    {jobDropdownOptions.map((o) => (
-                      <div className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 transition-colors hover:bg-neutral-100">
-                        <span className="pointer-events-none text-neutral-900">
-                          {o.startIcon}
-                        </span>
-                        <div
-                          onClick={() => o.onClick(job.job_id)}
-                          className="text-base text-neutral-900"
-                        >
-                          {o.label}
-                        </div>
-                      </div>
-                    ))}
-                  </PopoverPanel>
-                </Popover>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="mt-20 flex-col justify-items-center space-y-8 self-center">
-            <svg
-              width="204"
-              height="204"
-              viewBox="0 0 204 204"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="102" cy="102" r="102" fill="#E0E0E0"></circle>
-
-              <rect x="59" y="59" width="86" height="86" fill="#BDBDBD"></rect>
-
-              <polygon
-                points="70,135 85,110 100,135"
-                fill="rgb(235, 235, 235)"
-              ></polygon>
-
-              <polygon
-                points="92,135 112,101.4 132,135"
-                fill="rgb(235, 235, 235)"
-              ></polygon>
-            </svg>
-            <p className="text-center text-3xl font-bold text-neutral-400">
-              No jobs found. Let's make it happen!
-            </p>
+          /> */}
+            <Archive
+              size="24"
+              className="cursor-pointer text-neutral-900 transition-colors hover:text-neutral-600"
+              onClick={() =>
+                console.log(
+                  'TODO: add archive functionality for jobs. URL: https://itzikmish135.atlassian.net/browse/EROS-57',
+                )
+              }
+            />
           </div>
-        )}
-      </div>
-      {/* Exit Dialog
+        </div>
+        <div className="mt-6 flex flex-col gap-4">
+          {data.length > 0 ? (
+            data.map((job) => (
+              <div
+                key={job.job_id}
+                className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
+              >
+                <div className="flex items-center gap-4">
+                  <BriefcaseBusiness size="22" className="mt-1" />
+                  <h2 className="text-2xl font-bold text-neutral-900">
+                    {job.job_titles_ref.title}
+                  </h2>
+                </div>
+                <div className="flex gap-16">
+                  <div>
+                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                      Status:
+                    </h3>
+                    <StatusButton isActive={job.is_active} />
+                  </div>
+                  <div>
+                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                      Date Uploaded:
+                    </h3>
+                    <p className="font-medium text-neutral-900">
+                      {new Date(job.date_uploaded).toLocaleDateString(
+                        'en-IL',
+                        DATE_OPTIONS,
+                      )}
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                      Total Applicants:
+                    </h3>
+                    <p className="font-medium text-neutral-900">
+                      {job.job_seeker_status[0]?.count ?? 0}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-24">
+                  <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
+                  {/* TODO: use the global interface instead of this one */}
+                  <Popover data-slot="dropdown">
+                    <PopoverButton>
+                      <Ellipsis
+                        size="24"
+                        className="cursor-pointer text-neutral-500"
+                      />
+                    </PopoverButton>
+                    <PopoverPanel
+                      anchor="bottom end"
+                      transition
+                      className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
+                    >
+                      {jobDropdownOptions.map((o) => (
+                        <div className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 transition-colors hover:bg-neutral-100">
+                          <span className="pointer-events-none text-neutral-900">
+                            {o.startIcon}
+                          </span>
+                          <div
+                            onClick={() => o.onClick(job.job_id)}
+                            className="text-base text-neutral-900"
+                          >
+                            {o.label}
+                          </div>
+                        </div>
+                      ))}
+                    </PopoverPanel>
+                  </Popover>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="mt-20 flex-col justify-items-center space-y-8 self-center">
+              <svg
+                width="204"
+                height="204"
+                viewBox="0 0 204 204"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="102" cy="102" r="102" fill="#E0E0E0"></circle>
+
+                <rect
+                  x="59"
+                  y="59"
+                  width="86"
+                  height="86"
+                  fill="#BDBDBD"
+                ></rect>
+
+                <polygon
+                  points="70,135 85,110 100,135"
+                  fill="rgb(235, 235, 235)"
+                ></polygon>
+
+                <polygon
+                  points="92,135 112,101.4 132,135"
+                  fill="rgb(235, 235, 235)"
+                ></polygon>
+              </svg>
+              <p className="text-center text-3xl font-bold text-neutral-400">
+                No jobs found. Let's make it happen!
+              </p>
+            </div>
+          )}
+        </div>
+        {/* Exit Dialog
       <ExitDialog className="max-h-72 w-lg max-w-lg py-6" /> 
       */}
-    </div>
+      </div>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Create New Job"
+      >
+        test
+      </Modal>
+    </>
   );
 }
