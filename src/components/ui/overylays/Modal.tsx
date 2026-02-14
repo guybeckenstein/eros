@@ -1,8 +1,12 @@
+import { Fragment } from 'react';
+
 import {
   Description,
   Dialog,
   DialogPanel,
   DialogTitle,
+  Transition,
+  TransitionChild,
 } from '@headlessui/react';
 import { XIcon } from 'lucide-react';
 
@@ -31,26 +35,46 @@ export const Modal = ({
       className={'relative z-50'}
       {...props}
     >
-      <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+      <TransitionChild
+        as={Fragment}
+        enter="ease-out duration-200"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="ease-in duration-200"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+      </TransitionChild>
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel
-          className={classNames(
-            'relative overflow-auto rounded-[20px] bg-white py-5',
-            className,
-          )}
+        <TransitionChild
+          as={Fragment}
+          enter="ease-out duration-200"
+          enterFrom="opacity-0 scale-95"
+          enterTo="opacity-100 scale-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100 scale-100"
+          leaveTo="opacity-0 scale-95"
         >
-          <DialogTitle className="inline-flex w-full items-center justify-between border-b border-zinc-400 bg-white px-6 pb-5">
-            <span className="justify-start text-2xl font-semibold tracking-wide text-black">
-              {title}
-            </span>
-            {closeButton && (
-              <button onClick={() => onClose(false)}>
-                <XIcon className="cursor-pointer" />
-              </button>
+          <DialogPanel
+            className={classNames(
+              'relative overflow-auto rounded-[20px] bg-white py-5',
+              className,
             )}
-          </DialogTitle>
-          <div className="px-6 pt-5">{props.children}</div>
-        </DialogPanel>
+          >
+            <DialogTitle className="inline-flex w-full items-center justify-between border-b border-zinc-400 bg-white px-6 pb-5">
+              <span className="justify-start text-2xl font-semibold tracking-wide text-black">
+                {title}
+              </span>
+              {closeButton && (
+                <button onClick={() => onClose(false)}>
+                  <XIcon className="cursor-pointer" />
+                </button>
+              )}
+            </DialogTitle>
+            <div className="px-6 pt-5">{props.children}</div>
+          </DialogPanel>
+        </TransitionChild>
       </div>
     </Dialog>
   );

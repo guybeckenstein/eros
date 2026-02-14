@@ -20,7 +20,7 @@ export function Button({
     <HeadlessButton
       className={classNames(
         className,
-        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#222222] px-5 py-2.25 text-white',
+        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md px-5 py-2.25',
       )}
       {...props}
     >

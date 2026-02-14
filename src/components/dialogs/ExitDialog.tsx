@@ -1,8 +1,7 @@
 import { ComponentProps } from 'react';
 
+import { ClickableButton } from '@/components/buttons/ClickableButton';
 import { classNames } from '@/helpers/functions';
-
-import { ClickableButton } from '../buttons/ClickableButton';
 
 export default function ExitDialog({
   className,
