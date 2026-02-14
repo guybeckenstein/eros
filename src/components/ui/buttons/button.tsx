@@ -9,7 +9,7 @@ type ButtonProps = React.ComponentProps<typeof HeadlessButton> & {
   children: React.ReactNode;
 };
 
-export default function Button({
+export function Button({
   className,
   startIcon,
   endIcon,
