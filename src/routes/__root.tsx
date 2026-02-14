@@ -10,8 +10,6 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { useState } from 'react';
 
-import { Theme } from '@radix-ui/themes';
-
 import Navbar from '@/components/navigation/Navbar';
 import { RecruiterSidebar } from '@/components/navigation/RecruiterSidebar';
 import { NotFoundComponent } from '@/components/root/NotFound';
@@ -75,16 +73,14 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Theme>
-        <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
-        <div className="relative flex h-210 bg-white p-4 text-neutral-900">
-          <Outlet />
-        </div>
-        <RecruiterSidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-        />
-      </Theme>
+      <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
+      <div className="relative flex h-210 bg-white p-4 text-neutral-900">
+        <Outlet />
+      </div>
+      <RecruiterSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
     </QueryClientProvider>
   );
 }
