@@ -17,12 +17,16 @@ import {
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
+import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
+import { CreateJob } from '@/components/jobs/CreateJob';
+import { DeleteJob } from '@/components/jobs/DeleteJob';
+import { NoJobs } from '@/components/jobs/NoJobs';
 import Button from '@/components/ui/buttons/button';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
-import JobSearch from '@/shared/types/jobs';
+import { JobSearch } from '@/shared/types/jobs';
 
 export const Route = createFileRoute('/recruiter/jobs')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
@@ -42,13 +46,32 @@ function JobsPage() {
   const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
   const [searchValue, setSearchValue] = useState(text);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isAreYouSureCreateModalOpen, setIsAreYouSureCreateModalOpen] =
+    useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAreYouSureEditModalOpen, setIsAreYouSureEditModalOpen] =
+    useState(false);
+  const [isDeleteNonArchivedModalOpen, setIsDeleteNonArchivedModalOpen] =
+    useState(false);
+  const [
+    isAreYouSureDeleteNonArchivedModalOpen,
+    setIsAreYouSureDeleteNonArchivedModalOpen,
+  ] = useState(false);
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
+  const [isAreYouSureArchiveModalOpen, setIsAreYouSureArchiveModalOpen] =
+    useState(false);
+  const [isDeleteArchivedModalOpen, setIsDeleteArchivedModalOpen] =
+    useState(false);
+  const [
+    isAreYouSureDeleteArchivedModalOpen,
+    setIsAreYouSureDeleteArchivedModalOpen,
+  ] = useState(false);
+  const [deleteConfirmJobId, setDeleteConfirmJobId] = useState<number>(0);
 
   const deferredSearchValue = useDeferredValue(searchValue);
 
-  useEffect(() => {
-    setSearchValue(text);
-  }, [text]);
+  useEffect(() => setSearchValue(text), [text]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -72,18 +95,19 @@ function JobsPage() {
     });
   };
 
-  const jobDropdownOptions = [
+  const JOB_DROPDOWN_OPTIONS = [
     {
-      startIcon: <SquarePen size="22" className="text-neutral-900" />,
+      id: 'edit',
+      startIcon: <SquarePen size="22" className="text-current" />,
       label: 'Edit',
-      onClick: (job_id: string | number) =>
-        console.log(`Edit job clicked for job ID ${job_id}`),
+      onClick: (jobId: number) =>
+        console.log(`Edit job clicked for job ID ${jobId}`),
     },
     {
-      startIcon: <Trash size="22" className="text-neutral-900" />,
+      id: 'delete',
+      startIcon: <Trash size="22" className="text-current" />,
       label: 'Delete',
-      onClick: (job_id: string | number) =>
-        console.log(`Delete job clicked for job ID ${job_id}`),
+      onClick: (jobId: number) => setDeleteConfirmJobId(jobId),
     },
   ];
 
@@ -98,7 +122,7 @@ function JobsPage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchValue(e.target.value)
               }
-              startIcon={<Search size="22" className="text-neutral-900" />}
+              startIcon={<Search size="22" className="text-current" />}
               className="w-96"
             />
             <Dropdown label={`Sort by: ${sort}`}>
@@ -115,30 +139,16 @@ function JobsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Button
-              className={'h-12 w-56'}
-              onClick={() => setIsModalOpen(true)}
+              className={'h-12 w-56 bg-neutral-900 text-white'}
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <Plus size="24" className="text-white" />
               Add New Job
             </Button>
-            {/* <ClickableButton
-            className="w-56 min-w-36 px-9 py-4"
-            onClick={() =>
-              console.log(
-                'TODO: add popup for adding new job. URL: https://itzikmish135.atlassian.net/browse/EROS-55',
-              )
-            }
-            label="Add New Job"
-            svgIcon={<Plus size="24" className="text-white" />}
-          /> */}
             <Archive
               size="24"
-              className="cursor-pointer text-neutral-900 transition-colors hover:text-neutral-600"
-              onClick={() =>
-                console.log(
-                  'TODO: add archive functionality for jobs. URL: https://itzikmish135.atlassian.net/browse/EROS-57',
-                )
-              }
+              className="cursor-pointer text-current transition-colors hover:text-neutral-600"
+              onClick={() => setIsArchiveModalOpen(true)}
             />
           </div>
         </div>
@@ -150,23 +160,23 @@ function JobsPage() {
                 className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
               >
                 <div className="flex items-center gap-4">
-                  <BriefcaseBusiness size="22" className="mt-1" />
-                  <h2 className="text-2xl font-bold text-neutral-900">
+                  <BriefcaseBusiness size="22" />
+                  <h2 className="text-2xl font-bold text-current">
                     {job.job_titles_ref.title}
                   </h2>
                 </div>
                 <div className="flex gap-16">
                   <div>
-                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                    <h3 className="mb-2 text-xl font-medium text-current">
                       Status:
                     </h3>
                     <StatusButton isActive={job.is_active} />
                   </div>
                   <div>
-                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                    <h3 className="mb-2 text-xl font-medium text-current">
                       Date Uploaded:
                     </h3>
-                    <p className="font-medium text-neutral-900">
+                    <p className="font-medium text-current">
                       {new Date(job.date_uploaded).toLocaleDateString(
                         'en-IL',
                         DATE_OPTIONS,
@@ -174,17 +184,16 @@ function JobsPage() {
                     </p>
                   </div>
                   <div>
-                    <h3 className="mb-2 text-xl font-medium text-neutral-900">
+                    <h3 className="mb-2 text-xl font-medium text-current">
                       Total Applicants:
                     </h3>
-                    <p className="font-medium text-neutral-900">
+                    <p className="font-medium text-current">
                       {job.job_seeker_status[0]?.count ?? 0}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-24">
                   <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
-                  {/* TODO: use the global interface instead of this one */}
                   <Popover data-slot="dropdown">
                     <PopoverButton>
                       <Ellipsis
@@ -197,69 +206,59 @@ function JobsPage() {
                       transition
                       className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
                     >
-                      {jobDropdownOptions.map((o) => (
-                        <div className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 transition-colors hover:bg-neutral-100">
-                          <span className="pointer-events-none text-neutral-900">
-                            {o.startIcon}
-                          </span>
-                          <div
-                            onClick={() => o.onClick(job.job_id)}
-                            className="text-base text-neutral-900"
-                          >
-                            {o.label}
-                          </div>
-                        </div>
-                      ))}
+                      {({ close }) => (
+                        <>
+                          {deleteConfirmJobId === job.job_id ? (
+                            <DeleteJob
+                              jobId={job.job_id}
+                              onCancel={() => setDeleteConfirmJobId(0)}
+                              close={close}
+                            />
+                          ) : (
+                            JOB_DROPDOWN_OPTIONS.map((o) => (
+                              <div
+                                key={`${job.job_id}_${o.id}`}
+                                className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100"
+                              >
+                                <span className="pointer-events-none">
+                                  {o.startIcon}
+                                </span>
+                                <div
+                                  onClick={() => o.onClick(job.job_id)}
+                                  className="text-base"
+                                >
+                                  {o.label}
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </>
+                      )}
                     </PopoverPanel>
                   </Popover>
                 </div>
               </div>
             ))
           ) : (
-            <div className="mt-20 flex-col justify-items-center space-y-8 self-center">
-              <svg
-                width="204"
-                height="204"
-                viewBox="0 0 204 204"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="102" cy="102" r="102" fill="#E0E0E0"></circle>
-
-                <rect
-                  x="59"
-                  y="59"
-                  width="86"
-                  height="86"
-                  fill="#BDBDBD"
-                ></rect>
-
-                <polygon
-                  points="70,135 85,110 100,135"
-                  fill="rgb(235, 235, 235)"
-                ></polygon>
-
-                <polygon
-                  points="92,135 112,101.4 132,135"
-                  fill="rgb(235, 235, 235)"
-                ></polygon>
-              </svg>
-              <p className="text-center text-3xl font-bold text-neutral-400">
-                No jobs found. Let's make it happen!
-              </p>
-            </div>
+            <NoJobs text="No jobs found. Let's make it happen!" />
           )}
         </div>
-        {/* Exit Dialog
-      <ExitDialog className="max-h-72 w-lg max-w-lg py-6" /> 
-      */}
       </div>
       <Modal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
         title="Create New Job"
-        className={'h-217.25 w-279.25'}
+        className={'h-5/6 w-3/5'}
       >
-        test
+        <CreateJob />
+      </Modal>
+      <Modal
+        open={isArchiveModalOpen}
+        onClose={() => setIsArchiveModalOpen(false)}
+        title="Archive"
+        className={'h-5/6 w-3/5'}
+      >
+        <ArchivedJobs />
       </Modal>
     </>
   );

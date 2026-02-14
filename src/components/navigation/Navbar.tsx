@@ -36,18 +36,22 @@ function NavItem({ item, isActive }: NavItemProps) {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({
+  onProfileClick,
+}: {
+  onProfileClick?: () => void;
+}) {
   const matchRoute = useMatchRoute();
   const navigationItemsMemoed = useMemo(() => {
     return navigationItems;
   }, [navigationItems]);
 
   return (
-    <nav className="flex h-18 w-full items-stretch justify-between px-6 shadow-lg">
+    <nav className="relative z-1 flex h-18 w-full items-stretch justify-between bg-white px-6 shadow-lg">
       <Link to="/" className="flex items-center gap-2">
         {/* TODO: use one file for logo, not two */}
-        <img src="/logo.png" alt="TanStack Logo" className="" />
-        <img src="/logo-words.png" alt="TanStack Word Logo" className="w-23" />
+        <img src="/logo.png" alt="TanStack Logo" />
+        <img src="/logo-words.png" alt="TanStack Word Logo" />
       </Link>
       <div className={`flex items-center gap-4`}>
         {navigationItemsMemoed.map((item) => {
@@ -57,7 +61,10 @@ export default function Navbar() {
       </div>
       <div className="flex items-center gap-6">
         <AlertsIcon className="size-7 cursor-pointer" />
-        <ProfileIcon className="size-7 cursor-pointer" />
+        <ProfileIcon
+          className="size-7 cursor-pointer"
+          onClick={onProfileClick}
+        />
       </div>
     </nav>
   );
