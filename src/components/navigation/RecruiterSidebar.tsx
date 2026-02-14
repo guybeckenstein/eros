@@ -74,7 +74,7 @@ export function RecruiterSidebar({ isOpen, onClose }: RecruiterSidebarProps) {
           <h2 className="text-xl font-semibold">Profile</h2>
           <button
             onClick={onClose}
-            className="rounded-md p-1 transition-colors hover:bg-neutral-100"
+            className="cursor-pointer border-none bg-none"
           >
             <X size="24" />
           </button>
