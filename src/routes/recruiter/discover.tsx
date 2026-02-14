@@ -26,13 +26,14 @@ export const Route = createFileRoute('/recruiter/discover')({
 
 function DiscoverPage() {
   const { data } = useSuspenseQuery(discoverCandidatesQueryOptions());
+  console.log(data);
   // const exampleCandidate = data[0];
   const matchScore = 80;
 
   return (
-    <div className="relative space-y-4">
+    <>
       <h1 className="text-2xl font-bold">I'm looking for:</h1>
-      <div className="absolute right-0 left-0 h-180 w-3/5 rounded-lg border border-neutral-300">
+      <div className="right-0 left-0 m-auto h-180 w-3/5 rounded-lg border border-neutral-300">
         <div className="grid h-full grid-cols-[0.5fr_1fr]">
           <div className="flex size-full flex-col justify-between gap-2 rounded-l-[8.5px] bg-neutral-200 p-4">
             <div>
@@ -174,6 +175,6 @@ function DiscoverPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
