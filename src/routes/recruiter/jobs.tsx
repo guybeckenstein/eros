@@ -113,7 +113,7 @@ function JobsPage() {
 
   return (
     <>
-      <div className="flex-col">
+      <div className="w-full flex-col">
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-10">
             <Input

@@ -16,17 +16,20 @@ type DiscoverCandidate = {
 
 export interface FlattenCandidate {
   id: number;
-  full_name: string;
-  profile_pic_url: string;
-  job_title: string;
-  years_of_experience: number;
-  work_availability: string;
-  work_type: string;
+  fullName: string;
+  profilePicUrl: string;
+  jobTitle: string;
+  yearsOfExperience: number;
+  workAvailability: string;
+  workType: string;
+  workModel: string;
   city: string;
-  expected_salary_min: number;
-  expected_salary_max: number;
-  currency_name: string;
-  currency_symbol: string;
+  expectedSalary: number[2];
+  currencyName: string;
+  currencySymbol: string;
+  linkedinLink: string;
+  websiteLink: string;
+  resumeId: number;
 }
 
 export default DiscoverCandidate;

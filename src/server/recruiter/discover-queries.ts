@@ -28,18 +28,23 @@ async function getDiscoverCandidates(
     cities_ref!inner(
       name,
       countries_ref!inner(
+        common_name,
         is_active
       )
     ),
     years_of_experience,
     seeking_job_type,
     seeking_job_availability,
+    seeking_job_model,
     expected_salary_min,
     expected_salary_max,
     currencies_ref!inner(
       name,
       symbol
-    )
+    ),
+    linkedin_link,
+    website_link,
+    resume_id
   `,
     )
     .eq('cities_ref.countries_ref.is_active', true);
@@ -67,17 +72,20 @@ async function getDiscoverCandidates(
   // Transform data to match DiscoverCandidate type
   const transformedData: FlattenCandidate[] = data.map((seeker: any) => ({
     id: seeker.seeker_id,
-    full_name: `${seeker.users.first_name} ${seeker.users.last_name}`,
-    profile_pic_url: `${seeker.users.profile_pic_url}`,
-    job_title: seeker.job_titles_ref.title,
-    years_of_experience: seeker.years_of_experience,
-    work_availability: seeker.work_availability,
-    work_type: seeker.work_model,
-    city: seeker.cities_ref.name,
-    expected_salary_min: seeker.expected_salary_min,
-    expected_salary_max: seeker.expected_salary_max,
-    currency_name: seeker.currencies_ref.name,
-    currency_symbol: seeker.currencies_ref.symbol,
+    fullName: `${seeker.users.first_name} ${seeker.users.last_name}`,
+    profilePicUrl: `${seeker.users.profile_pic_url}`,
+    jobTitle: seeker.job_titles_ref.title,
+    yearsOfExperience: seeker.years_of_experience,
+    workAvailability: seeker.seeking_job_availability,
+    workType: seeker.seeking_job_type,
+    workModel: seeker.seeking_job_model,
+    city: `${seeker.cities_ref.name}, ${seeker.cities_ref.countries_ref.common_name}`,
+    expectedSalary: [seeker.expected_salary_min, seeker.expected_salary_max],
+    currencyName: seeker.currencies_ref.name,
+    currencySymbol: seeker.currencies_ref.symbol,
+    linkedinLink: seeker.linkedin_link,
+    websiteLink: seeker.website_link,
+    resumeId: seeker.resume_id,
   }));
 
   return transformedData;
