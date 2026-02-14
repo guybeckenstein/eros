@@ -17,7 +17,8 @@ import {
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
-import Button from '@/components/ui/buttons/button';
+import { Button } from '@/components/ui/buttons/Button';
+import { SelectButton } from '@/components/ui/buttons/SelectButton';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
@@ -100,6 +101,35 @@ function JobsPage() {
               }
               startIcon={<Search size="22" className="text-neutral-900" />}
               className="w-96"
+            />
+            <SelectButton
+              value={sort}
+              options={[
+                {
+                  value: 'Date',
+                  label: (
+                    <>
+                      sort by: <span className="font-bold">Date</span>
+                    </>
+                  ),
+                },
+                {
+                  value: 'Name',
+                  label: (
+                    <>
+                      sort by: <span className="font-bold">Name</span>
+                    </>
+                  ),
+                },
+                {
+                  value: 'Status',
+                  label: (
+                    <>
+                      sort by: <span className="font-bold">Status</span>
+                    </>
+                  ),
+                },
+              ]}
             />
             <Dropdown label={`Sort by: ${sort}`}>
               <Dropdown.Item onClick={() => handleSort(text, 'Date')}>
