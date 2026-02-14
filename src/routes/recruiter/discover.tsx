@@ -27,7 +27,7 @@ export const Route = createFileRoute('/recruiter/discover')({
 function DiscoverPage() {
   const { data } = useSuspenseQuery(discoverCandidatesQueryOptions());
   console.log(data);
-  // const exampleCandidate = data[0];
+  const exampleCandidate = data[0];
   const matchScore = 80;
 
   return (
@@ -48,16 +48,31 @@ function DiscoverPage() {
                   <div className="items-top flex gap-2 border-b border-neutral-200 pb-4">
                     <div className="max-h-12 min-h-12 max-w-12 min-w-12 rounded-full border bg-neutral-700" />
                     <div>
-                      <h2 className="text-xl font-semibold">Bar Simon</h2>
+                      <h2 className="text-xl font-semibold">
+                        {exampleCandidate.fullName}
+                      </h2>
                       <small className="text-sm font-medium text-neutral-600">
-                        Product Manager
+                        {exampleCandidate.jobTitle}
                       </small>
                     </div>
                   </div>
                   <div className="mt-1 flex gap-2">
-                    <Globe size="20" className="cursor-pointer" />
-                    <Linkedin size="20" className="cursor-pointer" />
-                    <FileText size="20" className="cursor-pointer" />
+                    {exampleCandidate.websiteLink.length > 0 ? (
+                      <Globe size="20" className="cursor-pointer" />
+                    ) : (
+                      <></>
+                    )}
+                    {exampleCandidate.linkedinLink.length > 0 ? (
+                      <Linkedin size="20" className="cursor-pointer" />
+                    ) : (
+                      <></>
+                    )}
+
+                    {exampleCandidate.resumeId > 0 ? (
+                      <FileText size="20" className="cursor-pointer" />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 </header>
                 <div className="mt-16 mb-6">
@@ -115,31 +130,35 @@ function DiscoverPage() {
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
                       <Contact size="22" className="m-auto" />
                     </div>
-                    <p className="font-medium">9 years experience</p>
+                    <p className="font-medium">
+                      {exampleCandidate.yearsOfExperience} years experience
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
                       <MapPin size="22" className="m-auto" />
                     </div>
-                    <p className="font-medium">Tel Aviv, Israel</p>
+                    <p className="font-medium">{exampleCandidate.city}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
                       <Clock size="22" className="m-auto" />
                     </div>
-                    <p className="font-medium">Full-Time</p>
+                    <p className="font-medium">{exampleCandidate.workType}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
                       <Clock size="22" className="m-auto" />
                     </div>
-                    <p className="font-medium">Availability: Now</p>
+                    <p className="font-medium">
+                      Availability: {exampleCandidate.workAvailability}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
                       <Building2 size="22" className="m-auto" />
                     </div>
-                    <p className="font-medium">Hybrid</p>
+                    <p className="font-medium">{exampleCandidate.workModel}</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
