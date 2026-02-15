@@ -24,11 +24,14 @@ import { InfoRow } from '@/components/discover/InfoRow';
 import { MatchButton } from '@/components/discover/MatchButton';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { SectionHeader } from '@/components/headers/SectionHeader';
+import { Select } from '@/components/ui/form';
 import { discoverCandidatesQueryOptions } from '@/server/recruiter/discover-queries';
 
 export const Route = createFileRoute('/recruiter/discover')({
-  loader: async ({ context: { queryClient } }) =>
-    queryClient.ensureQueryData(discoverCandidatesQueryOptions()),
+  loader: ({ context: { queryClient } }) => {
+    queryClient.ensureQueryData(discoverCandidatesQueryOptions());
+    // queryClient.ensureQueryData(recruiterJobTitlesQueryOptions());
+  },
   component: DiscoverPage,
 });
 
@@ -80,7 +83,7 @@ function DiscoverPage() {
         {/* Filter */}
         <div className="absolute top-4 left-6">
           <h1 className="text-3xl font-bold">I'm looking for:</h1>
-          <div>TODO: dropdown</div>
+          <Select inputClassName="border-b outline-0!" options={[]} />
         </div>
         {/* Content */}
         <div className="relative flex size-full">

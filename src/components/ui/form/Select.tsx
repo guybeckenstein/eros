@@ -6,6 +6,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/react';
+import clsx from 'clsx';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 export interface Option {
@@ -15,6 +16,8 @@ export interface Option {
 
 type SelectProps = React.ComponentProps<'select'> & {
   options: Option[];
+  dropdownClassName?: string;
+  inputClassName?: string;
   value?: string;
   onChange?: (value: string) => void;
   prefix?: string | React.ReactNode;
@@ -22,27 +25,66 @@ type SelectProps = React.ComponentProps<'select'> & {
 };
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ value, onChange, options, prefix, suffix, ...props }, ref) => {
+  (
+    {
+      className,
+      dropdownClassName,
+      inputClassName,
+      value,
+      onChange,
+      options,
+      prefix,
+      suffix,
+    },
+    ref,
+  ) => {
+    const optionsSize = options.length;
     return (
-      <Listbox as="div" value={value} onChange={onChange} ref={ref}>
-        <ListboxButton className="inline-flex items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black">
-          <span>
-            {prefix}
-            {value}
-            {suffix}
-          </span>
-          <ChevronDownIcon className="data-active:hidden" />
-          <ChevronUpIcon className="hidden data-open:block" />
+      <Listbox
+        as="div"
+        className={className}
+        value={value}
+        onChange={onChange}
+        ref={ref}
+      >
+        <ListboxButton
+          className={clsx(
+            'inline-flex items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
+            inputClassName,
+          )}
+        >
+          {({ open }) => (
+            <>
+              <div>
+                {prefix}
+                {value}
+                {suffix}
+              </div>
+              <ChevronDownIcon
+                className={clsx(
+                  'transition-transform duration-400',
+                  open && 'rotate-180',
+                )}
+              />
+            </>
+          )}
         </ListboxButton>
-        <ListboxOptions anchor="bottom">
-          {options.map((option) => (
-            <ListboxOption
-              key={option.value}
-              value={option.value}
-              className="data-focus:bg-blue-100"
-            >
-              {option.label}
-            </ListboxOption>
+        <ListboxOptions
+          anchor="bottom"
+          className={clsx(
+            'z-50 mt-2 w-(--button-width) self-stretch rounded-lg bg-white p-6 shadow-[0px_4px_15px_1px_rgba(0,0,0,0.09)] outline-none',
+            dropdownClassName,
+          )}
+        >
+          {options.map((option, index) => (
+            <>
+              <ListboxOption key={option.value} value={option.value}>
+                {option.label}
+              </ListboxOption>
+              {index < optionsSize - 1 && (
+                <div className="my-2.5 h-0.5 self-stretch bg-zinc-100"></div>
+              )}
+            </>
           ))}
         </ListboxOptions>
       </Listbox>
