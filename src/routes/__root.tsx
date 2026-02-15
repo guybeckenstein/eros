@@ -2,7 +2,6 @@ import { TanStackDevtools } from '@tanstack/react-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   HeadContent,
-  Link,
   Outlet,
   Scripts,
   createRootRouteWithContext,
@@ -11,11 +10,12 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { useState } from 'react';
 
+import Navbar from '@/components/navigation/Navbar';
 import { RecruiterSidebar } from '@/components/navigation/RecruiterSidebar';
-
-import Navbar from '../components/navigation/Navbar';
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
-import appCss from '../styles.css?url';
+import { NotFoundComponent } from '@/components/root/NotFound';
+import { RootErrorComponent } from '@/components/root/RootError';
+import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
+import appCss from '@/styles.css?url';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -45,27 +45,27 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         href: '/logo.png',
         type: 'image/png',
       },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap',
+      },
     ],
   }),
 
   component: RootComponent,
-  notFoundComponent: NotFound,
+  notFoundComponent: NotFoundComponent,
+  errorComponent: RootErrorComponent,
   shellComponent: RootDocument,
 });
-
-function NotFound() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <h1 className="text-4xl font-bold">404 - Page Not Found</h1>
-      <p className="text-muted-foreground">
-        The page you're looking for doesn't exist.
-      </p>
-      <Link to="/" className="text-primary underline hover:no-underline">
-        Go back home
-      </Link>
-    </div>
-  );
-}
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();

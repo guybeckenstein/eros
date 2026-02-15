@@ -1,7 +1,8 @@
 import { SimpleUserData } from './auth';
+import { Experience, Language, Study } from './general';
 import { CityRef, CurrencyRef, JobTitleRef } from './table-references';
 
-type DiscoverCandidate = {
+export type DiscoverCandidate = {
   seeker_id: number;
   users: SimpleUserData;
   job_titles_ref: JobTitleRef;
@@ -19,6 +20,7 @@ export interface FlattenCandidate {
   fullName: string;
   profilePicUrl: string;
   jobTitle: string;
+  experience: Experience[];
   yearsOfExperience: number;
   workAvailability: string;
   workType: string;
@@ -30,6 +32,7 @@ export interface FlattenCandidate {
   linkedinLink: string;
   websiteLink: string;
   resumeId: number;
+  currentStudies: Study[];
+  skills: string[];
+  languages: Language[];
 }
-
-export default DiscoverCandidate;
