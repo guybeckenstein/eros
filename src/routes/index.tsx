@@ -23,12 +23,13 @@ function Home() {
   const { companyIndustries = [] } = Route.useLoaderData();
 
   return (
-    <ul>
-      {companyIndustries.map((instrument) => (
-        <li key={`${instrument.company_id}-${instrument.industry_id}`}>
-          {instrument.company_id}, {instrument.industry_id}
-        </li>
-      ))}
-    </ul>
+    // <ul>
+    //   {companyIndustries.map((instrument) => (
+    //     <li key={`${instrument.company_id}-${instrument.industry_id}`}>
+    //       {instrument.company_id}, {instrument.industry_id}
+    //     </li>
+    //   ))}
+    // </ul>
+    <div></div>
   );
 }

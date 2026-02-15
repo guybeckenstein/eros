@@ -15,14 +15,13 @@ import {
 } from 'lucide-react';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
-import { Dropdown } from '@/components/buttons/DropdownButton';
 import { StatusButton } from '@/components/buttons/StatusButton';
 import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
 import { CreateJob } from '@/components/jobs/CreateJob';
 import { DeleteJob } from '@/components/jobs/DeleteJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
 import { Button } from '@/components/ui/buttons/Button';
-import { SelectButton } from '@/components/ui/buttons/SelectButton';
+import { Select } from '@/components/ui/form';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
@@ -46,6 +45,7 @@ function JobsPage() {
   const { text = '', sort = 'Date' } = Route.useSearch();
   const { data } = useSuspenseQuery(jobsQueryOptions({ text, sort }));
   const navigate = useNavigate({ from: Route.fullPath });
+  const [sortValue, setSortValue] = useState<JobSearch['sort']>(sort);
   const [searchValue, setSearchValue] = useState(text);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isAreYouSureCreateModalOpen, setIsAreYouSureCreateModalOpen] =
@@ -73,6 +73,7 @@ function JobsPage() {
   const deferredSearchValue = useDeferredValue(searchValue);
 
   useEffect(() => setSearchValue(text), [text]);
+  useEffect(() => setSortValue(sort), [sort]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -85,6 +86,14 @@ function JobsPage() {
 
     return () => clearTimeout(timeoutId);
   }, [navigate, searchValue, text]);
+
+  useEffect(() => {
+    if (sortValue === sort) return;
+    navigate({
+      search: (prev) => ({ ...prev, sort: sortValue }),
+      replace: true,
+    });
+  }, [navigate, sortValue, sort]);
 
   const handleSort = (
     newText: JobSearch['text'],
@@ -126,46 +135,16 @@ function JobsPage() {
               startIcon={<Search size="22" className="text-current" />}
               className="w-96"
             />
-            <SelectButton
-              value={sort}
+            <Select
+              value={sortValue}
+              onChange={(value) => setSortValue(value as JobSearch['sort'])}
+              prefix={'Sort by: '}
               options={[
-                {
-                  value: 'Date',
-                  label: (
-                    <>
-                      sort by: <span className="font-bold">Date</span>
-                    </>
-                  ),
-                },
-                {
-                  value: 'Name',
-                  label: (
-                    <>
-                      sort by: <span className="font-bold">Name</span>
-                    </>
-                  ),
-                },
-                {
-                  value: 'Status',
-                  label: (
-                    <>
-                      sort by: <span className="font-bold">Status</span>
-                    </>
-                  ),
-                },
+                { value: 'Date', label: 'Date' },
+                { value: 'Name', label: 'Name' },
+                { value: 'Status', label: 'Status' },
               ]}
             />
-            <Dropdown label={`Sort by: ${sort}`}>
-              <Dropdown.Item onClick={() => handleSort(text, 'Date')}>
-                Sort by: Date
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleSort(text, 'Name')}>
-                Sort by: Name
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleSort(text, 'Status')}>
-                Sort by: Status
-              </Dropdown.Item>
-            </Dropdown>
           </div>
           <div className="flex items-center gap-4">
             <Button
