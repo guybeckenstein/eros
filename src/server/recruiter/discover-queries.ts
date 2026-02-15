@@ -202,3 +202,21 @@ export function discoverCandidatesQueryOptions(
     staleTime: 1000, // * 60 * 5, // 5 minutes
   });
 }
+
+function recruiterJobTitlesQuery() {
+  return supabase.from('job_titles_ref').select('id, title');
+}
+
+export function recruiterJobTitlesQueryOptions() {
+  return queryOptions({
+    queryKey: ['jobTitles'],
+    queryFn: async () => {
+      const { data, error } = await recruiterJobTitlesQuery();
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    staleTime: Infinity,
+  });
+}
