@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SeekerPlaceholderRouteImport } from './routes/seeker/placeholder'
-import { Route as RecruiterJobsRouteImport } from './routes/recruiter/jobs'
 import { Route as RecruiterHomepageRouteImport } from './routes/recruiter/homepage'
 import { Route as RecruiterDiscoverRouteImport } from './routes/recruiter/discover'
 import { Route as GeneralSignUpRouteImport } from './routes/general/sign-up'
@@ -24,6 +23,8 @@ import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthProfileRouteImport } from './routes/auth/profile'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as RecruiterJobsIndexRouteImport } from './routes/recruiter/jobs/index'
+import { Route as RecruiterJobsIdRouteImport } from './routes/recruiter/jobs/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,11 +34,6 @@ const IndexRoute = IndexRouteImport.update({
 const SeekerPlaceholderRoute = SeekerPlaceholderRouteImport.update({
   id: '/seeker/placeholder',
   path: '/seeker/placeholder',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecruiterJobsRoute = RecruiterJobsRouteImport.update({
-  id: '/recruiter/jobs',
-  path: '/recruiter/jobs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecruiterHomepageRoute = RecruiterHomepageRouteImport.update({
@@ -100,6 +96,16 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecruiterJobsIndexRoute = RecruiterJobsIndexRouteImport.update({
+  id: '/recruiter/jobs/',
+  path: '/recruiter/jobs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecruiterJobsIdRoute = RecruiterJobsIdRouteImport.update({
+  id: '/recruiter/jobs/$id',
+  path: '/recruiter/jobs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -115,8 +121,9 @@ export interface FileRoutesByFullPath {
   '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
-  '/recruiter/jobs': typeof RecruiterJobsRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
+  '/recruiter/jobs/': typeof RecruiterJobsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,8 +139,9 @@ export interface FileRoutesByTo {
   '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
-  '/recruiter/jobs': typeof RecruiterJobsRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
+  '/recruiter/jobs': typeof RecruiterJobsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,8 +158,9 @@ export interface FileRoutesById {
   '/general/sign-up': typeof GeneralSignUpRoute
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
-  '/recruiter/jobs': typeof RecruiterJobsRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
+  '/recruiter/jobs/': typeof RecruiterJobsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -169,8 +178,9 @@ export interface FileRouteTypes {
     | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
-    | '/recruiter/jobs'
     | '/seeker/placeholder'
+    | '/recruiter/jobs/$id'
+    | '/recruiter/jobs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -186,8 +196,9 @@ export interface FileRouteTypes {
     | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
-    | '/recruiter/jobs'
     | '/seeker/placeholder'
+    | '/recruiter/jobs/$id'
+    | '/recruiter/jobs'
   id:
     | '__root__'
     | '/'
@@ -203,8 +214,9 @@ export interface FileRouteTypes {
     | '/general/sign-up'
     | '/recruiter/discover'
     | '/recruiter/homepage'
-    | '/recruiter/jobs'
     | '/seeker/placeholder'
+    | '/recruiter/jobs/$id'
+    | '/recruiter/jobs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -221,8 +233,9 @@ export interface RootRouteChildren {
   GeneralSignUpRoute: typeof GeneralSignUpRoute
   RecruiterDiscoverRoute: typeof RecruiterDiscoverRoute
   RecruiterHomepageRoute: typeof RecruiterHomepageRoute
-  RecruiterJobsRoute: typeof RecruiterJobsRoute
   SeekerPlaceholderRoute: typeof SeekerPlaceholderRoute
+  RecruiterJobsIdRoute: typeof RecruiterJobsIdRoute
+  RecruiterJobsIndexRoute: typeof RecruiterJobsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -239,13 +252,6 @@ declare module '@tanstack/react-router' {
       path: '/seeker/placeholder'
       fullPath: '/seeker/placeholder'
       preLoaderRoute: typeof SeekerPlaceholderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recruiter/jobs': {
-      id: '/recruiter/jobs'
-      path: '/recruiter/jobs'
-      fullPath: '/recruiter/jobs'
-      preLoaderRoute: typeof RecruiterJobsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recruiter/homepage': {
@@ -332,6 +338,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/recruiter/jobs/': {
+      id: '/recruiter/jobs/'
+      path: '/recruiter/jobs'
+      fullPath: '/recruiter/jobs/'
+      preLoaderRoute: typeof RecruiterJobsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recruiter/jobs/$id': {
+      id: '/recruiter/jobs/$id'
+      path: '/recruiter/jobs/$id'
+      fullPath: '/recruiter/jobs/$id'
+      preLoaderRoute: typeof RecruiterJobsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -349,8 +369,9 @@ const rootRouteChildren: RootRouteChildren = {
   GeneralSignUpRoute: GeneralSignUpRoute,
   RecruiterDiscoverRoute: RecruiterDiscoverRoute,
   RecruiterHomepageRoute: RecruiterHomepageRoute,
-  RecruiterJobsRoute: RecruiterJobsRoute,
   SeekerPlaceholderRoute: SeekerPlaceholderRoute,
+  RecruiterJobsIdRoute: RecruiterJobsIdRoute,
+  RecruiterJobsIndexRoute: RecruiterJobsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -19,7 +19,10 @@ import {
 } from 'lucide-react';
 
 import { StarIcon } from '@/assets/icons/StarIcon';
-import { ExperienceItem } from '@/components/discover/DiscoverItem';
+import { ExperienceItem } from '@/components/discover/ExperienceItem';
+import { InfoRow } from '@/components/discover/InfoRow';
+import { MatchButton } from '@/components/discover/MatchButton';
+import { SocialLink } from '@/components/discover/SocialLink';
 import { SectionHeader } from '@/components/headers/SectionHeader';
 import { discoverCandidatesQueryOptions } from '@/server/recruiter/discover-queries';
 
@@ -108,25 +111,19 @@ function DiscoverPage() {
                       </div>
                     </div>
                     <div className="mt-1 flex gap-2">
-                      {exampleCandidate.websiteLink.length && (
-                        <Link
-                          to={exampleCandidate.websiteLink}
-                          title="Website link"
-                        >
-                          <Globe size="20" className="cursor-pointer" />
-                        </Link>
-                      )}
-                      {exampleCandidate.linkedinLink.length && (
-                        <Link
-                          to={exampleCandidate.linkedinLink}
-                          title="LinkedIn link"
-                        >
-                          <Linkedin size="20" className="cursor-pointer" />
-                        </Link>
-                      )}
+                      <SocialLink
+                        href={exampleCandidate.websiteLink}
+                        icon={<Globe size="20" className="cursor-pointer" />}
+                        title="Website link"
+                      />
+                      <SocialLink
+                        href={exampleCandidate.linkedinLink}
+                        icon={<Linkedin size="20" className="cursor-pointer" />}
+                        title="LinkedIn link"
+                      />
 
                       {exampleCandidate.resumeId && (
-                        // TODO: add download file logic
+                        // TODO: add PDF preview popup logic
                         <FileText size="20" className="cursor-pointer" />
                       )}
                     </div>
@@ -183,66 +180,39 @@ function DiscoverPage() {
                   {/* Data about the seeker */}
                   <div className="flex flex-col gap-2 text-current">
                     {exampleCandidate.yearsOfExperience && (
-                      <div className="flex items-center gap-3">
-                        <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                          <Contact size="22" className="m-auto" />
-                        </div>
-                        <p className="font-semibold">
-                          {exampleCandidate.yearsOfExperience}{' '}
-                          {exampleCandidate.yearsOfExperience === 1
-                            ? 'year'
-                            : 'years'}{' '}
-                          experience
-                        </p>
-                      </div>
+                      <InfoRow icon={<Contact size="22" className="m-auto" />}>
+                        {exampleCandidate.yearsOfExperience}{' '}
+                        {exampleCandidate.yearsOfExperience === 1
+                          ? 'year'
+                          : 'years'}{' '}
+                        experience
+                      </InfoRow>
                     )}
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                        <MapPin size="22" className="m-auto" />
-                      </div>
-                      <p className="font-semibold">{exampleCandidate.city}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                        <Clock size="22" className="m-auto" />
-                      </div>
-                      <p className="font-semibold">
-                        {exampleCandidate.workType} job
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                        <Clock size="22" className="m-auto" />
-                      </div>
-                      <p className="font-semibold">
-                        Availability: {exampleCandidate.workAvailability}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                        <Building2 size="22" className="m-auto" />
-                      </div>
-                      <p className="font-semibold">
-                        {exampleCandidate.workModel}
-                      </p>
-                    </div>
+                    <InfoRow icon={<MapPin size="22" className="m-auto" />}>
+                      {exampleCandidate.city}
+                    </InfoRow>
+                    <InfoRow icon={<Clock size="22" className="m-auto" />}>
+                      {exampleCandidate.workType} job
+                    </InfoRow>
+                    <InfoRow icon={<Clock size="22" className="m-auto" />}>
+                      Availability: {exampleCandidate.workAvailability}
+                    </InfoRow>
+                    <InfoRow icon={<Building2 size="22" className="m-auto" />}>
+                      {exampleCandidate.workModel}
+                    </InfoRow>
                     {exampleCandidate.currentStudies.map((s) => (
-                      <div key={s.level} className="flex items-center gap-3">
-                        <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                          <GraduationCap size="22" className="m-auto" />
-                        </div>
-                        <p className="font-semibold">{s.studyName}</p>
-                      </div>
+                      <InfoRow
+                        key={s.level}
+                        icon={<GraduationCap size="22" className="m-auto" />}
+                      >
+                        {s.studyName}
+                      </InfoRow>
                     ))}
                   </div>
                 </div>
                 <div className="mx-auto flex gap-4">
-                  <div className="flex size-14 cursor-pointer rounded-full border border-neutral-400 bg-white">
-                    <X size="22" className="m-auto" />
-                  </div>
-                  <div className="flex size-14 cursor-pointer rounded-full border border-neutral-400 bg-white">
-                    <Heart size="22" className="m-auto" />
-                  </div>
+                  <MatchButton icon={<X size="22" className="m-auto" />} />
+                  <MatchButton icon={<Heart size="22" className="m-auto" />} />
                 </div>
               </div>
               <div

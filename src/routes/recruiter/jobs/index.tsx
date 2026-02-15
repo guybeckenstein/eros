@@ -12,15 +12,18 @@ import {
   Search,
   SquarePen,
   Trash,
+  Users,
 } from 'lucide-react';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
-import { StatusButton } from '@/components/buttons/StatusButton';
 import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
 import { CreateJob } from '@/components/jobs/CreateJob';
+import { DataColumn } from '@/components/jobs/DataColumn';
 import { DeleteJob } from '@/components/jobs/DeleteJob';
+import { EditJob } from '@/components/jobs/EditJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
 import { Button } from '@/components/ui/buttons/Button';
+import { StatusButton } from '@/components/ui/buttons/StatusButton';
 import { Select } from '@/components/ui/form';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
@@ -28,7 +31,7 @@ import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import DATE_OPTIONS from '@/shared/configurations/configuration';
 import { JobSearch } from '@/shared/types/jobs';
 
-export const Route = createFileRoute('/recruiter/jobs')({
+export const Route = createFileRoute('/recruiter/jobs/')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
     return {
       text: (search.text as string) || undefined,
@@ -48,27 +51,9 @@ function JobsPage() {
   const [sortValue, setSortValue] = useState<JobSearch['sort']>(sort);
   const [searchValue, setSearchValue] = useState(text);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isAreYouSureCreateModalOpen, setIsAreYouSureCreateModalOpen] =
-    useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAreYouSureEditModalOpen, setIsAreYouSureEditModalOpen] =
-    useState(false);
-  const [isDeleteNonArchivedModalOpen, setIsDeleteNonArchivedModalOpen] =
-    useState(false);
-  const [
-    isAreYouSureDeleteNonArchivedModalOpen,
-    setIsAreYouSureDeleteNonArchivedModalOpen,
-  ] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
-  const [isAreYouSureArchiveModalOpen, setIsAreYouSureArchiveModalOpen] =
-    useState(false);
-  const [isDeleteArchivedModalOpen, setIsDeleteArchivedModalOpen] =
-    useState(false);
-  const [
-    isAreYouSureDeleteArchivedModalOpen,
-    setIsAreYouSureDeleteArchivedModalOpen,
-  ] = useState(false);
-  const [deleteConfirmJobId, setDeleteConfirmJobId] = useState<number>(0);
+  const [editModalOpen, setEditModalOpen] = useState(0);
+  const [deleteConfirmJobId, setDeleteConfirmJobId] = useState(0);
 
   const deferredSearchValue = useDeferredValue(searchValue);
 
@@ -107,11 +92,22 @@ function JobsPage() {
 
   const JOB_DROPDOWN_OPTIONS = [
     {
+      id: 'candidates',
+      startIcon: <Users size="22" className="text-current" />,
+      label: 'Candidates',
+      onClick: (jobId: number) => {
+        console.log(jobId);
+        navigate({
+          to: '/recruiter/jobs/$id',
+          params: { id: jobId.toString() },
+        });
+      },
+    },
+    {
       id: 'edit',
       startIcon: <SquarePen size="22" className="text-current" />,
       label: 'Edit',
-      onClick: (jobId: number) =>
-        console.log(`Edit job clicked for job ID ${jobId}`),
+      onClick: (jobId: number) => setEditModalOpen(jobId),
     },
     {
       id: 'delete',
@@ -123,7 +119,7 @@ function JobsPage() {
 
   return (
     <>
-      <div className="w-full flex-col">
+      <div className="w-full">
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-10">
             <Input
@@ -166,40 +162,29 @@ function JobsPage() {
             data.map((job) => (
               <div
                 key={job.job_id}
-                className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
+                className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9 text-current"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex h-full items-center gap-4">
                   <BriefcaseBusiness size="22" />
-                  <h2 className="text-2xl font-bold text-current">
+                  <h2 className="text-2xl font-bold">
                     {job.job_titles_ref.title}
                   </h2>
                 </div>
-                <div className="flex gap-16">
-                  <div>
-                    <h3 className="mb-2 text-xl font-medium text-current">
-                      Status:
-                    </h3>
+                <div className="flex gap-16 font-medium">
+                  <DataColumn header="Status:">
                     <StatusButton isActive={job.is_active} />
-                  </div>
-                  <div>
-                    <h3 className="mb-2 text-xl font-medium text-current">
-                      Date Uploaded:
-                    </h3>
-                    <p className="font-medium text-current">
+                  </DataColumn>
+                  <DataColumn header="Date Uploaded:">
+                    <span>
                       {new Date(job.date_uploaded).toLocaleDateString(
                         'en-IL',
                         DATE_OPTIONS,
                       )}
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="mb-2 text-xl font-medium text-current">
-                      Total Applicants:
-                    </h3>
-                    <p className="font-medium text-current">
-                      {job.job_seeker_status[0]?.count ?? 0}
-                    </p>
-                  </div>
+                    </span>
+                  </DataColumn>
+                  <DataColumn header="Total Applicants:">
+                    <span>{job.job_seeker_status[0]?.count ?? 0}</span>
+                  </DataColumn>
                 </div>
                 <div className="flex items-center gap-24">
                   <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
@@ -260,6 +245,14 @@ function JobsPage() {
         className={'h-5/6 w-3/5'}
       >
         <CreateJob />
+      </Modal>
+      <Modal
+        open={editModalOpen !== 0}
+        onClose={() => setEditModalOpen(0)}
+        title="Edit Existing Job"
+        className={'h-5/6 w-3/5'}
+      >
+        <EditJob />
       </Modal>
       <Modal
         open={isArchiveModalOpen}
