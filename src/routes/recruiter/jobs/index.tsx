@@ -22,8 +22,8 @@ import { DataColumn } from '@/components/jobs/DataColumn';
 import { DeleteJob } from '@/components/jobs/DeleteJob';
 import { EditJob } from '@/components/jobs/EditJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
-import { Button } from '@/components/ui/buttons/Button';
-import { StatusButton } from '@/components/ui/buttons/StatusButton';
+import { Button } from '@/components/ui/Buttons/Button';
+import { StatusButton } from '@/components/ui/Buttons/StatusButton';
 import { Select } from '@/components/ui/form';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
@@ -96,7 +96,6 @@ function JobsPage() {
       startIcon: <Users size="22" className="text-current" />,
       label: 'Candidates',
       onClick: (jobId: number) => {
-        console.log(jobId);
         navigate({
           to: '/recruiter/jobs/$id',
           params: { id: jobId.toString() },

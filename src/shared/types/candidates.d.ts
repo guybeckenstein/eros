@@ -15,7 +15,7 @@ export type DiscoverCandidate = {
   currencies_ref: CurrencyRef;
 };
 
-export interface FlattenCandidate {
+export interface FlattenCandidateDiscover {
   id: number;
   fullName: string;
   profilePicUrl: string;
@@ -35,4 +35,19 @@ export interface FlattenCandidate {
   currentStudies: Study[];
   skills: string[];
   languages: Language[];
+}
+
+export interface CandidateJobDetails {
+  id: number;
+  fullName: string;
+  profilePicUrl: string;
+  jobTitle: string;
+  jobType: string;
+  isCurrentlyHired: boolean;
+  yearsOfExperience: number;
+  city: string;
+  matchScore: number;
+  linkedinLink: string;
+  websiteLink: string;
+  resumeId: number;
 }
