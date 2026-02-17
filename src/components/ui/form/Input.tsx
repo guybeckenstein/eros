@@ -21,13 +21,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           wrapperClassName,
         )}
       >
-        {startIcon && <span className="mr-2">{startIcon}</span>}
+        {startIcon}
         <HeadlessInput
           ref={ref}
           className={classNames('flex-1 self-stretch outline-0', className)}
           {...props}
         />
-        {endIcon && <span className="ml-2">{endIcon}</span>}
+        {endIcon}
       </div>
     );
   },

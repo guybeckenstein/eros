@@ -74,7 +74,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
-      <div className="relative flex h-210 bg-white p-4 text-neutral-900">
+      <div className="relative flex h-210 bg-neutral-100 p-4 text-neutral-900">
         <Outlet />
       </div>
       <RecruiterSidebar

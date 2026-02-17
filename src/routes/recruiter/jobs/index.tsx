@@ -127,7 +127,11 @@ function JobsPage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSearchValue(e.target.value)
               }
-              startIcon={<Search size="22" className="text-current" />}
+              startIcon={
+                <span className="mr-2">
+                  <Search size="22" className="text-current" />
+                </span>
+              }
               className="w-96"
             />
             <Select
