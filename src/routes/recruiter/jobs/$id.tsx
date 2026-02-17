@@ -94,6 +94,7 @@ function RouteComponent() {
                 { value: 'Frozen', label: 'Frozen' },
                 { value: 'Unread', label: 'Unread' },
               ]}
+              className="text-base"
             />
           </div>
           {data.seekers
