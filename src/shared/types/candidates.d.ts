@@ -50,4 +50,6 @@ export interface CandidateJobDetails {
   linkedinLink: string;
   websiteLink: string;
   resumeId: number;
+  currentStage: number;
+  daysUntilRespond: number;
 }

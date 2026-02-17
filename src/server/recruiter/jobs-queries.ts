@@ -144,6 +144,8 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         linkedinLink: seeker.linkedin_link,
         websiteLink: seeker.website_link,
         resumeId: 0, // TODO: add resume ID logic
+        currentStage: 1,
+        daysUntilRespond: 7,
       };
     });
 
