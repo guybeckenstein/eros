@@ -62,7 +62,7 @@ export function ArchivedJobs() {
             <div className="flex items-center gap-4">
               <BriefcaseBusiness size="22" />
               <h2 className="mb-1 text-2xl font-bold text-current">
-                {job.title.title}
+                {job.title}
               </h2>
             </div>
             <div>
