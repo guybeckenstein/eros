@@ -56,25 +56,20 @@ export function ArchivedJobs() {
       {data.length > 0 ? (
         data.map((job) => (
           <div
-            key={job.job_id}
+            key={job.jobId}
             className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
           >
             <div className="flex items-center gap-4">
               <BriefcaseBusiness size="22" />
               <h2 className="mb-1 text-2xl font-bold text-current">
-                {job.job_titles_ref.title}
+                {job.title.title}
               </h2>
             </div>
             <div>
               <h3 className="mb-2 text-xl font-medium text-current">
                 Date Uploaded:
               </h3>
-              <p className="font-medium text-current">
-                {new Date(job.date_uploaded).toLocaleDateString(
-                  'en-IL',
-                  DATE_OPTIONS,
-                )}
-              </p>
+              <p className="font-medium text-current">{job.dateUploaded}</p>
             </div>
             <div className="flex items-center gap-24">
               <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
@@ -92,23 +87,23 @@ export function ArchivedJobs() {
                 >
                   {({ close }) => (
                     <>
-                      {deleteConfirmJobId === job.job_id ? (
+                      {deleteConfirmJobId === job.jobId ? (
                         <DeleteJob
-                          jobId={job.job_id}
+                          jobId={job.jobId}
                           onCancel={() => setDeleteConfirmJobId(0)}
                           close={close}
                         />
                       ) : (
                         JOB_DROPDOWN_OPTIONS.map((o) => (
                           <div
-                            key={`${job.job_id}_${o.id}`}
+                            key={`${job.jobId}_${o.id}`}
                             className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100"
                           >
                             <span className="pointer-events-none">
                               {o.startIcon}
                             </span>
                             <div
-                              onClick={() => o.onClick(job.job_id)}
+                              onClick={() => o.onClick(job.jobId)}
                               className="text-base"
                             >
                               {o.label}

@@ -1,12 +1,11 @@
 import { QueryClient, queryOptions } from '@tanstack/react-query';
 
+import DATE_OPTIONS from '@/shared/configurations/configuration';
+import { toRecruiterJobItem } from '@/shared/mapping/recruiter';
 import { CandidateJobDetails } from '@/shared/types/candidates';
 import { Experience } from '@/shared/types/general';
 import { DeleteJob, JobSearch, UpdateJob } from '@/shared/types/jobs';
-import {
-  RecruiterJobItem,
-  SpecificJobFlattened,
-} from '@/shared/types/recruiter';
+import { RawJobRow, SpecificJobFlattened } from '@/shared/types/recruiter';
 import { supabase } from '@/utils/supabase';
 
 const queryClient = new QueryClient();
@@ -31,8 +30,7 @@ async function getJobs(search: JobSearch, isArchived: boolean = false) {
   }
 
   if (sort === 'Name') {
-    query.order('title', {
-      referencedTable: 'job_titles_ref',
+    query.order('job_titles_ref (title)', {
       ascending: true,
     });
   } else if (sort === 'Status') {
@@ -46,7 +44,8 @@ async function getJobs(search: JobSearch, isArchived: boolean = false) {
     throw error;
   }
 
-  return data as unknown as RecruiterJobItem[];
+  const items = (data as unknown as RawJobRow[]).map(toRecruiterJobItem);
+  return items;
 }
 
 async function getSpecificJob(jobId: number, isArchived = false) {
@@ -152,8 +151,11 @@ async function getSpecificJob(jobId: number, isArchived = false) {
   // If your component expects a single object with the job info + candidates:
   return {
     jobId: jobRecord.job_id,
-    dateUploaded: jobRecord.date_uploaded,
-    title: jobRecord.job_titles_ref.title,
+    dateUploaded: new Date(jobRecord.date_uploaded).toLocaleDateString(
+      'en-IL',
+      DATE_OPTIONS,
+    ),
+    title: (jobRecord.job_titles_ref as any).title,
     seekers: candidates || [], // This is your flattened array
   } as unknown as SpecificJobFlattened;
 }
@@ -165,7 +167,7 @@ export function jobsQueryOptions(
   return queryOptions({
     queryKey: ['jobs', search, isArchived],
     queryFn: async () => await getJobs(search, isArchived),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: import.meta.env.STALE_TIME,
   });
 }
 

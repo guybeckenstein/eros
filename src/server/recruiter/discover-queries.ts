@@ -204,7 +204,7 @@ export function discoverCandidatesQueryOptions(
   return queryOptions({
     queryKey: ['seekers', filters],
     queryFn: async () => await getDiscoverCandidates(filters),
-    staleTime: 1000, // * 60 * 5, // 5 minutes
+    staleTime: import.meta.env.STALE_TIME,
   });
 }
 
@@ -222,6 +222,6 @@ export function recruiterJobTitlesQueryOptions() {
       }
       return data;
     },
-    staleTime: Infinity,
+    staleTime: import.meta.env.STALE_TIME,
   });
 }

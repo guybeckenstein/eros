@@ -10,6 +10,8 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { useState } from 'react';
 
+import { ClassNames } from '@emotion/react';
+
 import Navbar from '@/components/navigation/Navbar';
 import { RecruiterSidebar } from '@/components/navigation/RecruiterSidebar';
 import { NotFoundComponent } from '@/components/root/NotFound';
@@ -73,14 +75,16 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
-      <div className="relative flex h-210 bg-neutral-100 p-4 text-neutral-900">
-        <Outlet />
+      <div className="h-screen">
+        <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
+        <div className="relative flex h-210 bg-neutral-100 p-4 text-neutral-900">
+          <Outlet />
+        </div>
+        <RecruiterSidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
       </div>
-      <RecruiterSidebar
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-      />
     </QueryClientProvider>
   );
 }

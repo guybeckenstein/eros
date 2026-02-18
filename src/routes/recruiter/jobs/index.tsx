@@ -22,13 +22,12 @@ import { DataColumn } from '@/components/jobs/DataColumn';
 import { DeleteJob } from '@/components/jobs/DeleteJob';
 import { EditJob } from '@/components/jobs/EditJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
-import { Button } from '@/components/ui/Buttons/Button';
-import { StatusButton } from '@/components/ui/Buttons/StatusButton';
+import { StatusButton } from '@/components/ui/buttons/StatusButton';
+import { Button } from '@/components/ui/buttons/button';
 import { Select } from '@/components/ui/form';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
-import DATE_OPTIONS from '@/shared/configurations/configuration';
 import { JobSearch } from '@/shared/types/jobs';
 
 export const Route = createFileRoute('/recruiter/jobs/')({
@@ -132,9 +131,11 @@ function JobsPage() {
                   <Search size="22" className="text-current" />
                 </span>
               }
+              wrapperClassName="bg-white"
               className="w-96"
             />
             <Select
+              inputClassName="bg-white"
               value={sortValue}
               onChange={(value) => setSortValue(value as JobSearch['sort'])}
               prefix={'Sort by: '}
@@ -161,32 +162,25 @@ function JobsPage() {
           </div>
         </div>
         <div className="mt-6 flex flex-col gap-4">
-          {data.length > 0 ? (
+          {(data &&
             data.map((job) => (
               <div
-                key={job.job_id}
+                key={job.jobId}
                 className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9 text-current"
               >
                 <div className="flex h-full items-center gap-4">
                   <BriefcaseBusiness size="22" />
-                  <h2 className="text-2xl font-bold">
-                    {job.job_titles_ref.title}
-                  </h2>
+                  <h2 className="text-2xl font-bold">{job.title}</h2>
                 </div>
                 <div className="flex gap-16 font-medium">
                   <DataColumn header="Status:">
-                    <StatusButton isActive={job.is_active} />
+                    <StatusButton isActive={job.isActive} />
                   </DataColumn>
                   <DataColumn header="Date Uploaded:">
-                    <span>
-                      {new Date(job.date_uploaded).toLocaleDateString(
-                        'en-IL',
-                        DATE_OPTIONS,
-                      )}
-                    </span>
+                    <span>{job.dateUploaded}</span>
                   </DataColumn>
                   <DataColumn header="Total Applicants:">
-                    <span>{job.job_seeker_status[0]?.count ?? 0}</span>
+                    <span>{job.seekersNumber}</span>
                   </DataColumn>
                 </div>
                 <div className="flex items-center gap-24">
@@ -205,29 +199,32 @@ function JobsPage() {
                     >
                       {({ close }) => (
                         <>
-                          {deleteConfirmJobId === job.job_id ? (
+                          {deleteConfirmJobId === job.jobId && (
                             <DeleteJob
-                              jobId={job.job_id}
+                              jobId={job.jobId}
                               onCancel={() => setDeleteConfirmJobId(0)}
                               close={close}
                             />
-                          ) : (
-                            JOB_DROPDOWN_OPTIONS.map((o) => (
-                              <div
-                                key={`${job.job_id}_${o.id}`}
-                                className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100"
-                              >
-                                <span className="pointer-events-none">
-                                  {o.startIcon}
-                                </span>
+                          )}
+                          {deleteConfirmJobId !== job.jobId && (
+                            <>
+                              {JOB_DROPDOWN_OPTIONS.map((o) => (
                                 <div
-                                  onClick={() => o.onClick(job.job_id)}
-                                  className="text-base"
+                                  key={`${job.jobId}_${o.id}`}
+                                  className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100"
                                 >
-                                  {o.label}
+                                  <span className="pointer-events-none">
+                                    {o.startIcon}
+                                  </span>
+                                  <div
+                                    onClick={() => o.onClick(job.jobId)}
+                                    className="text-base"
+                                  >
+                                    {o.label}
+                                  </div>
                                 </div>
-                              </div>
-                            ))
+                              ))}
+                            </>
                           )}
                         </>
                       )}
@@ -235,10 +232,7 @@ function JobsPage() {
                   </Popover>
                 </div>
               </div>
-            ))
-          ) : (
-            <NoJobs text="No jobs found. Let's make it happen!" />
-          )}
+            ))) || <NoJobs text="No jobs found. Let's make it happen!" />}
         </div>
       </div>
       <Modal

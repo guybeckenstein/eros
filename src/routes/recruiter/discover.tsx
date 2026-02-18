@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { LinearProgress } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
+import { motion } from 'framer-motion';
 import {
   Building2,
   Clock,
@@ -41,9 +42,16 @@ enum ClickedSection {
   Skills = 'Skills',
 }
 
+interface SwipeDirectionProps {
+  x: number;
+  rotate: number;
+  opacity: number;
+}
+
 function DiscoverPage() {
   const { data } = useSuspenseQuery(discoverCandidatesQueryOptions());
-  const exampleCandidate = data[0];
+  const [index, setIndex] = useState(0);
+  const candidate = data[index];
   const matchScore = 80;
 
   // Create the ref for the scrollable container
@@ -76,9 +84,15 @@ function DiscoverPage() {
   }, [clickedSection]);
 
   const scoreList = [1, 2, 3, 4];
+  // Swipe
+  const [swipeDirection, setSwipeDirection] = useState<SwipeDirectionProps>({
+    x: 0,
+    rotate: 0,
+    opacity: 1,
+  });
 
   return (
-    exampleCandidate && (
+    candidate && (
       <>
         {/* Filter */}
         <div className="absolute top-4 left-6">
@@ -88,44 +102,58 @@ function DiscoverPage() {
         {/* Content */}
         <div className="relative flex size-full">
           {/* Actual content */}
-          <div className="relative z-10 m-auto h-6/7 w-3/5 rounded-lg border border-neutral-300">
-            <div className="grid size-full grid-cols-[0.5fr_1fr]">
+          <div className="relative z-10 m-auto h-6/7 w-3/5 overflow-hidden rounded-lg border border-neutral-300">
+            <motion.div
+              className="absolute inset-0 grid size-full grid-cols-[0.5fr_1fr]"
+              initial={{ x: 0, rotate: 0, opacity: 1 }}
+              animate={{ ...swipeDirection }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+              onAnimationComplete={() => {
+                if (swipeDirection.x !== 0) {
+                  setSwipeDirection({ x: 0, rotate: 0, opacity: 1 }); // reset animation state
+                  // move to next candidate if exists
+                  if (index < data.length - 1) {
+                    setIndex(index + 1);
+                  }
+                }
+              }}
+            >
               <div className="flex size-full flex-col justify-between gap-2 rounded-l-[8.5px] bg-neutral-200 p-4">
                 <div>
                   <header className="items-top flex justify-between">
                     <div className="items-top flex gap-2 border-b border-neutral-200 pb-4">
-                      {exampleCandidate.profilePicUrl &&
-                      exampleCandidate.profilePicUrl.length > 0 ? (
+                      {candidate.profilePicUrl &&
+                      candidate.profilePicUrl.length > 0 ? (
                         <img
                           className="object-fit max-h-12 min-h-12 max-w-12 min-w-12 rounded-full border"
-                          alt={`${exampleCandidate.fullName} profile pic`}
-                          src={exampleCandidate.profilePicUrl}
+                          alt={`${candidate.fullName} profile pic`}
+                          src={candidate.profilePicUrl}
                         />
                       ) : (
                         <div className="max-h-12 min-h-12 max-w-12 min-w-12 rounded-full border bg-neutral-700" />
                       )}
                       <div>
                         <h2 className="text-2xl font-semibold text-current">
-                          {exampleCandidate.fullName}
+                          {candidate.fullName}
                         </h2>
                         <small className="text-sm font-medium text-neutral-600">
-                          {exampleCandidate.jobTitle}
+                          {candidate.jobTitle}
                         </small>
                       </div>
                     </div>
                     <div className="mt-1 flex gap-2">
                       <SocialLink
-                        href={exampleCandidate.websiteLink}
+                        href={candidate.websiteLink}
                         icon={<Globe size="20" className="cursor-pointer" />}
                         title="Website link"
                       />
                       <SocialLink
-                        href={exampleCandidate.linkedinLink}
+                        href={candidate.linkedinLink}
                         icon={<Linkedin size="20" className="cursor-pointer" />}
                         title="LinkedIn link"
                       />
 
-                      {exampleCandidate.resumeId && (
+                      {candidate.resumeId && (
                         // TODO: add PDF preview popup logic
                         <FileText size="20" className="cursor-pointer" />
                       )}
@@ -147,6 +175,7 @@ function DiscoverPage() {
                         arrow
                         slotProps={{
                           popper: {
+                            disablePortal: true,
                             modifiers: [
                               {
                                 name: 'offset',
@@ -182,28 +211,26 @@ function DiscoverPage() {
                   </div>
                   {/* Data about the seeker */}
                   <div className="flex flex-col gap-2 text-current">
-                    {exampleCandidate.yearsOfExperience && (
+                    {candidate.yearsOfExperience && (
                       <InfoRow icon={<Contact size="22" className="m-auto" />}>
-                        {exampleCandidate.yearsOfExperience}{' '}
-                        {exampleCandidate.yearsOfExperience === 1
-                          ? 'year'
-                          : 'years'}{' '}
+                        {candidate.yearsOfExperience}{' '}
+                        {candidate.yearsOfExperience === 1 ? 'year' : 'years'}{' '}
                         experience
                       </InfoRow>
                     )}
                     <InfoRow icon={<MapPin size="22" className="m-auto" />}>
-                      {exampleCandidate.city}
+                      {candidate.city}
                     </InfoRow>
                     <InfoRow icon={<Clock size="22" className="m-auto" />}>
-                      {exampleCandidate.workType} job
+                      {candidate.workType} job
                     </InfoRow>
                     <InfoRow icon={<Clock size="22" className="m-auto" />}>
-                      Availability: {exampleCandidate.workAvailability}
+                      Availability: {candidate.workAvailability}
                     </InfoRow>
                     <InfoRow icon={<Building2 size="22" className="m-auto" />}>
-                      {exampleCandidate.workModel}
+                      {candidate.workModel}
                     </InfoRow>
-                    {exampleCandidate.currentStudies.map((s) => (
+                    {candidate.currentStudies.map((s) => (
                       <InfoRow
                         key={s.level}
                         icon={<GraduationCap size="22" className="m-auto" />}
@@ -214,8 +241,32 @@ function DiscoverPage() {
                   </div>
                 </div>
                 <div className="mx-auto flex gap-4">
-                  <MatchButton icon={<X size="22" className="m-auto" />} />
-                  <MatchButton icon={<Heart size="22" className="m-auto" />} />
+                  <MatchButton
+                    icon={
+                      <X
+                        size="22"
+                        className="m-auto"
+                        onClick={() =>
+                          setSwipeDirection({
+                            x: -800,
+                            rotate: -20,
+                            opacity: 0,
+                          })
+                        }
+                      />
+                    }
+                  />
+                  <MatchButton
+                    icon={
+                      <Heart
+                        size="22"
+                        className="m-auto"
+                        onClick={() =>
+                          setSwipeDirection({ x: 800, rotate: 20, opacity: 0 })
+                        }
+                      />
+                    }
+                  />
                 </div>
               </div>
               <div
@@ -244,7 +295,7 @@ function DiscoverPage() {
                     <h1 className="text-2xl font-semibold text-current">
                       Work Experience
                     </h1>
-                    {exampleCandidate.experience.map((e) => (
+                    {candidate.experience.map((e) => (
                       <ExperienceItem
                         key={e.companyName}
                         title={e.companyName}
@@ -259,7 +310,7 @@ function DiscoverPage() {
                     <h1 className="text-2xl font-semibold text-current">
                       Education
                     </h1>
-                    {exampleCandidate.currentStudies.map((s) => (
+                    {candidate.currentStudies.map((s) => (
                       <ExperienceItem
                         key={s.level}
                         title={s.institution}
@@ -275,7 +326,7 @@ function DiscoverPage() {
                       Skills
                     </h1>
                     <div className="flex flex-wrap items-start gap-4">
-                      {exampleCandidate.skills.map((s) => (
+                      {candidate.skills.map((s) => (
                         <div
                           key={s}
                           className="rounded-2xl bg-neutral-200 px-2 py-1 text-xs"
@@ -286,7 +337,7 @@ function DiscoverPage() {
                     </div>
                   </section>
                   <div className="space-y-4">
-                    {exampleCandidate.languages.map((l) => (
+                    {candidate.languages.map((l) => (
                       <div
                         key={l.name}
                         className="grid grid-cols-[1fr_3fr] items-center text-lg"
@@ -312,7 +363,7 @@ function DiscoverPage() {
                   </div>
                 </main>
               </div>
-            </div>
+            </motion.div>
           </div>
           {/* Design */}
           <div className="absolute top-1/2 left-1/2 h-6/7 w-3/5 -translate-1/2 -rotate-2 rounded-lg border border-neutral-300">

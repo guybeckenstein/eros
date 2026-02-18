@@ -54,11 +54,7 @@ function RouteComponent() {
             </span>
           </div>
           <p className="justify-self-center font-light text-neutral-500">
-            Job uploaded:{' '}
-            {new Date(data.dateUploaded).toLocaleDateString(
-              'en-IL',
-              DATE_OPTIONS,
-            )}
+            Job uploaded: {data.dateUploaded}
           </p>
           <div className="space-x-6 justify-self-end">
             <Snowflake
@@ -95,6 +91,7 @@ function RouteComponent() {
                 { value: 'Unread', label: 'Unread' },
               ]}
               className="text-base"
+              inputClassName="w-60"
             />
           </div>
           {data.seekers
@@ -103,7 +100,10 @@ function RouteComponent() {
             .map((s: CandidateJobDetails) => (
               <div
                 key={s.id}
-                className="relative grid grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
+                className="relative grid cursor-pointer grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
+                onClick={() =>
+                  console.log('TODO: go to chat with:', s.id, data.jobId)
+                }
               >
                 <div className="flex gap-2">
                   <input
@@ -121,7 +121,7 @@ function RouteComponent() {
                     ) : (
                       <div className="m-auto size-12 rounded-full border bg-neutral-700" />
                     )}
-                    <div className="absolute right-0 -bottom-2 flex size-8 place-items-center justify-center gap-0.5 rounded-full bg-sky-950 text-white">
+                    <div className="absolute right-0 -bottom-2 flex size-8 cursor-auto place-items-center justify-center gap-0.5 rounded-full bg-sky-950 text-white">
                       <span className="text-xs font-semibold">
                         {s.matchScore}
                       </span>
@@ -130,19 +130,23 @@ function RouteComponent() {
                   </div>
                   <div className="flex max-w-110 flex-col gap-1">
                     <p className="space-x-1">
-                      <b>{s.fullName}</b>{' '}
-                      <small className="text-neutral-500">{s.jobTitle}</small>
+                      <b className="cursor-auto">{s.fullName}</b>{' '}
+                      <small className="cursor-auto text-neutral-500">
+                        {s.jobTitle}
+                      </small>
                     </p>
                     <div className="flex items-center space-x-1 text-xs text-neutral-400">
                       <MapPin size={14} className="inline" />
-                      <span>{s.city}</span>
+                      <span className="cursor-auto">{s.city}</span>
                       <Briefcase size={14} className="inline" />
-                      <span>{s.jobType}</span>
+                      <span className="cursor-auto">{s.jobType}</span>
                       <Lightbulb size={14} className="inline" />
-                      <span>{s.yearsOfExperience} years exp.</span>
+                      <span className="cursor-auto">
+                        {s.yearsOfExperience} years exp.
+                      </span>
                     </div>
                     {/* TODO: add actual data from chat */}
-                    <div className="flex items-center justify-between rounded-tl-xl rounded-r-lg bg-neutral-200 px-2 py-1 text-xs">
+                    <div className="flex cursor-auto items-center justify-between rounded-tl-xl rounded-r-lg bg-neutral-200 px-2 py-1 text-xs">
                       <span>Looking forward to our meet next week</span>
                       <span className="flex size-5 place-items-center justify-center rounded-full bg-neutral-300 text-sm font-semibold">
                         2
@@ -154,7 +158,7 @@ function RouteComponent() {
                   {/* Stage status */}
                   <div className="w-30 space-y-1 text-sky-950">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium">
+                      <p className="cursor-auto text-sm font-medium">
                         {/* TODO: get number of stages from jobs_stages table */}
                         STAGE {s.currentStage}/4
                       </p>
@@ -174,7 +178,7 @@ function RouteComponent() {
                   <div className="w-30 space-y-1 text-emerald-600">
                     <div className="flex items-center gap-2">
                       <Timer size={14} strokeWidth={3} />
-                      <p className="text-sm font-bold">
+                      <p className="cursor-auto text-sm font-bold">
                         {s.daysUntilRespond} days left
                       </p>
                     </div>
