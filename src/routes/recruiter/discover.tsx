@@ -25,13 +25,16 @@ import { InfoRow } from '@/components/discover/InfoRow';
 import { MatchButton } from '@/components/discover/MatchButton';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { SectionHeader } from '@/components/headers/SectionHeader';
-import { Select } from '@/components/ui/form';
-import { discoverCandidatesQueryOptions } from '@/server/recruiter/discover-queries';
+import { Option, Select } from '@/components/ui/form';
+import {
+  discoverCandidatesQueryOptions,
+  recruiterJobTitlesQueryOptions,
+} from '@/server/recruiter/discover-queries';
 
 export const Route = createFileRoute('/recruiter/discover')({
   loader: ({ context: { queryClient } }) => {
     queryClient.ensureQueryData(discoverCandidatesQueryOptions());
-    // queryClient.ensureQueryData(recruiterJobTitlesQueryOptions());
+    queryClient.ensureQueryData(recruiterJobTitlesQueryOptions());
   },
   component: DiscoverPage,
 });
@@ -50,6 +53,16 @@ interface SwipeDirectionProps {
 
 function DiscoverPage() {
   const { data } = useSuspenseQuery(discoverCandidatesQueryOptions());
+  const { data: jobTitles } = useSuspenseQuery(
+    recruiterJobTitlesQueryOptions(),
+  );
+  console.log(
+    jobTitles.map((job) => ({
+      label: job.title,
+      value: job.id,
+    })),
+  );
+  const [filterJobTitle, setFilterJobTitle] = useState<string>();
   const [index, setIndex] = useState(0);
   const candidate = data[index];
   const matchScore = 80;
@@ -93,14 +106,28 @@ function DiscoverPage() {
 
   return (
     candidate && (
-      <>
+      <div className="flex flex-1">
         {/* Filter */}
-        <div className="absolute top-4 left-6">
+        <div>
           <h1 className="text-3xl font-bold">I'm looking for:</h1>
-          <Select inputClassName="border-b outline-0!" options={[]} />
+          <Select
+            inputClassName="border-b outline-0! min-w-60"
+            value={filterJobTitle}
+            onChange={(value) => {
+              const selectedJob = jobTitles.find((job) => job.id === value);
+              setFilterJobTitle(selectedJob ? selectedJob.title : undefined);
+            }}
+            options={jobTitles.map(
+              (job) =>
+                ({
+                  label: job.title,
+                  value: job.id,
+                }) as Option,
+            )}
+          />
         </div>
         {/* Content */}
-        <div className="relative flex size-full">
+        <div className="relative flex h-full w-5/6">
           {/* Actual content */}
           <div className="relative z-10 m-auto h-6/7 w-3/5 overflow-hidden rounded-lg border border-neutral-300">
             <motion.div
@@ -373,7 +400,7 @@ function DiscoverPage() {
             </div>
           </div>
         </div>
-      </>
+      </div>
     )
   );
 }

@@ -49,7 +49,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       >
         <ListboxButton
           className={clsx(
-            'inline-flex items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
+            'inline-flex cursor-pointer items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
             inputClassName,
           )}
         >
@@ -77,14 +77,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
         >
           {options.map((option, index) => (
-            <>
-              <ListboxOption key={option.value} value={option.value}>
+            <div>
+              <ListboxOption
+                key={option.value}
+                value={option.value}
+                className="cursor-pointer rounded-md px-4 py-2 hover:bg-zinc-200"
+              >
                 {option.label}
               </ListboxOption>
               {index < optionsSize - 1 && (
                 <div className="my-2.5 h-0.5 self-stretch bg-zinc-100"></div>
               )}
-            </>
+            </div>
           ))}
         </ListboxOptions>
       </Listbox>
