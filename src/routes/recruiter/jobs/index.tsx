@@ -20,6 +20,7 @@ import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
 import { CreateJob } from '@/components/jobs/CreateJob';
 import { DataColumn } from '@/components/jobs/DataColumn';
 import { DeleteJob } from '@/components/jobs/DeleteJob';
+import { DropdownOptions } from '@/components/jobs/DropdownOptions';
 import { EditJob } from '@/components/jobs/EditJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
 import { Button, StatusButton } from '@/components/ui/buttons';
@@ -206,24 +207,10 @@ function JobsPage() {
                             />
                           )}
                           {deleteConfirmJobId !== job.jobId && (
-                            <>
-                              {JOB_DROPDOWN_OPTIONS.map((o) => (
-                                <div
-                                  key={`${job.jobId}_${o.id}`}
-                                  className="grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100"
-                                >
-                                  <span className="pointer-events-none">
-                                    {o.startIcon}
-                                  </span>
-                                  <div
-                                    onClick={() => o.onClick(job.jobId)}
-                                    className="text-base"
-                                  >
-                                    {o.label}
-                                  </div>
-                                </div>
-                              ))}
-                            </>
+                            <DropdownOptions
+                              options={JOB_DROPDOWN_OPTIONS}
+                              jobId={job.jobId}
+                            />
                           )}
                         </>
                       )}
