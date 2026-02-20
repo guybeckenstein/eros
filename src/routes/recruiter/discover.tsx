@@ -74,48 +74,45 @@ function DiscoverPage() {
         />
       </div>
       {/* Content */}
-      {candidate && (
-        <>
-          <div className="relative mx-auto flex h-full w-5/6">
-            {/* Actual content */}
-            <div className="relative z-10 m-auto h-6/7 w-3/5 overflow-hidden rounded-lg border border-neutral-300">
-              <CandidateCard
-                candidate={candidate}
-                matchScore={getCandidateMatchScore()}
-                swipeDirection={swipeDirection}
-                onOpenResume={setSeekerResumeModalOpen}
-                onSwipeLeft={() =>
-                  setSwipeDirection({ x: -800, rotate: -20, opacity: 0 })
-                }
-                onSwipeRight={() =>
-                  setSwipeDirection({ x: 800, rotate: 20, opacity: 0 })
-                }
-                onAnimationComplete={() => {
-                  if (swipeDirection.x !== 0) {
-                    setSwipeDirection({ x: 0, rotate: 0, opacity: 1 });
-                    if (index < data.length - 1) setIndex(index + 1);
-                  }
-                }}
-              />
-            </div>
-            {/* Design */}
-            <div className="absolute top-1/2 left-1/2 h-6/7 w-3/5 -translate-1/2 -rotate-2 rounded-lg border border-neutral-300">
-              <div className="grid h-full grid-cols-[0.5fr_1fr]">
-                <div className="size-full gap-2 rounded-l-[8.5px] bg-neutral-200 p-4"></div>
-                <div className="size-full rounded-r-[9px] bg-white p-4"></div>
-              </div>
-            </div>
+
+      <div className="relative mx-auto flex h-full w-5/6">
+        {/* Actual content */}
+        <div className="relative z-10 m-auto h-6/7 w-3/5 overflow-hidden rounded-lg border border-neutral-300">
+          <CandidateCard
+            candidate={candidate}
+            matchScore={getCandidateMatchScore()}
+            swipeDirection={swipeDirection}
+            onOpenResume={setSeekerResumeModalOpen}
+            onSwipeLeft={() =>
+              setSwipeDirection({ x: -800, rotate: -20, opacity: 0 })
+            }
+            onSwipeRight={() =>
+              setSwipeDirection({ x: 800, rotate: 20, opacity: 0 })
+            }
+            onAnimationComplete={() => {
+              if (swipeDirection.x !== 0) {
+                setSwipeDirection({ x: 0, rotate: 0, opacity: 1 });
+                if (index < data.length - 1) setIndex(index + 1);
+              }
+            }}
+          />
+        </div>
+        {/* Design */}
+        <div className="absolute top-1/2 left-1/2 h-6/7 w-3/5 -translate-1/2 -rotate-2 rounded-lg border border-neutral-300">
+          <div className="grid h-full grid-cols-[0.5fr_1fr]">
+            <div className="size-full gap-2 rounded-l-[8.5px] bg-neutral-200 p-4"></div>
+            <div className="size-full rounded-r-[9px] bg-white p-4"></div>
           </div>
-          <Modal
-            open={seekerResumeModalOpen !== 0}
-            onClose={() => setSeekerResumeModalOpen(0)}
-            title="Resume"
-            className={'h-5/6 w-3/5'}
-          >
-            <PdfPreview />
-          </Modal>
-        </>
-      )}
+        </div>
+      </div>
+      <Modal
+        open={seekerResumeModalOpen !== 0}
+        onClose={() => setSeekerResumeModalOpen(0)}
+        title="Resume"
+        className={'h-5/6 w-3/5'}
+      >
+        <PdfPreview />
+      </Modal>
     </div>
   );
 }

@@ -52,10 +52,17 @@ export const CandidateCard = ({
   onOpenResume,
 }: CandidateCardProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  // section the user has manually clicked (used to drive scrollIntoView)
   const [clickedSection, setClickedSection] = useState<ClickedSection>(
     ClickedSection.WorkExperience,
   );
+  // section that is currently visible in the viewport – used for highlighting
+  const [activeSection, setActiveSection] = useState<ClickedSection>(
+    ClickedSection.WorkExperience,
+  );
 
+  // scroll to the section that was clicked; does not fire when activeSection
+  // is updated by scrolling so we don’t fight the user
   useEffect(() => {
     if (!scrollContainerRef.current) return;
     const sectionIds: Record<ClickedSection, string> = {
@@ -70,6 +77,45 @@ export const CandidateCard = ({
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [clickedSection]);
+
+  // set up observer once to update activeSection on manual scroll
+  useEffect(() => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+
+    const sectionIds: Record<ClickedSection, string> = {
+      [ClickedSection.WorkExperience]: 'work-experience',
+      [ClickedSection.Education]: 'education',
+      [ClickedSection.Skills]: 'skills',
+    };
+
+    // create intersection observer with root = scroll container
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const matched = (
+              Object.entries(sectionIds) as [ClickedSection, string][]
+            ).find(([, id]) => id === entry.target.id);
+            if (matched) {
+              setActiveSection(matched[0]);
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.6,
+      },
+    );
+
+    Object.values(sectionIds).forEach((id) => {
+      const el = container.querySelector(`#${id}`);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <motion.div
@@ -117,7 +163,7 @@ export const CandidateCard = ({
                 <ResumeIcon
                   isShow={Number(candidate.resumeId) !== 0}
                   size="20"
-                  onClick={() => onOpenResume?.(candidate.resumeId)}
+                  onClick={() => onOpenResume(candidate.resumeId)}
                 />
               )}
             </div>
@@ -217,8 +263,11 @@ export const CandidateCard = ({
               <SectionHeader
                 key={value}
                 text={value}
-                isActive={clickedSection === value}
-                onClick={() => setClickedSection(value)}
+                isActive={activeSection === value}
+                onClick={() => {
+                  setClickedSection(value);
+                  setActiveSection(value);
+                }}
               />
             ))}
           </header>
