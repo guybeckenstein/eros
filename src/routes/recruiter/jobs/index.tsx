@@ -23,12 +23,13 @@ import { DeleteJob } from '@/components/jobs/DeleteJob';
 import { DropdownOptions } from '@/components/jobs/DropdownOptions';
 import { EditJob } from '@/components/jobs/EditJob';
 import { NoJobs } from '@/components/jobs/NoJobs';
-import { Button, StatusButton } from '@/components/ui/buttons';
+import { Button, StatusButton } from '@/components/ui/Buttons';
 import { Select } from '@/components/ui/form';
 import { Input } from '@/components/ui/form/Input';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import { JobSearch } from '@/shared/types/jobs';
+import { mapToOptions } from '@/utils/transformers';
 
 export const Route = createFileRoute('/recruiter/jobs/')({
   validateSearch: (search: Record<string, unknown>): JobSearch => {
@@ -139,11 +140,11 @@ function JobsPage() {
               value={sortValue}
               onChange={(value) => setSortValue(value as JobSearch['sort'])}
               prefix={'Sort by: '}
-              options={[
-                { value: 'Date', label: 'Date' },
-                { value: 'Name', label: 'Name' },
-                { value: 'Status', label: 'Status' },
-              ]}
+              options={mapToOptions([
+                'Date',
+                'Name',
+                'Status',
+              ] as JobSearch['sort'][])}
             />
           </div>
           <div className="flex items-center gap-4">

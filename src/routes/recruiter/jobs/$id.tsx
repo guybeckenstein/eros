@@ -8,7 +8,6 @@ import {
   Briefcase,
   ChevronRight,
   EllipsisVertical,
-  FileText,
   Lightbulb,
   MapPin,
   Search,
@@ -17,12 +16,16 @@ import {
   User,
 } from 'lucide-react';
 
+import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
+import { PdfPreview } from '@/components/seekers/PdfPreview';
 import { Input } from '@/components/ui/form/Input';
 import { Select } from '@/components/ui/form/Select';
+import { ResumeIcon } from '@/components/ui/icons/ResumeIcon';
+import { Modal } from '@/components/ui/overylays/Modal';
 import { jobDetailQueryOptions } from '@/server/recruiter/jobs-queries';
-import DATE_OPTIONS from '@/shared/configurations/configuration';
 import { CandidateJobDetails } from '@/shared/types/candidates';
 import { CandidateSearch } from '@/shared/types/jobs';
+import { mapToOptions } from '@/utils/transformers';
 
 export const Route = createFileRoute('/recruiter/jobs/$id')({
   component: RouteComponent,
@@ -37,6 +40,10 @@ function RouteComponent() {
   const [searchValue, setSearchValue] = useState<CandidateSearch['text']>('');
   const [filterValue, setFilterValue] =
     useState<CandidateSearch['filter']>('All');
+  const [seekerResumeModalOpen, setSeekerResumeModalOpen] = useState(0);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
+    null,
+  );
 
   return (
     <>
@@ -84,23 +91,34 @@ function RouteComponent() {
                 setFilterValue(value as CandidateSearch['filter'])
               }
               prefix={'Filter by: '}
-              options={[
-                { value: 'All', label: 'All' },
-                { value: 'New', label: 'New' },
-                { value: 'Frozen', label: 'Frozen' },
-                { value: 'Unread', label: 'Unread' },
-              ]}
+              options={mapToOptions([
+                'All',
+                'New',
+                'Unread',
+                'Frozen',
+              ] as CandidateSearch['filter'][])}
               className="text-base"
               inputClassName="w-60"
             />
           </div>
           {data.seekers
             // TODO: filter seekers by text and filter values
-            .filter((s) => true)
+            .filter((s: CandidateJobDetails) => {
+              const searchLower = searchValue.toLowerCase().trim();
+              const matchesText =
+                searchLower === '' ||
+                s.fullName.toLowerCase().includes(searchLower);
+
+              // 2. Category Filter Logic (Optional: based on your data structure)
+              // Note: You'll need to check which property in s matches 'New', 'Frozen', etc.
+              const matchesCategory = filterValue === 'All'; // || s.status === filterValue; // Adjust 's.status' to your actual property name
+
+              return matchesText && matchesCategory;
+            })
             .map((s: CandidateJobDetails) => (
               <div
                 key={s.id}
-                className="relative grid cursor-pointer grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
+                className="relative z-0 grid cursor-pointer grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
                 onClick={() =>
                   console.log('TODO: go to chat with:', s.id, data.jobId)
                 }
@@ -185,14 +203,45 @@ function RouteComponent() {
                     <div className="h-2 w-full rounded-lg bg-emerald-600"></div>
                   </div>
                 </div>
-                <div className="flex gap-2 justify-self-end">
-                  <FileText size={20} />
-                  <User size={20} />
+                <div className="relative z-100 flex gap-2 justify-self-end">
+                  <ResumeIcon
+                    isShow={Number(s.resumeId) !== 0}
+                    size="20"
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSeekerResumeModalOpen(s.resumeId);
+                    }}
+                  />
+                  <User
+                    size={20}
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation(); // This prevents the parent div's onClick from firing
+                      setSelectedCandidateId(s.id);
+                    }}
+                  />
                   <EllipsisVertical size={20} />
                 </div>
               </div>
             ))}
         </div>
+        <Modal
+          open={seekerResumeModalOpen !== 0}
+          onClose={() => setSeekerResumeModalOpen(0)}
+          title="Resume"
+          className={'h-5/6 w-3/5'}
+        >
+          <PdfPreview />
+        </Modal>
+        <Modal
+          open={!!selectedCandidateId}
+          onClose={() => setSelectedCandidateId(null)}
+          title="Profile"
+          className={'h-5/6 w-3/5'}
+        >
+          {selectedCandidateId && (
+            <CandidateDetailsWrapper id={selectedCandidateId} />
+          )}
+        </Modal>
       </div>
     </>
   );

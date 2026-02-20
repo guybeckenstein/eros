@@ -13,6 +13,6 @@ export type UpdateJob = {
 };
 
 export type CandidateSearch = {
-  text?: string;
+  text: string;
   filter?: 'All' | 'New' | 'Frozen' | 'Unread';
 };
