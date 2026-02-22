@@ -17,7 +17,7 @@ export type RawJobRow = {
   // Depending on relationship, this can come back as an array of objects with { count }
   // or a single object. We’ll handle both cases safely below.
   job_seeker_status:
-    | Array<{ count: number | null }>
+    | { count: number | null }[]
     | { count: number | null }
     | null;
 };
@@ -25,6 +25,7 @@ export type RawJobRow = {
 export interface SpecificJobFlattened {
   jobId: number;
   dateUploaded: string;
+  stages: number;
   title: string;
   seekers: CandidateJobDetails[];
 }

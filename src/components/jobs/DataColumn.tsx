@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
 
-import { classNames } from '@/helpers/functions';
+import { twMerge } from 'tailwind-merge';
 
 interface DataColumnProps {
   header: string;
   children: ReactElement;
-  className: string | undefined;
+  className?: string;
 }
 
 export const DataColumn = ({
@@ -19,7 +19,7 @@ export const DataColumn = ({
 
   return (
     <div>
-      <h3 className={classNames('mb-2 text-xl', className)}>{header}</h3>
+      <h3 className={twMerge('mb-2 text-xl', className)}>{header}</h3>
       {children}
     </div>
   );

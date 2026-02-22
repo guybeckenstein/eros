@@ -6,15 +6,15 @@ export type DropdownOption = {
   id: string;
   label: string;
   startIcon: React.ReactNode;
-  /** Called when the option is clicked. Receives the jobId. */
-  onClick: (jobId: number) => void;
+  /** Called when the option is clicked. Receives the attributeId. */
+  onClick: (attributeId: number) => void;
 };
 
 type DropdownOptionsProps = {
   /** The options to render. */
   options: DropdownOption[];
-  /** The jobId to pass into each option's onClick. */
-  jobId: number;
+  /** The attributeId to pass into each option's onClick. */
+  attributeId: number;
 
   /**
    * Optional close callback (e.g., PopoverPanel's `close` function).
@@ -39,7 +39,7 @@ type DropdownOptionsProps = {
 export const DropdownOptions: React.FC<DropdownOptionsProps> = React.memo(
   ({
     options,
-    jobId,
+    attributeId,
     close,
     role = 'menu',
     className,
@@ -50,7 +50,7 @@ export const DropdownOptions: React.FC<DropdownOptionsProps> = React.memo(
       'grid cursor-pointer grid-cols-[max-content_auto] items-center gap-4 px-4 py-2 text-current transition-colors hover:bg-neutral-100';
 
     const handleClick = (option: DropdownOption) => {
-      option.onClick(jobId);
+      option.onClick(attributeId);
       // Close popover if provided
       close?.();
       onAfterSelect?.(option);
@@ -68,7 +68,7 @@ export const DropdownOptions: React.FC<DropdownOptionsProps> = React.memo(
       <div role={role} className={className}>
         {options.map((o) => (
           <div
-            key={`${jobId}_${o.id}`}
+            key={`${attributeId}_${o.id}`}
             role={role === 'menu' ? 'menuitem' : undefined}
             tabIndex={0}
             className={clsx(baseItemClass, itemClassName)}

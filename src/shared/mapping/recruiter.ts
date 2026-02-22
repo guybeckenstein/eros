@@ -1,4 +1,4 @@
-import DATE_OPTIONS from '../configurations/configuration';
+import { DATE_OPTIONS } from '../configurations/configuration';
 import { RawJobRow, RecruiterJobItem } from '../types/recruiter';
 
 export function toRecruiterJobItem(row: RawJobRow): RecruiterJobItem {

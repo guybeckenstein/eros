@@ -8,13 +8,12 @@ import { useState } from 'react';
 
 import { SquarePen, Trash } from 'lucide-react';
 
+import { DataColumn } from '@/components/jobs/DataColumn';
+import { EditJob } from '@/components/jobs/EditJob';
+import { JobRow } from '@/components/jobs/JobRow';
 import { NoJobs } from '@/components/jobs/NoJobs';
+import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions, updateJob } from '@/server/recruiter/jobs-queries';
-
-import { EditJob } from './EditJob';
-import { JobRow } from './JobRow';
-
-import { Modal } from '../ui/overylays/Modal';
 
 export function ArchivedJobs() {
   const [deleteConfirmJobId, setDeleteConfirmJobId] = useState<number | null>(
@@ -63,7 +62,11 @@ export function ArchivedJobs() {
               menuOptions={JOB_DROPDOWN_OPTIONS}
               isConfirmingDelete={deleteConfirmJobId === job.jobId}
               onCancelDelete={() => setDeleteConfirmJobId(null)}
-            />
+            >
+              <DataColumn header="Date Uploaded:" className="font-medium">
+                <p className="font-medium">{job.dateUploaded}</p>
+              </DataColumn>
+            </JobRow>
           ))
         ) : (
           <NoJobs text="No archived jobs" />

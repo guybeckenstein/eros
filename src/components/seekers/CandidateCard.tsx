@@ -127,12 +127,14 @@ export const CandidateCard = ({
             <div className="relative">
               <Tooltip
                 title={
-                  <div className="flex flex-col text-center">
-                    <h3 className="text-xs text-neutral-600">Match</h3>
-                    <h4 className="text-sm font-bold text-current">
+                  <>
+                    <h3 className="text-center text-xs text-neutral-600">
+                      Match
+                    </h3>
+                    <h4 className="text-center text-sm font-bold text-current">
                       {matchScore}%
                     </h4>
-                  </div>
+                  </>
                 }
                 open={true}
                 placement="top"
@@ -155,7 +157,7 @@ export const CandidateCard = ({
                 }}
               >
                 <div
-                  className="absolute translate-x-1/2"
+                  className="absolute h-full w-0 -translate-x-1/2"
                   style={{ left: `${matchScore}%` }}
                 />
               </Tooltip>
@@ -194,12 +196,12 @@ export const CandidateCard = ({
         {!!onSwipeLeft && !!onSwipeRight && (
           <div className="mx-auto flex gap-4">
             <MatchButton
-              icon={<X size="22" className="m-auto" onClick={onSwipeLeft} />}
+              onClick={onSwipeLeft}
+              icon={<X size="22" className="m-auto" />}
             />
             <MatchButton
-              icon={
-                <Heart size="22" className="m-auto" onClick={onSwipeRight} />
-              }
+              onClick={onSwipeRight}
+              icon={<Heart size="22" className="m-auto" />}
             />
           </div>
         )}
@@ -225,7 +227,7 @@ export const CandidateCard = ({
           <X size="24" className="cursor-pointer" />
         </div>
 
-        <main className="space-y-12">
+        <main className="mb-12 space-y-12">
           <section id="work-experience" className="scroll-mt-14 space-y-6">
             <h1 className="text-2xl font-semibold">Work Experience</h1>
             <Experiences experiences={candidate.experience} />
@@ -241,10 +243,10 @@ export const CandidateCard = ({
             <div className="flex flex-wrap gap-4">
               <CandidateSkills skills={candidate.skills} />
             </div>
+            <div className="mt-16 space-y-4">
+              <LanguageScoreList languages={candidate.languages} />
+            </div>
           </section>
-          <div className="space-y-4">
-            <LanguageScoreList languages={candidate.languages} />
-          </div>
         </main>
       </div>
     </motion.div>
