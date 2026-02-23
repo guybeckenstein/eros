@@ -52,7 +52,7 @@ export default function Navbar({
   return (
     <nav className="relative z-1 flex h-18 w-full items-stretch justify-between bg-white px-6 shadow-lg">
       <Link to="/" className="flex flex-1 items-center gap-2">
-        {/* TODO: use one file for logo, not two */}
+        {/* TODO: use updated logo */}
         <img src="/logo.png" alt="TanStack Logo" />
         <img src="/logo-words.png" alt="TanStack Word Logo" />
       </Link>

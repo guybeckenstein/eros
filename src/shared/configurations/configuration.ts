@@ -1,7 +1,6 @@
-const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   day: 'numeric',
   month: 'numeric',
   year: 'numeric',
 };
-
-export default DATE_OPTIONS;
+export const CHAT_DAYS_TO_RESPOND = 14;

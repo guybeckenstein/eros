@@ -4,9 +4,10 @@ import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
 import { BriefcaseBusiness, Ellipsis } from 'lucide-react';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
-import { DeleteJob } from '@/components/jobs/DeleteJob';
-
-import { DropdownOptions } from './DropdownOptions';
+import { JobsPopover } from '@/components/jobs//JobsPopover';
+import { ConfirmAction } from '@/components/jobs/ConfirmAction';
+import { DropdownOptions } from '@/components/jobs/DropdownOptions';
+import { deleteOrUpdateJob } from '@/server/recruiter/jobs-queries';
 
 export type JobMenuOption = {
   id: string;
@@ -19,24 +20,14 @@ type MinimalJob = {
   jobId: number;
   title: string;
   dateUploaded: string;
-  // Add more fields if you need them in the future
 };
 
 type JobRowProps = {
   job: MinimalJob;
-  /**
-   * Whether the delete confirmation UI should be shown for this job.
-   */
   isConfirmingDelete: boolean;
-  /**
-   * Called when user cancels delete in the confirmation panel.
-   */
   onCancelDelete: () => void;
-  /**
-   * Options to render inside the actions popover (Edit / Restore / Delete...).
-   * The onClick will receive jobId.
-   */
   menuOptions: JobMenuOption[];
+  children?: React.ReactNode;
 };
 
 export function JobRow({
@@ -44,10 +35,11 @@ export function JobRow({
   isConfirmingDelete,
   onCancelDelete,
   menuOptions,
+  children,
 }: JobRowProps) {
   return (
     <div
-      className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9"
+      className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9 text-current"
       data-testid={`job-row-${job.jobId}`}
     >
       <div className="flex items-center gap-4">
@@ -55,42 +47,22 @@ export function JobRow({
         <h2 className="mb-1 text-2xl font-bold text-current">{job.title}</h2>
       </div>
 
-      <div>
-        <h3 className="mb-2 text-xl font-medium text-current">
-          Date Uploaded:
-        </h3>
-        <p className="font-medium text-current">{job.dateUploaded}</p>
-      </div>
+      <div>{children}</div>
 
       <div className="flex items-center gap-24">
         <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
 
-        <Popover data-slot="dropdown">
-          <PopoverButton aria-label="Open job row actions">
-            <Ellipsis size="24" className="cursor-pointer text-neutral-500" />
-          </PopoverButton>
-
-          <PopoverPanel
-            anchor="bottom end"
-            transition
-            className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
-          >
-            {({ close }) => (
-              <>
-                {isConfirmingDelete === true && (
-                  <DeleteJob
-                    jobId={job.jobId}
-                    onCancel={onCancelDelete}
-                    close={close}
-                  />
-                )}
-                {isConfirmingDelete === false && (
-                  <DropdownOptions options={menuOptions} jobId={job.jobId} />
-                )}
-              </>
-            )}
-          </PopoverPanel>
-        </Popover>
+        <JobsPopover
+          variables={{ jobId: job.jobId }}
+          mutationFn={deleteOrUpdateJob}
+          queryKeysToInvalidate={[['jobs']]}
+          isConfirmAction={isConfirmingDelete}
+          title="Are you sure you want to delete this job?"
+          idPrefix="delete"
+          onCancel={onCancelDelete}
+          menuOptions={menuOptions}
+          attributeId={job.jobId}
+        />
       </div>
     </div>
   );

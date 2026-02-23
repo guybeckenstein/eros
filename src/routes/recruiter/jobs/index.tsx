@@ -3,25 +3,13 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 
 import { useDeferredValue, useEffect, useState } from 'react';
 
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import {
-  Archive,
-  BriefcaseBusiness,
-  Ellipsis,
-  Plus,
-  Search,
-  SquarePen,
-  Trash,
-  Users,
-} from 'lucide-react';
+import { Archive, Plus, Search, SquarePen, Trash, Users } from 'lucide-react';
 
-import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
 import { CreateJob } from '@/components/jobs/CreateJob/CreateJob';
 import { DataColumn } from '@/components/jobs/DataColumn';
-import { DeleteJob } from '@/components/jobs/DeleteJob';
-import { DropdownOptions } from '@/components/jobs/DropdownOptions';
 import { EditJob } from '@/components/jobs/EditJob';
+import { JobRow } from '@/components/jobs/JobRow';
 import { NoJobs } from '@/components/jobs/NoJobs';
 import { Button, StatusButton } from '@/components/ui/Buttons';
 import { Select, TextField } from '@/components/ui/inputs';
@@ -79,15 +67,15 @@ function JobsPage() {
     });
   }, [navigate, sortValue, sort]);
 
-  const handleSort = (
-    newText: JobSearch['text'],
-    newSort: JobSearch['sort'],
-  ) => {
-    if (newText === text && newSort === sort) return; // Skip if already selected
-    navigate({
-      search: (prev) => ({ ...prev, text: newText, sort: newSort }),
-    });
-  };
+  // const handleSort = (
+  //   newText: JobSearch['text'],
+  //   newSort: JobSearch['sort'],
+  // ) => {
+  //   if (newText === text && newSort === sort) return; // Skip if already selected
+  //   navigate({
+  //     search: (prev) => ({ ...prev, text: newText, sort: newSort }),
+  //   });
+  // };
 
   const JOB_DROPDOWN_OPTIONS = [
     {
@@ -148,7 +136,7 @@ function JobsPage() {
           </div>
           <div className="flex items-center gap-4">
             <Button
-              className={'h-12 w-56 bg-neutral-900 text-white'}
+              className="h-12 w-56 bg-neutral-900 text-white"
               onClick={() => setIsCreateModalOpen(true)}
             >
               <Plus size="24" className="text-white" />
@@ -162,16 +150,16 @@ function JobsPage() {
           </div>
         </div>
         <div className="mt-6 flex flex-col gap-4">
-          {(data &&
+          {(!!data &&
             data.map((job) => (
-              <div
+              <JobRow
                 key={job.jobId}
-                className="grid grid-cols-[0.5fr_1fr_max-content] items-center rounded-md border bg-white px-7 py-9 text-current"
+                job={job}
+                isConfirmingDelete={deleteConfirmJobId === job.jobId}
+                onCancelDelete={() => setDeleteConfirmJobId(0)}
+                menuOptions={JOB_DROPDOWN_OPTIONS}
               >
-                <div className="flex h-full items-center gap-4">
-                  <BriefcaseBusiness size="22" />
-                  <h2 className="text-2xl font-bold">{job.title}</h2>
-                </div>
+                {/* Pass the extra data specific to this page here */}
                 <div className="flex gap-16 font-medium">
                   <DataColumn header="Status:">
                     <StatusButton isActive={job.isActive} />
@@ -183,41 +171,7 @@ function JobsPage() {
                     <span>{job.seekersNumber}</span>
                   </DataColumn>
                 </div>
-                <div className="flex items-center gap-24">
-                  <VerticalDividerIcon className="h-12 w-0.5 fill-none" />
-                  <Popover data-slot="dropdown">
-                    <PopoverButton>
-                      <Ellipsis
-                        size="24"
-                        className="cursor-pointer text-neutral-500"
-                      />
-                    </PopoverButton>
-                    <PopoverPanel
-                      anchor="bottom end"
-                      transition
-                      className="original-top mt-2 rounded-sm border border-neutral-200 bg-white transition duration-200 ease-out data-closed:scale-95 data-closed:opacity-0"
-                    >
-                      {({ close }) => (
-                        <>
-                          {deleteConfirmJobId === job.jobId && (
-                            <DeleteJob
-                              jobId={job.jobId}
-                              onCancel={() => setDeleteConfirmJobId(0)}
-                              close={close}
-                            />
-                          )}
-                          {deleteConfirmJobId !== job.jobId && (
-                            <DropdownOptions
-                              options={JOB_DROPDOWN_OPTIONS}
-                              jobId={job.jobId}
-                            />
-                          )}
-                        </>
-                      )}
-                    </PopoverPanel>
-                  </Popover>
-                </div>
-              </div>
+              </JobRow>
             ))) || <NoJobs text="No jobs found. Let's make it happen!" />}
         </div>
       </div>

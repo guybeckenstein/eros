@@ -50,6 +50,10 @@ export interface CandidateJobDetails {
   linkedinLink: string;
   websiteLink: string;
   resumeId: number;
+  recentChatMessage: string;
+  totalChatMessages: number;
+  isMessagesUnread: boolean;
   currentStage: number;
   daysUntilRespond: number;
+  isFrozen: boolean;
 }

@@ -1,30 +1,28 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import {
-  Archive,
-  Briefcase,
-  ChevronRight,
-  EllipsisVertical,
-  Lightbulb,
-  MapPin,
-  Search,
-  Snowflake,
-  Timer,
-  User,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronRight, Search, Trash } from 'lucide-react';
 
+import { CandidateJobCard } from '@/components/jobs/CandidateJobCard';
 import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
 import { PdfPreview } from '@/components/seekers/PdfPreview';
-import { ResumeIcon } from '@/components/ui/icons/ResumeIcon';
+import { Button } from '@/components/ui/Buttons/Button';
 import { Select } from '@/components/ui/inputs/Select';
 import { TextField } from '@/components/ui/inputs/TextField';
 import { Modal } from '@/components/ui/overylays/Modal';
-import { jobDetailQueryOptions } from '@/server/recruiter/jobs-queries';
-import { CandidateJobDetails } from '@/shared/types/candidates';
+import {
+  jobDetailQueryOptions,
+  removeCandidateFromJob,
+} from '@/server/recruiter/jobs-queries';
 import { CandidateSearch } from '@/shared/types/jobs';
+import { filterCandidates } from '@/utils/filters';
 import { mapToOptions } from '@/utils/transformers';
 
 export const Route = createFileRoute('/recruiter/jobs/$id')({
@@ -32,11 +30,19 @@ export const Route = createFileRoute('/recruiter/jobs/$id')({
 });
 
 function RouteComponent() {
+  const queryClient = useQueryClient();
   const { id } = Route.useParams();
   const jobId = Number(id);
   const { data } = useSuspenseQuery(
     jobDetailQueryOptions(jobId, ['jobs', 'list', { text: '', sort: 'desc' }]),
   );
+  const bulkRemoveMutation = useMutation({
+    mutationFn: removeCandidateFromJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['candidates'] });
+      setSelectedSeekerIds([]); // Clear selection after deletion
+    },
+  });
   const [searchValue, setSearchValue] = useState<CandidateSearch['text']>('');
   const [filterValue, setFilterValue] =
     useState<CandidateSearch['filter']>('All');
@@ -44,6 +50,46 @@ function RouteComponent() {
   const [selectedCandidateId, setSelectedCandidateId] = useState<number | null>(
     null,
   );
+  const [removeCandidateId, setRemoveCandidateId] = useState<number | null>(
+    null,
+  );
+  const [selectedCandidateIds, setSelectedSeekerIds] = useState<number[]>([]);
+
+  const toggleSeekerSelection = (currId: number) => {
+    setSelectedSeekerIds((prev) =>
+      prev.includes(currId)
+        ? prev.filter((seekerId) => seekerId !== currId)
+        : [...prev, currId],
+    );
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedCandidateIds.length === 0) return;
+
+    // You could also wrap this in a confirm() call if you don't want a full modal
+    if (
+      window.confirm(
+        `Are you sure you want to remove ${selectedCandidateIds.length} candidates?`,
+      )
+    ) {
+      bulkRemoveMutation.mutate({ candidateIdList: selectedCandidateIds });
+    }
+  };
+
+  const CANDIDATE_DROPDOWN_OPTIONS = [
+    {
+      id: 'remove',
+      startIcon: <Trash size="22" className="text-current" />,
+      label: 'Remove Candidate',
+      onClick: (candidateId: number) => setRemoveCandidateId(candidateId),
+    },
+  ];
+
+  const filteredCandidates = useMemo(
+    () => filterCandidates(data.seekers, searchValue, filterValue),
+    [data.seekers, searchValue, filterValue],
+  );
+  useEffect(() => setSelectedSeekerIds([]), [searchValue, filterValue]);
 
   return (
     <>
@@ -52,8 +98,8 @@ function RouteComponent() {
           <div className="space-x-1 justify-self-start">
             <Link to="..">Jobs</Link>
             <ChevronRight
-              size={14}
-              strokeWidth={4}
+              size="20"
+              strokeWidth="4"
               className="inline text-current"
             />
             <span className="font-bold underline underline-offset-5">
@@ -63,16 +109,7 @@ function RouteComponent() {
           <p className="justify-self-center font-light text-neutral-500">
             Job uploaded: {data.dateUploaded}
           </p>
-          <div className="space-x-6 justify-self-end">
-            <Snowflake
-              size="24"
-              className="inline cursor-pointer transition-colors hover:text-neutral-600"
-            />
-            <Archive
-              size="24"
-              className="inline cursor-pointer transition-colors hover:text-neutral-600"
-            />
-          </div>
+          <div className="space-x-6 justify-self-end"></div>
         </div>
         <div className="mx-auto w-19/20 space-y-3">
           <div className="flex items-center justify-between rounded bg-white px-5 py-3">
@@ -101,128 +138,54 @@ function RouteComponent() {
               inputClassName="w-60"
             />
           </div>
-          {data.seekers
-            // TODO: filter seekers by text and filter values
-            .filter((s: CandidateJobDetails) => {
-              const searchLower = searchValue.toLowerCase().trim();
-              const matchesText =
-                searchLower === '' ||
-                s.fullName.toLowerCase().includes(searchLower);
-
-              // 2. Category Filter Logic (Optional: based on your data structure)
-              // Note: You'll need to check which property in s matches 'New', 'Frozen', etc.
-              const matchesCategory = filterValue === 'All'; // || s.status === filterValue; // Adjust 's.status' to your actual property name
-
-              return matchesText && matchesCategory;
-            })
-            .map((s: CandidateJobDetails) => (
-              <div
-                key={s.id}
-                className="relative z-0 grid cursor-pointer grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
-                onClick={() =>
-                  console.log('TODO: go to chat with:', s.id, data.jobId)
-                }
-              >
-                <div className="flex gap-2">
-                  <input
-                    type="radio"
-                    name="TODO: add generic radio button"
-                    className="absolute top-2 left-2"
-                  />
-                  <div className="relative ml-8 flex size-16">
-                    {s.profilePicUrl && s.profilePicUrl.length > 0 ? (
-                      <img
-                        className="object-fit m-auto size-12 rounded-full border"
-                        alt={`${s.fullName} profile pic`}
-                        src={s.profilePicUrl}
-                      />
-                    ) : (
-                      <div className="m-auto size-12 rounded-full border bg-neutral-700" />
-                    )}
-                    <div className="absolute right-0 -bottom-2 flex size-8 cursor-auto place-items-center justify-center gap-0.5 rounded-full bg-sky-950 text-white">
-                      <span className="text-xs font-semibold">
-                        {s.matchScore}
-                      </span>
-                      <small className="text-[8px]">%</small>
-                    </div>
-                  </div>
-                  <div className="flex max-w-110 flex-col gap-1">
-                    <p className="space-x-1">
-                      <b className="cursor-auto">{s.fullName}</b>{' '}
-                      <small className="cursor-auto text-neutral-500">
-                        {s.jobTitle}
-                      </small>
-                    </p>
-                    <div className="flex items-center space-x-1 text-xs text-neutral-400">
-                      <MapPin size={14} className="inline" />
-                      <span className="cursor-auto">{s.city}</span>
-                      <Briefcase size={14} className="inline" />
-                      <span className="cursor-auto">{s.jobType}</span>
-                      <Lightbulb size={14} className="inline" />
-                      <span className="cursor-auto">
-                        {s.yearsOfExperience} years exp.
-                      </span>
-                    </div>
-                    {/* TODO: add actual data from chat */}
-                    <div className="flex cursor-auto items-center justify-between rounded-tl-xl rounded-r-lg bg-neutral-200 px-2 py-1 text-xs">
-                      <span>Looking forward to our meet next week</span>
-                      <span className="flex size-5 place-items-center justify-center rounded-full bg-neutral-300 text-sm font-semibold">
-                        2
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  {/* Stage status */}
-                  <div className="w-30 space-y-1 text-sky-950">
-                    <div className="flex items-center gap-2">
-                      <p className="cursor-auto text-sm font-medium">
-                        {/* TODO: get number of stages from jobs_stages table */}
-                        STAGE {s.currentStage}/4
-                      </p>
-                    </div>
-                    <div className="flex h-2 w-full items-center gap-2">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-full flex-1 rounded-lg ${
-                            i < s.currentStage ? 'bg-sky-950' : 'bg-gray-200'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  {/* Time left to reply */}
-                  <div className="w-30 space-y-1 text-emerald-600">
-                    <div className="flex items-center gap-2">
-                      <Timer size={14} strokeWidth={3} />
-                      <p className="cursor-auto text-sm font-bold">
-                        {s.daysUntilRespond} days left
-                      </p>
-                    </div>
-                    <div className="h-2 w-full rounded-lg bg-emerald-600"></div>
-                  </div>
-                </div>
-                <div className="relative z-100 flex gap-2 justify-self-end">
-                  <ResumeIcon
-                    isShow={Number(s.resumeId) !== 0}
-                    size="20"
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setSeekerResumeModalOpen(s.resumeId);
-                    }}
-                  />
-                  <User
-                    size={20}
-                    onClick={(e: React.MouseEvent) => {
-                      e.stopPropagation(); // This prevents the parent div's onClick from firing
-                      setSelectedCandidateId(s.id);
-                    }}
-                  />
-                  <EllipsisVertical size={20} />
-                </div>
+          {selectedCandidateIds.length > 0 && (
+            <motion.div
+              initial={{ height: 0, opacity: 0, overflow: 'hidden' }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="flex w-full items-center gap-4 bg-neutral-200 py-3 pl-2"
+            >
+              <div className="space-x-2 text-sm">
+                <input
+                  type="checkbox"
+                  className="align-middle"
+                  checked={true}
+                  onChange={() => setSelectedSeekerIds([])} // Deselect all
+                />
+                <span className="align-text-top text-slate-600">
+                  {selectedCandidateIds.length} Selected{' '}
+                  {selectedCandidateIds.length ===
+                    filteredCandidates.length && <>(All)</>}
+                </span>
               </div>
-            ))}
+              <Button
+                className="gap-0 bg-neutral-300 text-base text-current transition-colors hover:bg-red-300 disabled:opacity-50"
+                startIcon={<Trash size="20" />}
+                onClick={handleBulkDelete}
+                disabled={bulkRemoveMutation.isPending}
+              >
+                {bulkRemoveMutation.isPending
+                  ? 'Removing...'
+                  : 'Remove selected candidates'}
+              </Button>
+            </motion.div>
+          )}
+          {filteredCandidates.map((s) => (
+            <CandidateJobCard
+              key={s.id}
+              candidate={s}
+              jobId={data.jobId}
+              stages={data.stages}
+              isSelected={selectedCandidateIds.includes(s.id)}
+              onToggleSelection={() => toggleSeekerSelection(s.id)}
+              isConfirmingDelete={removeCandidateId === s.id}
+              onSetRemoveId={setRemoveCandidateId}
+              onViewResume={setSeekerResumeModalOpen}
+              onViewProfile={setSelectedCandidateId}
+              dropdownOptions={CANDIDATE_DROPDOWN_OPTIONS}
+            />
+          ))}
         </div>
         <Modal
           open={seekerResumeModalOpen !== 0}
