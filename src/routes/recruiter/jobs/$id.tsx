@@ -8,7 +8,7 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { useEffect, useMemo, useState } from 'react';
 
 import { motion } from 'framer-motion';
-import { Archive, ChevronRight, Search, Snowflake, Trash } from 'lucide-react';
+import { ChevronRight, Search, Trash } from 'lucide-react';
 
 import { CandidateJobCard } from '@/components/jobs/CandidateJobCard';
 import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
@@ -109,12 +109,7 @@ function RouteComponent() {
           <p className="justify-self-center font-light text-neutral-500">
             Job uploaded: {data.dateUploaded}
           </p>
-          <div className="space-x-6 justify-self-end">
-            <Snowflake
-              size="24"
-              className="inline cursor-pointer transition-colors hover:text-neutral-600"
-            />
-          </div>
+          <div className="space-x-6 justify-self-end"></div>
         </div>
         <div className="mx-auto w-19/20 space-y-3">
           <div className="flex items-center justify-between rounded bg-white px-5 py-3">
