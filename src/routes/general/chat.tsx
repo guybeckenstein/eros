@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { InformationIcon } from '@/components/ui/icons';
+
 export const Route = createFileRoute('/general/chat')({
   component: ChatPage,
 });

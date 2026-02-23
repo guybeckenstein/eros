@@ -1,23 +1,19 @@
-import { FileText } from 'lucide-react';
+import { Info } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
 
-interface ResumeIconProps {
-  isShow: boolean;
+// TODO: implement
+interface InformationIconProps {
   onClick: () => void;
   size?: string | number;
   className?: string;
 }
 
-export const ResumeIcon = ({
-  isShow,
+export const InformationIcon = ({
   onClick,
   size = 24,
   className,
-}: ResumeIconProps) => {
+}: InformationIconProps) => {
   const baseClassName = 'cursor-pointer';
-
-  if (!isShow) {
-    return null;
-  }
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // This prevents the parent div's onClick from firing
@@ -25,7 +21,7 @@ export const ResumeIcon = ({
   };
 
   return (
-    <FileText
+    <Info
       size={Number(size)}
       className={twMerge(baseClassName, className)}
       onClick={handleClick}
