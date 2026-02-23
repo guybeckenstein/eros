@@ -1,11 +1,9 @@
 import { Fragment } from 'react';
 
 import {
-  Description,
   Dialog,
   DialogPanel,
   DialogTitle,
-  Transition,
   TransitionChild,
 } from '@headlessui/react';
 import { XIcon } from 'lucide-react';
@@ -16,6 +14,7 @@ type ModalProps = React.ComponentProps<typeof Dialog> & {
   title: string;
   description?: string | React.ReactNode;
   children: React.ReactNode;
+  childrenClassName?: string;
   closeButton?: boolean;
 };
 
@@ -72,7 +71,9 @@ export const Modal = ({
                 </button>
               )}
             </DialogTitle>
-            <div className="px-6 pt-5">{props.children}</div>
+            <div className={classNames('px-6 pt-5', props.childrenClassName)}>
+              {props.children}
+            </div>
           </DialogPanel>
         </TransitionChild>
       </div>

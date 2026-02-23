@@ -6,14 +6,13 @@ import { useDeferredValue, useEffect, useState } from 'react';
 import { Archive, Plus, Search, SquarePen, Trash, Users } from 'lucide-react';
 
 import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
-import { CreateJob } from '@/components/jobs/CreateJob';
+import { CreateJob } from '@/components/jobs/CreateJob/CreateJob';
 import { DataColumn } from '@/components/jobs/DataColumn';
 import { EditJob } from '@/components/jobs/EditJob';
 import { JobRow } from '@/components/jobs/JobRow';
 import { NoJobs } from '@/components/jobs/NoJobs';
 import { Button, StatusButton } from '@/components/ui/Buttons';
-import { Select } from '@/components/ui/form';
-import { Input } from '@/components/ui/form/Input';
+import { Select, TextField } from '@/components/ui/inputs';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
 import { JobSearch } from '@/shared/types/jobs';
@@ -109,7 +108,7 @@ function JobsPage() {
       <div className="w-full">
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-10">
-            <Input
+            <TextField
               value={deferredSearchValue}
               placeholder="Search jobs..."
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -181,6 +180,7 @@ function JobsPage() {
         onClose={() => setIsCreateModalOpen(false)}
         title="Create New Job"
         className={'h-5/6 w-3/5'}
+        childrenClassName="p-0! h-[850px]"
       >
         <CreateJob />
       </Modal>
