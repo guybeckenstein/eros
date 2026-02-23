@@ -18,9 +18,9 @@ import {
 
 import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
 import { PdfPreview } from '@/components/seekers/PdfPreview';
-import { Input } from '@/components/ui/form/Input';
-import { Select } from '@/components/ui/form/Select';
 import { ResumeIcon } from '@/components/ui/icons/ResumeIcon';
+import { Select } from '@/components/ui/inputs/Select';
+import { TextField } from '@/components/ui/inputs/TextField';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobDetailQueryOptions } from '@/server/recruiter/jobs-queries';
 import { CandidateJobDetails } from '@/shared/types/candidates';
@@ -76,7 +76,7 @@ function RouteComponent() {
         </div>
         <div className="mx-auto w-19/20 space-y-3">
           <div className="flex items-center justify-between rounded bg-white px-5 py-3">
-            <Input
+            <TextField
               value={searchValue}
               placeholder="Search candidates"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

@@ -1,4 +1,5 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
+import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   HeadContent,
@@ -10,18 +11,29 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { useState } from 'react';
 
-import { ClassNames } from '@emotion/react';
-
 import Navbar from '@/components/navigation/Navbar';
 import { RecruiterSidebar } from '@/components/navigation/RecruiterSidebar';
 import { NotFoundComponent } from '@/components/root/NotFound';
 import { RootErrorComponent } from '@/components/root/RootError';
+import { FormTextField } from '@/components/ui/form/TextField';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import appCss from '@/styles.css?url';
 
 interface MyRouterContext {
   queryClient: QueryClient;
 }
+
+export const { fieldContext, formContext, useFieldContext } =
+  createFormHookContexts();
+
+createFormHook({
+  fieldContext,
+  formContext,
+  fieldComponents: {
+    TextField: FormTextField,
+  },
+  formComponents: {},
+});
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({

@@ -1,4 +1,4 @@
-import { Option } from '@/components/ui/form/Select';
+import { Option } from '@/components/ui/inputs/Select';
 
 export const mapToOptions = <T>(list: T[]): Option[] => {
   return list.map((item) => ({
