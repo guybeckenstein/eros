@@ -1,6 +1,5 @@
 import { Button as HeadlessButton } from '@headlessui/react';
-
-import { classNames } from '@/helpers/functions';
+import { twMerge } from 'tailwind-merge';
 
 type ButtonProps = React.ComponentProps<typeof HeadlessButton> & {
   startIcon?: React.ReactNode;
@@ -18,9 +17,9 @@ export function Button({
 }: ButtonProps) {
   return (
     <HeadlessButton
-      className={classNames(
-        className,
+      className={twMerge(
         'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md px-5 py-2.25',
+        className,
       )}
       {...props}
     >
