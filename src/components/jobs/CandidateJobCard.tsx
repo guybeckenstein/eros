@@ -1,6 +1,7 @@
 import { Briefcase, Lightbulb, MapPin, Timer, User } from 'lucide-react';
 
 import { JobsPopover } from '@/components/jobs/JobsPopover';
+import { Avatar } from '@/components/profile/Avatar';
 import { ResumeIcon } from '@/components/ui/icons/ResumeIcon';
 import { removeCandidateFromJob } from '@/server/recruiter/jobs-queries';
 import { CandidateJobDetails } from '@/shared/types/candidates';
@@ -47,15 +48,13 @@ export function CandidateJobCard({
           className="absolute top-2 left-2"
         />
         <div className="relative ml-8 flex size-16">
-          {candidate.profilePicUrl ? (
-            <img
-              className="object-fit m-auto size-12 rounded-full border"
-              alt={`${candidate.fullName} profile pic`}
-              src={candidate.profilePicUrl}
-            />
-          ) : (
-            <div className="m-auto size-12 rounded-full border bg-neutral-700" />
-          )}
+          <Avatar
+            src={candidate.profilePicUrl}
+            alt={`${candidate.fullName} profile pic`}
+            name={candidate.fullName}
+            size="size-12"
+            className="m-auto"
+          />
           <div className="absolute right-0 -bottom-2 flex size-8 place-items-center justify-center gap-0.5 rounded-full bg-sky-950 text-white">
             <span className="text-xs font-semibold">
               {candidate.matchScore}

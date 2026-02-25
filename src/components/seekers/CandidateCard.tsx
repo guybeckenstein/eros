@@ -17,6 +17,7 @@ import { InfoRow } from '@/components/discover/InfoRow';
 import { MatchButton } from '@/components/discover/MatchButton';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { SectionHeader } from '@/components/headers/SectionHeader';
+import { Avatar } from '@/components/profile/Avatar';
 import { Experiences } from '@/components/seekers/Experiences';
 import { LanguageScoreList } from '@/components/seekers/LanguageScoreList';
 import { CandidateSkills } from '@/components/seekers/Skills';
@@ -130,15 +131,12 @@ export const CandidateCard = ({
         <div>
           <header className="items-top flex justify-between">
             <div className="items-top flex gap-2 border-b border-neutral-200 pb-4">
-              {candidate.profilePicUrl ? (
-                <img
-                  className="object-fit size-12 rounded-full border"
-                  alt={`${candidate.fullName} profile pic`}
-                  src={candidate.profilePicUrl}
-                />
-              ) : (
-                <div className="size-12 rounded-full border bg-neutral-700" />
-              )}
+              <Avatar
+                src={candidate.profilePicUrl}
+                alt={`${candidate.fullName} profile pic`}
+                name={candidate.fullName}
+                size="size-12"
+              />
               <div>
                 <h2 className="text-2xl font-semibold text-current">
                   {candidate.fullName}

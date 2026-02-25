@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { CandidateCard } from '@/components/seekers/CandidateCard';
 import { PdfPreview } from '@/components/seekers/PdfPreview';
-import { Option, Select } from '@/components/ui/form';
+import { Option, Select } from '@/components/ui/inputs';
 import { Modal } from '@/components/ui/overylays/Modal';
 import {
   discoverCandidatesQueryOptions,

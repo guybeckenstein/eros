@@ -11,6 +11,8 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 
 import { useState } from 'react';
 
+import { twMerge } from 'tailwind-merge';
+
 import Navbar from '@/components/navigation/Navbar';
 import { RecruiterSidebar } from '@/components/navigation/RecruiterSidebar';
 import { NotFoundComponent } from '@/components/root/NotFound';
@@ -18,6 +20,7 @@ import { RootErrorComponent } from '@/components/root/RootError';
 import { FormTextField } from '@/components/ui/form/TextField';
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools';
 import appCss from '@/styles.css?url';
+import { getIsRouteInNavigation } from '@/utils/navigation';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -84,12 +87,18 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isInNavigation = getIsRouteInNavigation();
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="h-screen">
         <Navbar onProfileClick={() => setIsSidebarOpen(true)} />
-        <div className="relative flex h-210 bg-neutral-100 p-4 text-neutral-900">
+        <div
+          className={twMerge(
+            'relative flex h-210 bg-neutral-100 text-neutral-900',
+            isInNavigation ? 'p-4' : 'p-0',
+          )}
+        >
           <Outlet />
         </div>
         <RecruiterSidebar
