@@ -5,12 +5,14 @@ import { twMerge } from 'tailwind-merge';
 interface InformationIconProps {
   onClick: () => void;
   size?: string | number;
+  strokeWidth?: string | number;
   className?: string;
 }
 
 export const InformationIcon = ({
   onClick,
   size = 24,
+  strokeWidth,
   className,
 }: InformationIconProps) => {
   const baseClassName = 'cursor-pointer';
@@ -23,6 +25,7 @@ export const InformationIcon = ({
   return (
     <Info
       size={Number(size)}
+      strokeWidth={Number(strokeWidth)}
       className={twMerge(baseClassName, className)}
       onClick={handleClick}
     />

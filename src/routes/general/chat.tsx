@@ -3,14 +3,18 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import {
+  Check,
   ChevronLeft,
+  Clock,
   Copy,
   Download,
+  Ellipsis,
   EllipsisVertical,
   Linkedin,
 } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
+import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { Avatar } from '@/components/profile/Avatar';
 import { InformationIcon } from '@/components/ui/icons';
@@ -132,7 +136,97 @@ function ChatPage() {
         </div>
       </div>
       {/* Main content */}
-      <div className="">Center</div>
+      <div className="flex flex-col justify-between space-y-4 p-4">
+        <div>
+          {/* Slider */}
+          <div className="w-full space-y-6 rounded-xl bg-white px-6 py-4">
+            <div className="flex justify-between">
+              <h2 className="text-xl font-bold text-current">
+                Interview Process
+                <InformationIcon
+                  size="22"
+                  strokeWidth="1.5"
+                  className="ml-2 inline text-neutral-600"
+                  onClick={() => console.log('information clicked')}
+                />
+              </h2>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <Clock size="20" />
+                  <small className="text-sm text-neutral-400">
+                    Last Update: today at 9:30
+                  </small>
+                </div>
+                <VerticalDividerIcon
+                  className="h-6 w-px fill-none"
+                  pathClassName="fill-neutral-300"
+                />
+                <div className="flex items-center justify-between">
+                  <button className="space-x-1 text-base text-current">
+                    <span>+</span>
+                    <span className="underline underline-offset-2">
+                      Add 7 days
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="relative flex h-15 w-45 rounded-md border border-neutral-400">
+                <div className="my-auto ms-2 flex items-center gap-2">
+                  <Ellipsis
+                    size="24"
+                    className="absolute top-0 right-1 text-neutral-500"
+                  />
+                  <div className="flex size-10 rounded-full bg-black">
+                    <Check
+                      size="24"
+                      strokeWidth="3"
+                      className="m-auto text-white"
+                    />
+                  </div>
+                  <p className="w-8 text-base font-semibold">Phone Interview</p>
+                </div>
+              </div>
+              <div className="my-auto h-1 w-8 rounded-md bg-neutral-300"></div>
+              <div className="relative flex h-15 w-45 rounded-md border border-neutral-400">
+                <div className="my-auto ms-2 flex items-center gap-2">
+                  <Ellipsis
+                    size="24"
+                    className="absolute top-0 right-1 text-neutral-500"
+                  />
+                  <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
+                    <p className="m-auto text-xl text-current">2</p>
+                  </div>
+                  <p className="w-8 text-base">Phone Interview</p>
+                </div>
+              </div>
+              <div className="my-auto h-1 w-8 rounded-md bg-neutral-300"></div>
+              <div className="relative flex h-15 w-45 rounded-md border border-neutral-400">
+                <div className="my-auto ms-2 flex items-center gap-2">
+                  <Ellipsis
+                    size="24"
+                    className="absolute top-0 right-1 text-neutral-500"
+                  />
+                  <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
+                    <p className="m-auto text-xl text-current">3</p>
+                  </div>
+                  <p className="w-8 text-base">Phone Interview</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h4 className="text-center text-xl font-light text-neutral-500">
+            Today at 9:30 AM
+          </h4>
+        </div>
+
+        <TextField
+          placeholder="Type a message..."
+          fieldClassName="w-full gap-0 border-none"
+          wrapperClassName="outline-neutral-400 rounded-xl bg-white"
+        />
+      </div>
       {/* Right sidebar */}
       <div className="w-full space-y-4 bg-white p-6">
         <h1 className="text-2xl font-bold">My Notes</h1>
