@@ -1,4 +1,4 @@
-import { CreateJobSteps } from './CreateJob';
+import { CreateJobSteps } from '.';
 
 import { cn } from '../../../lib/utils';
 

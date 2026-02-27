@@ -1,29 +1,10 @@
 import { useState } from 'react';
 
+import { CreateJobStepsItemProps, steps } from '.';
+
 import { Button } from '@/components/ui/Buttons';
 
 import { CreateJobSidebar } from './CreateJobSidebar';
-import { JobDetailsStep } from './steps/JobDetailsStep';
-
-export enum CreateJobSteps {
-  JobDetails = 'Job Details',
-  Requirements = 'Requirements',
-  Description = 'Description',
-  InterviewStages = 'Interview Stages',
-  ReviewSubmit = 'Review & Submit',
-}
-
-interface CreateJobStepsItemProps {
-  step: CreateJobSteps;
-  Component: React.ComponentType;
-}
-
-const steps: CreateJobStepsItemProps[] = [
-  {
-    step: CreateJobSteps.JobDetails,
-    Component: JobDetailsStep,
-  },
-];
 
 export function CreateJob() {
   const [currentStep, setCurrentStep] = useState<CreateJobStepsItemProps>(
@@ -40,8 +21,13 @@ export function CreateJob() {
           <currentStep.Component />
         </div>
       </div>
-      <div className="bg-1 flex items-center justify-end gap-2 self-stretch rounded-lg px-5 py-3.5">
-        <Button>Next</Button>
+      <div className="bg-1 flex items-center justify-end gap-2 self-stretch rounded-b-lg border-t border-[#B1B1B1] px-6 py-4.75">
+        <Button
+          className="h-12 w-32.5 bg-[#222222] text-white"
+          onClick={() => setCurrentStep(steps[steps.indexOf(currentStep) + 1])}
+        >
+          Next
+        </Button>
       </div>
     </>
   );

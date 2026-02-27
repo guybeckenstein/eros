@@ -150,7 +150,7 @@ function JobsPage() {
           </div>
         </div>
         <div className="mt-6 flex flex-col gap-4">
-          {(!!data &&
+          {data.length > 0 ? (
             data.map((job) => (
               <JobRow
                 key={job.jobId}
@@ -172,7 +172,10 @@ function JobsPage() {
                   </DataColumn>
                 </div>
               </JobRow>
-            ))) || <NoJobs text="No jobs found. Let's make it happen!" />}
+            ))
+          ) : (
+            <NoJobs text="No jobs found. Let's make it happen!" />
+          )}
         </div>
       </div>
       <Modal

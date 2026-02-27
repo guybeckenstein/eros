@@ -35,7 +35,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           fieldClassName,
         )}
       >
-        <Label className="justify-start text-base font-semibold tracking-wide text-black">
+        <Label className="justify-start text-base tracking-wide text-black">
           {label}
           {required && '*'}
         </Label>

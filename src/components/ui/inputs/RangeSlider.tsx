@@ -120,29 +120,24 @@ export const RangeSlider = forwardRef<HTMLInputElement, RangeSliderProps>(
       <Field className="inline-flex flex-col items-start justify-start gap-2 self-stretch">
         {label ? (
           <div className="inline-flex w-full items-center justify-between gap-2">
-            <Label className="justify-start text-base font-semibold tracking-wide text-black">
+            <Label className="justify-start text-base tracking-wide text-black">
               {label}
               {required && '*'}
             </Label>
-            {showValue ? (
-              <span
-                className={classNames(
-                  'text-base font-semibold tracking-wide text-black',
-                  valueLabelClassName,
-                )}
-              >
-                {renderedStart} - {renderedEnd}
-              </span>
-            ) : null}
           </div>
         ) : null}
 
-        <div
-          className={classNames(
-            'inline-flex items-center justify-start gap-1.5 self-stretch rounded-md p-2.5 outline-1 -outline-offset-1 outline-black',
-            wrapperClassName,
-          )}
-        >
+        <div className="flex w-full flex-col items-center justify-start gap-1.5 self-stretch rounded-md p-4">
+          {showValue ? (
+            <span
+              className={classNames(
+                'text-base font-semibold tracking-wide text-black',
+                valueLabelClassName,
+              )}
+            >
+              {renderedStart} - {renderedEnd}
+            </span>
+          ) : null}
           <div className="relative h-6 w-full">
             <div className="absolute top-1/2 h-1 w-full -translate-y-1/2 rounded-full bg-zinc-300" />
             <div
