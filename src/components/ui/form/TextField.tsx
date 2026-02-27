@@ -1,9 +1,7 @@
-import { TextField } from '../inputs';
+import { TextField, TextFieldProps } from '../inputs';
 
-interface FormTextFieldProps {
-  label: string;
-}
+type FormTextFieldProps = TextFieldProps;
 
-export function FormTextField({ label }: FormTextFieldProps) {
-  return <TextField label={label} required />;
+export function FormTextField({ label, placeholder }: FormTextFieldProps) {
+  return <TextField label={label} placeholder={placeholder} required />;
 }

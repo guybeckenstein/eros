@@ -7,11 +7,12 @@ import { Archive, Plus, Search, SquarePen, Trash, Users } from 'lucide-react';
 
 import { ArchivedJobs } from '@/components/jobs/ArchivedJobs';
 import { CreateJob } from '@/components/jobs/CreateJob/CreateJob';
+import { CreateJobProvider } from '@/components/jobs/CreateJob/useCreateJobContext';
 import { DataColumn } from '@/components/jobs/DataColumn';
 import { EditJob } from '@/components/jobs/EditJob';
 import { JobRow } from '@/components/jobs/JobRow';
 import { NoJobs } from '@/components/jobs/NoJobs';
-import { Button, StatusButton } from '@/components/ui/Buttons';
+import { Button, StatusButton } from '@/components/ui/buttons';
 import { Select, TextField } from '@/components/ui/inputs';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
@@ -185,7 +186,9 @@ function JobsPage() {
         className={'h-5/6 w-3/5'}
         childrenClassName="p-0! h-[850px]"
       >
-        <CreateJob />
+        <CreateJobProvider>
+          <CreateJob />
+        </CreateJobProvider>
       </Modal>
       <Modal
         open={editModalOpen !== 0}

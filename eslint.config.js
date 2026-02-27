@@ -1,56 +1,40 @@
-//  @ts-check
-import { tanstackConfig } from '@tanstack/eslint-config';
+import js from '@eslint/js';
+import globals from 'globals';
+import reactHooks from 'eslint-plugin-react-hooks';
+// import reactRefresh from 'eslint-plugin-react-refresh';
+import tseslint from 'typescript-eslint';
+import react from 'eslint-plugin-react';
 
-export default [
-  ...tanstackConfig,
-  // Override or add custom rules here
-  {
-    rules: {
-      '@typescript-eslint/array-type': [
-        'error',
-        {
-          default: 'array',
-        },
-      ],
-      '@typescript-eslint/consistent-type-imports': 'off',
-      'import/order': [
-        'error',
-        {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'sibling',
-            'parent',
-            'index',
-            'unknown',
-          ],
-          pathGroups: [
-            {
-              pattern: '@tanstack/**',
-              group: 'external',
-              position: 'before',
-            },
-            {
-              pattern: 'react',
-              group: 'external',
-              position: 'before',
-            },
-          ],
-          pathGroupsExcludedImportTypes: [], // This is the magic line
-          'newlines-between': 'always',
-          alphabetize: {
-            order: 'asc',
-            caseInsensitive: true,
-          },
-          // This allows types to be mixed in with values alphabetically
-          warnOnUnassignedImports: true,
-        },
-      ],
-    },
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parserOptions: {},
-    },
-  },
-];
+export default tseslint.config(
+	{ ignores: ['dist'] },
+	{
+		extends: [js.configs.recommended, ...tseslint.configs.recommended],
+		files: ['**/*.{ts,tsx}'],
+		languageOptions: {
+			ecmaVersion: 2020,
+			globals: globals.browser,
+		},
+		plugins: {
+			'react-hooks': reactHooks,
+			// 'react-refresh': reactRefresh,
+			react,
+		},
+		rules: {
+			...reactHooks.configs.recommended.rules,
+			// 'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+			'react/jsx-curly-brace-presence': [
+				'error',
+				{
+					props: 'never',
+					children: 'never',
+				},
+			],
+			'prefer-const': 'error',
+			'no-irregular-whitespace': 'error',
+			'semi': 'error',
+			'no-duplicate-imports': 'error',
+			'camelcase': 'error',
+			'@typescript-eslint/no-unused-vars': 'off', // handled by typescript
+		},
+	}
+);

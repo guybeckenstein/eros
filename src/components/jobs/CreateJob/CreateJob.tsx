@@ -1,15 +1,12 @@
-import { useState } from 'react';
+import { steps } from '.';
 
-import { CreateJobStepsItemProps, steps } from '.';
-
-import { Button } from '@/components/ui/Buttons';
+import { Button } from '@/components/ui/buttons';
 
 import { CreateJobSidebar } from './CreateJobSidebar';
+import { useCreateJobContext } from './useCreateJobContext';
 
 export function CreateJob() {
-  const [currentStep, setCurrentStep] = useState<CreateJobStepsItemProps>(
-    steps[0],
-  );
+  const { currentStep, setCurrentStep } = useCreateJobContext();
 
   return (
     <>
@@ -17,7 +14,7 @@ export function CreateJob() {
         {/* Sidebar */}
         <CreateJobSidebar currentStep={currentStep.step} />
         {/* Main Content */}
-        <div className="flex-1 p-6">
+        <div className="flex-1 overflow-auto p-6">
           <currentStep.Component />
         </div>
       </div>
