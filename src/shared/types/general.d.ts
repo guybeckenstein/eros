@@ -1,3 +1,5 @@
+import { CandidateInChat } from './candidates';
+
 export interface Study {
   institution: string;
   institutionLogoUrl: string;
@@ -26,4 +28,36 @@ export interface Language {
   name: string;
   score: 1 | 2 | 3 | 4;
   rank: LanguageRank;
+}
+
+export interface Stage {
+  stageId: number;
+  name: string;
+  stageDate: string;
+  numberInProcess: number;
+}
+
+export interface Note {
+  noteId: number;
+  dateUploaded: string;
+  text: string;
+}
+
+export interface Message {
+  isRecruiter: boolean;
+  dateSent: Date;
+  text: string;
+  profileImageUrl: string;
+  senderFullName: string;
+}
+
+export interface SpecificChatFlattened {
+  chatId: number;
+  dateOpened: string;
+  stages: Stage[];
+  lastUpdated: Date;
+  notes: Note[];
+  candidate: CandidateInChat;
+  messages: Message[];
+  seekers: CandidateJobDetails[];
 }

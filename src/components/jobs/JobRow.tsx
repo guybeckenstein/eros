@@ -1,12 +1,9 @@
 import * as React from 'react';
 
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import { BriefcaseBusiness, Ellipsis } from 'lucide-react';
+import { BriefcaseBusiness } from 'lucide-react';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
-import { JobsPopover } from '@/components/jobs//JobsPopover';
-import { ConfirmAction } from '@/components/jobs/ConfirmAction';
-import { DropdownOptions } from '@/components/jobs/DropdownOptions';
+import { JobsPopover } from '@/components/jobs/JobsPopover';
 import { deleteOrUpdateJob } from '@/server/recruiter/jobs-queries';
 
 export type JobMenuOption = {

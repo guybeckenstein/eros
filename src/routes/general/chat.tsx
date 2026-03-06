@@ -44,7 +44,7 @@ function ChatPage() {
   ];
 
   return (
-    <div className="grid w-full grid-flow-col grid-cols-[2fr_7fr_2fr] text-current">
+    <div className="grid w-full grid-flow-col grid-cols-[2fr_6fr_2fr] text-current">
       {/* Left sidebar */}
       <div className="flex flex-col gap-6 bg-white p-6 pt-10">
         <Link to="/recruiter/jobs">
