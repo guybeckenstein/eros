@@ -230,8 +230,11 @@ function ChatPage() {
       {/* Right sidebar */}
       <div className="w-full space-y-4 bg-white p-6">
         <h1 className="text-2xl font-bold">My Notes</h1>
-        {NOTES.map((n) => (
-          <div className="relative rounded-xl bg-neutral-100 px-2 py-1 text-start text-lg">
+        {NOTES.map((n, i) => (
+          <div
+            key={i}
+            className="relative rounded-xl bg-neutral-100 px-2 py-1 text-start text-lg"
+          >
             <div className="w-5/6 space-y-2">
               <EllipsisVertical
                 size="20"
