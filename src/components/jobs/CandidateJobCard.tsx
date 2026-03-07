@@ -1,3 +1,5 @@
+import { useNavigate } from '@tanstack/react-router';
+
 import { Briefcase, Lightbulb, MapPin, Timer, User } from 'lucide-react';
 
 import { JobsPopover } from '@/components/jobs/JobsPopover';
@@ -31,10 +33,19 @@ export function CandidateJobCard({
   onViewProfile,
   dropdownOptions,
 }: CandidateJobCardProps) {
+  const navigate = useNavigate();
   return (
     <div
       className="relative z-0 grid cursor-pointer grid-cols-[4fr_4fr_2fr] items-start rounded bg-white px-2 py-3"
-      onClick={() => console.log('TODO: go to chat with:', candidate.id, jobId)}
+      onClick={() => {
+        navigate({
+          to: '/chat/$jobId/$candidateId',
+          params: {
+            jobId: jobId.toString(),
+            candidateId: candidate.id.toString(),
+          },
+        });
+      }}
     >
       <div className="flex gap-2">
         <input

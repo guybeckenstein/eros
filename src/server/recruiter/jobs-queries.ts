@@ -2,7 +2,7 @@ import { QueryClient, queryOptions } from '@tanstack/react-query';
 
 import {
   CHAT_DAYS_TO_RESPOND,
-  DATE_OPTIONS,
+  DATE_OPTIONS_NO_TIME,
 } from '@/shared/configurations/configuration';
 import { toRecruiterJobItem } from '@/shared/mapping/recruiter';
 import { CandidateJobDetails } from '@/shared/types/candidates';
@@ -220,7 +220,7 @@ async function getSpecificJob(jobId: number, isArchived = false) {
     jobId: jobRecord.job_id,
     dateUploaded: new Date(jobRecord.date_uploaded).toLocaleDateString(
       'en-IL',
-      DATE_OPTIONS,
+      DATE_OPTIONS_NO_TIME,
     ),
     stages: (jobRecord.job_interview_stages as any[]).reduce(
       (sum, x) => sum + (x?.count ?? 0),

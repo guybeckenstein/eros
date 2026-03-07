@@ -30,12 +30,12 @@ export const Route = createFileRoute('/recruiter/jobs/$id')({
 });
 
 function RouteComponent() {
-  const queryClient = useQueryClient();
   const { id } = Route.useParams();
   const jobId = Number(id);
   const { data } = useSuspenseQuery(
     jobDetailQueryOptions(jobId, ['jobs', 'list', { text: '', sort: 'desc' }]),
   );
+  const queryClient = useQueryClient();
   const bulkRemoveMutation = useMutation({
     mutationFn: removeCandidateFromJob,
     onSuccess: () => {

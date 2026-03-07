@@ -60,6 +60,7 @@ export interface CandidateJobDetails {
 
 export interface CandidateInChat {
   fullName: string;
+  currentStage: number;
   candidateProfileImageUrl: string;
   jobTitle: string;
   phoneNumber: string;

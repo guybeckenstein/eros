@@ -1,4 +1,7 @@
-import { CandidateInChat } from './candidates';
+import {
+  CandidateInChat,
+  CandidateJobDetails,
+} from '@/shared/types/candidates';
 
 export interface Study {
   institution: string;
@@ -33,8 +36,10 @@ export interface Language {
 export interface Stage {
   stageId: number;
   name: string;
+  note: string;
   stageDate: string;
   numberInProcess: number;
+  recentUpdateDate: Date;
 }
 
 export interface Note {
@@ -46,6 +51,7 @@ export interface Note {
 export interface Message {
   isRecruiter: boolean;
   dateSent: Date;
+  dateSentStr: string;
   text: string;
   profileImageUrl: string;
   senderFullName: string;
@@ -55,9 +61,9 @@ export interface SpecificChatFlattened {
   chatId: number;
   dateOpened: string;
   stages: Stage[];
-  lastUpdated: Date;
+  lastUpdatedStages: string;
   notes: Note[];
   candidate: CandidateInChat;
   messages: Message[];
-  seekers: CandidateJobDetails[];
+  firstMessageDate: string;
 }

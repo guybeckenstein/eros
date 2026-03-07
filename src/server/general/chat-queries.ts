@@ -1,199 +1,248 @@
 import { QueryClient, queryOptions } from '@tanstack/react-query';
 
+import { DATE_OPTIONS_WITH_TIME } from '@/shared/configurations/configuration';
+import { getVerboseTimeDifference } from '@/shared/mapping/time';
+import { CandidateInChat } from '@/shared/types/candidates';
 import {
-  CHAT_DAYS_TO_RESPOND,
-  DATE_OPTIONS,
-} from '@/shared/configurations/configuration';
-import { CandidateJobDetails } from '@/shared/types/candidates';
-import { Experience } from '@/shared/types/general';
-import { DeleteJob, UpdateJob } from '@/shared/types/jobs';
-import { SpecificJobFlattened } from '@/shared/types/recruiter';
-import { daysBetweenDates } from '@/utils/helpers';
+  Message,
+  Note,
+  SpecificChatFlattened,
+  Stage,
+} from '@/shared/types/general';
+import { AlternativeJobs } from '@/shared/types/jobs';
 import { supabase } from '@/utils/supabase';
 
 const queryClient = new QueryClient();
 
-async function getSpecificChat(
-  jobId: number,
-  candidateId: number,
-  isArchived = false,
-) {
+async function getAlternativeJobs(jobId: number) {
   const { data, error } = await supabase
     .from('jobs')
     .select(
       `
-        job_id, 
-        date_uploaded, 
-        job_interview_stages!inner (count),
-        job_titles_ref!inner (title),
-        recruiter_seeker_swipes!inner (
-          seekers!inner (
-            seeker_id,
-            users!inner (
-              first_name, 
-              last_name, 
-              profile_pic_url,
-              recruiter_seeker_chat_messages (
-                message_text,
-                message_date,
-                is_recruiter,
-                job_id
-              )
-            ),
-            job_seeker_stage!inner (count),
-            job_seeker_status!inner (is_frozen),
-            job_titles_ref!inner (
-              title,
-              job_types_ref!inner (type)
-            ),
-            seeker_experience_jobs!inner (
-              start_month,
-              start_year,
-              end_month,
-              end_year,
-              is_currently_working,
-              job_description
-            ),
-            cities_ref!inner (
-              name, 
-              countries_ref!inner (common_name)
-            ),
-            linkedin_link,
-            website_link
+        company_id,
+        companies!inner (
+          jobs!inner (
+            job_id,
+            is_archived,
+            is_active,
+            job_titles_ref!inner (title)
           )
         )
       `,
     )
     .eq('job_id', jobId)
-    .eq('is_archived', isArchived)
-    .eq('is_active', true)
-    .eq('recruiter_seeker_swipes.seekers.job_seeker_stage.job_id', jobId)
-    .eq('recruiter_seeker_swipes.seekers.job_seeker_status.job_id', jobId)
-    .eq('recruiter_seeker_swipes.seekers.job_seeker_status.is_active', true)
-    .eq(
-      'recruiter_seeker_swipes.seekers.users.recruiter_seeker_chat_messages.job_id',
-      jobId,
-    );
+    .eq('companies.jobs.is_archived', false)
+    .eq('companies.jobs.is_active', true)
+    .single();
 
   if (error) {
     throw error;
-  } else if (!data || data.length === 0) {
-    console.error('No job found with ID:', jobId);
-    throw new Error(`getSpecificJob: No record found for ID '${jobId}'`);
   }
 
-  const jobRecord = data[0];
-  const currentDate = new Date();
-  const candidates: CandidateJobDetails[] =
-    jobRecord.recruiter_seeker_swipes.map((swipe: any) => {
-      const seeker = swipe.seekers;
-      const user = seeker.users;
-      const jobTitleRef = seeker.job_titles_ref;
-      const cityRef = seeker.cities_ref;
+  const companyJobs = data?.companies?.jobs || [];
 
-      // Map the experience array
-      let isCurrentlyHired = false;
-      const experience: Experience[] = seeker.seeker_experience_jobs.map(
-        (exp: any) => {
-          isCurrentlyHired = isCurrentlyHired || exp.is_currently_working;
-          return {
-            startMonth: exp.start_month,
-            startYear: exp.start_year,
-            endMonth: exp.end_month,
-            endYear: exp.end_year,
-            isCurrentlyWorking: exp.is_currently_working,
-          };
-        },
-      );
+  return companyJobs.map(
+    (j: typeof data.companies[0].jobs) =>
+      ({
+        jobId: j.job_id,
+        title: j.job_titles_ref?.title,
+      }) as unknown as AlternativeJobs,
+  );
+}
 
-      // Calculate total years of experience
-      const yearsOfExperience = experience.reduce((acc: number, job: any) => {
-        const start = new Date(job.startYear, job.startMonth - 1);
-        const end = job.isCurrentlyWorking
-          ? new Date()
-          : new Date(job.endYear, (job.endMonth || 1) - 1);
-
-        // Calculate difference in years (including decimal for months)
-        const diffInMonths =
-          (end.getFullYear() - start.getFullYear()) * 12 +
-          (end.getMonth() - start.getMonth());
-        return acc + diffInMonths / 12;
-      }, 0);
-
-      const messages = user.recruiter_seeker_chat_messages || [];
-
-      // 1. Sort messages to find the most recent one
-      // We sort descending: index 0 is the newest
-      const sortedMessages = [...messages].sort(
-        (a, b) =>
-          new Date(b.message_date).getTime() -
-          new Date(a.message_date).getTime(),
-      );
-
-      const latestMessage = sortedMessages[0];
-      const recentChatMessage = latestMessage
-        ? latestMessage.message_text
-        : 'No messages yet';
-
-      // 2. Days until respond logic
-      // Find the latest message sent BY THE CANDIDATE
-      const isLastCandidateMessage = sortedMessages.find(
-        (m) => m.is_recruiter === false,
-      );
-
-      const currentStage = (seeker.job_seeker_stage as any[]).reduce(
-        (sum, x) => sum + (x?.count ?? 0),
-        0,
-      );
-
-      let daysUntilRespond = Number.NaN;
-      if (isLastCandidateMessage) {
-        const sentDate = new Date(isLastCandidateMessage.message_date);
-        // Add the response window to the sent date
-        const deadlineDate = new Date(
-          sentDate.getTime() +
-            Number(CHAT_DAYS_TO_RESPOND) * 24 * 60 * 60 * 1000,
-        );
-
-        daysUntilRespond = daysBetweenDates(currentDate, deadlineDate);
+export const fetchAlternativeRoles = (
+  jobId: number,
+  currQueryClient?: QueryClient,
+) =>
+  queryOptions({
+    queryKey: ['alternative-jobs', jobId],
+    queryFn: async () => await getAlternativeJobs(jobId),
+    initialData: () => {
+      if (!currQueryClient) {
+        return undefined;
       }
 
-      return {
-        id: seeker.seeker_id,
-        fullName: `${user.first_name} ${user.last_name}`,
-        profilePicUrl: user.profile_pic_url,
-        jobTitle: jobTitleRef.title,
-        jobType: jobTitleRef.job_types_ref.type,
-        isCurrentlyHired: isCurrentlyHired,
-        yearsOfExperience: yearsOfExperience,
-        city: `${cityRef.name}, ${cityRef.countries_ref.common_name}`,
-        matchScore: 0, // TODO: calculate match score between seekers and recruiters
-        linkedinLink: seeker.linkedin_link,
-        websiteLink: seeker.website_link,
-        resumeId: 0, // TODO: add resume ID logic
-        recentChatMessage: recentChatMessage,
-        totalChatMessages: messages.length,
-        isMessagesUnread: !recentChatMessage.is_read,
-        currentStage: currentStage,
-        daysUntilRespond: daysUntilRespond,
-        isFrozen: seeker.job_seeker_status[0].is_frozen,
-      };
-    });
+      return currQueryClient
+        .getQueryData<any[]>(['chat', 'list'])
+        ?.find((j) => j.jobId === jobId);
+    },
+  });
 
-  // If your component expects a single object with the job info + candidates:
+async function getSpecificChat(jobId: number, candidateId: number) {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select(
+      `
+        job_id,
+        date_uploaded,
+        job_titles_ref!inner (title),
+        job_interview_stages!inner (
+          interview_stage_id,
+          interview_type, 
+          stage_index, 
+          note, 
+          interview_date, 
+          recent_update,
+          job_seeker_stage (
+            is_pass, 
+            days_until_decision, 
+            note, 
+            date_created
+          )
+        ),
+        recruiter_seeker_swipes!inner (
+          seekers!inner (
+            seeker_id,
+            linkedin_link,
+            website_link,
+            users!inner (
+              first_name, 
+              last_name, 
+              profile_pic_url,
+              phone_number,
+              email_address
+            ),
+            job_titles_ref!inner (title),
+            recruiter_seeker_notes (
+              note_id, 
+              note_text, 
+              note_date
+            )
+          )
+        ),
+        recruiter_seeker_chat_messages!inner (
+          message_text,
+          message_date,
+          is_recruiter,
+          users!inner (first_name, last_name, profile_pic_url)
+        )
+      `,
+    )
+    .eq('job_id', jobId)
+    .eq('is_archived', false)
+    .eq('is_active', true)
+    .eq('job_interview_stages.is_active', true)
+    .eq('recruiter_seeker_swipes.seekers.seeker_id', candidateId)
+    .filter(
+      'job_interview_stages.job_seeker_stage.seeker_id',
+      'eq',
+      candidateId,
+    )
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  // Navigate the data structure carefully
+  const swipe = data.recruiter_seeker_swipes[0];
+  const seeker = swipe.seekers;
+  const user = (seeker as any).users;
+  const rawMessages = data.recruiter_seeker_chat_messages || [];
+
+  // Map Messages
+  const messages: Message[] = rawMessages.map(
+    (m: any) =>
+      ({
+        isRecruiter: m.is_recruiter,
+        dateSent: new Date(m.message_date),
+        dateSentStr: new Date(m.message_date).toLocaleDateString(
+          'en-IL',
+          DATE_OPTIONS_WITH_TIME,
+        ),
+        text: m.message_text,
+        profileImageUrl: m.is_recruiter ? '' : user.profile_pic_url,
+        senderFullName: m.is_recruiter
+          ? 'Recruiter'
+          : `${user.first_name} ${user.last_name}`,
+      }) as Message,
+  );
+
+  // Map Stages
+  const stages = (data.job_interview_stages as any[])
+    .sort((a, b) => a.stage_index - b.stage_index)
+    .map(
+      (s) =>
+        ({
+          stageId: s.interview_stage_id,
+          name: s.interview_type,
+          stageDate: s.interview_date,
+          numberInProcess: s.stage_index,
+        }) as Stage,
+    );
+  // Calculate last update for stages
+  const updateDateStages = (data.job_interview_stages as any[])
+    .map((s) => s.recent_update)
+    .filter(Boolean);
+
+  const lastUpdatedStagesDate =
+    updateDateStages.length > 0
+      ? new Date(
+          Math.max(...updateDateStages.map((d) => new Date(d).getTime())),
+        )
+      : new Date();
+  const { text: lastUpdatedStagesText, isToday: isTodayStages } =
+    getVerboseTimeDifference(lastUpdatedStagesDate.toString());
+  const lastUpdatedStagesResponse = `${lastUpdatedStagesText}${
+    isTodayStages
+      ? ` at ${new Date(lastUpdatedStagesDate).toLocaleTimeString('en-IL', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: false,
+        })}`
+      : ''
+  }`;
+  // Calculate last update for messages
+  const messageDates = messages.map((m) => m.dateSent).filter(Boolean);
+
+  const firstMessageDate =
+    messageDates.length > 0
+      ? new Date(Math.min(...messageDates.map((d) => new Date(d).getTime())))
+      : new Date();
+  const { text: firstSentMessageText, isToday: isTodayMessage } =
+    getVerboseTimeDifference(firstMessageDate.toString());
+  const firstMessageResponse = `${firstSentMessageText}${
+    isTodayMessage
+      ? ` at ${new Date(firstMessageDate).toLocaleTimeString('en-IL', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: false,
+        })}`
+      : ''
+  }`;
+
   return {
-    jobId: jobRecord.job_id,
-    dateUploaded: new Date(jobRecord.date_uploaded).toLocaleDateString(
-      'en-IL',
-      DATE_OPTIONS,
+    chatId: `${data.job_id}_${(seeker as any).seeker_id}`,
+    dateOpened: messages.length > 0 ? new Date() : data.date_uploaded,
+    stages: stages,
+    lastUpdatedStages: lastUpdatedStagesResponse,
+    notes: ((seeker as any).recruiter_seeker_notes || []).map(
+      (n: any) =>
+        ({
+          noteId: n.note_id,
+          dateUploaded: n.note_date,
+          text: n.note_text,
+        }) as Note,
     ),
-    stages: (jobRecord.job_interview_stages as any[]).reduce(
-      (sum, x) => sum + (x?.count ?? 0),
-      0,
-    ),
-    title: (jobRecord.job_titles_ref as any).title,
-    seekers: candidates || [], // This is your flattened array
-  } as unknown as SpecificJobFlattened;
+    candidate: {
+      fullName: `${user.first_name} ${user.last_name}`,
+      currentStage: (data.job_interview_stages as any[]).reduce((sum, s) => {
+        // Check if it's an array with items OR a non-null object
+        const hasProgress = Array.isArray(s.job_seeker_stage)
+          ? s.job_seeker_stage.length > 0
+          : s.job_seeker_stage !== null;
+
+        return sum + (hasProgress ? 1 : 0);
+      }, 0),
+      candidateProfileImageUrl: user.profile_pic_url,
+      jobTitle: (seeker as any).job_titles_ref.title,
+      phoneNumber: user.phone_number,
+      emailAddress: user.email_address,
+      resumeId: 0, // TODO: add resume ID logic
+    } as CandidateInChat,
+    messages: messages,
+    firstMessageDate: firstMessageResponse,
+  } as unknown as SpecificChatFlattened;
 }
 
 export const chatDetailQueryOptions = (
@@ -204,38 +253,29 @@ export const chatDetailQueryOptions = (
   queryOptions({
     queryKey: ['chats', 'detail', jobId, candidateId],
     queryFn: async () => await getSpecificChat(jobId, candidateId),
-    // This is the magic part:
     initialData: () => {
-      // 1. Get the list from the cache using the dynamic key (text, sort, etc.)
+      // 1. Get the list from the cache using the dynamic key
       const allChats = queryClient.getQueryData<any[]>(listQueryKey);
 
-      // 2. Find the job in that list
+      // 2. Find the chat in that list
       const chatFromList = allChats?.find(
         (c) => c.jobId === jobId && c.candidateId === candidateId,
       );
 
-      // 3. Map the list item to the "SpecificJobFlattened" shape if they differ
+      // 3. Map the list item to the "SpecificChatFlattened" shape if they differ
       if (chatFromList) {
         return {
-          jobId: chatFromList.jobId,
-          dateUploaded: chatFromList.dateUploaded,
-          title: chatFromList.title,
-        } as SpecificJobFlattened;
+          chatId: chatFromList.chatId,
+          dateOpened: chatFromList.dateOpened,
+          stages: chatFromList.stages,
+          lastUpdatedStages: chatFromList.lastUpdated,
+          notes: chatFromList.notes,
+          candidate: chatFromList.candidate,
+          messages: chatFromList.messages,
+        } as SpecificChatFlattened;
       }
       return undefined;
     },
     initialDataUpdatedAt: () =>
       queryClient.getQueryState(listQueryKey)?.dataUpdatedAt,
   });
-
-export async function updateJob(model: UpdateJob) {
-  const { jobId, isArchived } = model;
-  const { error } = await supabase
-    .from('jobs')
-    .update({ is_archived: isArchived })
-    .eq('job_id', jobId);
-
-  if (error) {
-    throw error;
-  }
-}

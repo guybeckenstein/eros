@@ -17,7 +17,6 @@ import { Route as GeneralSignUpRouteImport } from './routes/general/sign-up'
 import { Route as GeneralSignInRouteImport } from './routes/general/sign-in'
 import { Route as GeneralLandingPageRouteImport } from './routes/general/landing-page'
 import { Route as GeneralCreateProfileRouteImport } from './routes/general/create-profile'
-import { Route as GeneralChatRouteImport } from './routes/general/chat'
 import { Route as AuthSettingsRouteImport } from './routes/auth/settings'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthProfileRouteImport } from './routes/auth/profile'
@@ -25,6 +24,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as RecruiterJobsIndexRouteImport } from './routes/recruiter/jobs/index'
 import { Route as RecruiterJobsIdRouteImport } from './routes/recruiter/jobs/$id'
+import { Route as ChatJobIdCandidateIdRouteImport } from './routes/chat/$jobId.$candidateId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -66,11 +66,6 @@ const GeneralCreateProfileRoute = GeneralCreateProfileRouteImport.update({
   path: '/general/create-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GeneralChatRoute = GeneralChatRouteImport.update({
-  id: '/general/chat',
-  path: '/general/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthSettingsRoute = AuthSettingsRouteImport.update({
   id: '/auth/settings',
   path: '/auth/settings',
@@ -106,6 +101,11 @@ const RecruiterJobsIdRoute = RecruiterJobsIdRouteImport.update({
   path: '/recruiter/jobs/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatJobIdCandidateIdRoute = ChatJobIdCandidateIdRouteImport.update({
+  id: '/chat/$jobId/$candidateId',
+  path: '/chat/$jobId/$candidateId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,7 +114,6 @@ export interface FileRoutesByFullPath {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/settings': typeof AuthSettingsRoute
-  '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
   '/general/sign-in': typeof GeneralSignInRoute
@@ -122,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/chat/$jobId/$candidateId': typeof ChatJobIdCandidateIdRoute
   '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
   '/recruiter/jobs/': typeof RecruiterJobsIndexRoute
 }
@@ -132,7 +132,6 @@ export interface FileRoutesByTo {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/settings': typeof AuthSettingsRoute
-  '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
   '/general/sign-in': typeof GeneralSignInRoute
@@ -140,6 +139,7 @@ export interface FileRoutesByTo {
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/chat/$jobId/$candidateId': typeof ChatJobIdCandidateIdRoute
   '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
   '/recruiter/jobs': typeof RecruiterJobsIndexRoute
 }
@@ -151,7 +151,6 @@ export interface FileRoutesById {
   '/auth/profile': typeof AuthProfileRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/settings': typeof AuthSettingsRoute
-  '/general/chat': typeof GeneralChatRoute
   '/general/create-profile': typeof GeneralCreateProfileRoute
   '/general/landing-page': typeof GeneralLandingPageRoute
   '/general/sign-in': typeof GeneralSignInRoute
@@ -159,6 +158,7 @@ export interface FileRoutesById {
   '/recruiter/discover': typeof RecruiterDiscoverRoute
   '/recruiter/homepage': typeof RecruiterHomepageRoute
   '/seeker/placeholder': typeof SeekerPlaceholderRoute
+  '/chat/$jobId/$candidateId': typeof ChatJobIdCandidateIdRoute
   '/recruiter/jobs/$id': typeof RecruiterJobsIdRoute
   '/recruiter/jobs/': typeof RecruiterJobsIndexRoute
 }
@@ -171,7 +171,6 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/register'
     | '/auth/settings'
-    | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
     | '/general/sign-in'
@@ -179,6 +178,7 @@ export interface FileRouteTypes {
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/seeker/placeholder'
+    | '/chat/$jobId/$candidateId'
     | '/recruiter/jobs/$id'
     | '/recruiter/jobs/'
   fileRoutesByTo: FileRoutesByTo
@@ -189,7 +189,6 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/register'
     | '/auth/settings'
-    | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
     | '/general/sign-in'
@@ -197,6 +196,7 @@ export interface FileRouteTypes {
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/seeker/placeholder'
+    | '/chat/$jobId/$candidateId'
     | '/recruiter/jobs/$id'
     | '/recruiter/jobs'
   id:
@@ -207,7 +207,6 @@ export interface FileRouteTypes {
     | '/auth/profile'
     | '/auth/register'
     | '/auth/settings'
-    | '/general/chat'
     | '/general/create-profile'
     | '/general/landing-page'
     | '/general/sign-in'
@@ -215,6 +214,7 @@ export interface FileRouteTypes {
     | '/recruiter/discover'
     | '/recruiter/homepage'
     | '/seeker/placeholder'
+    | '/chat/$jobId/$candidateId'
     | '/recruiter/jobs/$id'
     | '/recruiter/jobs/'
   fileRoutesById: FileRoutesById
@@ -226,7 +226,6 @@ export interface RootRouteChildren {
   AuthProfileRoute: typeof AuthProfileRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSettingsRoute: typeof AuthSettingsRoute
-  GeneralChatRoute: typeof GeneralChatRoute
   GeneralCreateProfileRoute: typeof GeneralCreateProfileRoute
   GeneralLandingPageRoute: typeof GeneralLandingPageRoute
   GeneralSignInRoute: typeof GeneralSignInRoute
@@ -234,6 +233,7 @@ export interface RootRouteChildren {
   RecruiterDiscoverRoute: typeof RecruiterDiscoverRoute
   RecruiterHomepageRoute: typeof RecruiterHomepageRoute
   SeekerPlaceholderRoute: typeof SeekerPlaceholderRoute
+  ChatJobIdCandidateIdRoute: typeof ChatJobIdCandidateIdRoute
   RecruiterJobsIdRoute: typeof RecruiterJobsIdRoute
   RecruiterJobsIndexRoute: typeof RecruiterJobsIndexRoute
 }
@@ -296,13 +296,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GeneralCreateProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/general/chat': {
-      id: '/general/chat'
-      path: '/general/chat'
-      fullPath: '/general/chat'
-      preLoaderRoute: typeof GeneralChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth/settings': {
       id: '/auth/settings'
       path: '/auth/settings'
@@ -352,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecruiterJobsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/$jobId/$candidateId': {
+      id: '/chat/$jobId/$candidateId'
+      path: '/chat/$jobId/$candidateId'
+      fullPath: '/chat/$jobId/$candidateId'
+      preLoaderRoute: typeof ChatJobIdCandidateIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -362,7 +362,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthProfileRoute: AuthProfileRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSettingsRoute: AuthSettingsRoute,
-  GeneralChatRoute: GeneralChatRoute,
   GeneralCreateProfileRoute: GeneralCreateProfileRoute,
   GeneralLandingPageRoute: GeneralLandingPageRoute,
   GeneralSignInRoute: GeneralSignInRoute,
@@ -370,6 +369,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecruiterDiscoverRoute: RecruiterDiscoverRoute,
   RecruiterHomepageRoute: RecruiterHomepageRoute,
   SeekerPlaceholderRoute: SeekerPlaceholderRoute,
+  ChatJobIdCandidateIdRoute: ChatJobIdCandidateIdRoute,
   RecruiterJobsIdRoute: RecruiterJobsIdRoute,
   RecruiterJobsIndexRoute: RecruiterJobsIndexRoute,
 }
