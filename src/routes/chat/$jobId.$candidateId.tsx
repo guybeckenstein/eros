@@ -8,12 +8,25 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { Fragment, useState } from 'react';
 
 import {
-  Check,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
+import { Tooltip } from '@mui/material';
+import {
   ChevronLeft,
   Clock,
   Copy,
   Download,
-  Ellipsis,
   Linkedin,
   Send,
   Trash,
@@ -22,6 +35,7 @@ import { twMerge } from 'tailwind-merge';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { ChatPopover } from '@/components/chat/ChatPopover';
+import { SortableStage } from '@/components/chat/SortableStage';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { Avatar } from '@/components/profile/Avatar';
 import { InformationIcon } from '@/components/ui/icons';
@@ -31,6 +45,7 @@ import {
   addNote,
   chatDetailQueryOptions,
   deleteNote,
+  deleteStage,
   fetchAlternativeRoles,
   updateJobSeekerStatus,
 } from '@/server/general/chat-queries';
@@ -65,17 +80,7 @@ function ChatPage() {
     },
   });
 
-  const setFreezeMutation = useMutation({
-    mutationFn: updateJobSeekerStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: detailQueryKey,
-      });
-      queryClient.invalidateQueries({ queryKey: listQueryKey });
-    },
-  });
-
-  const setDaysToRespondMutation = useMutation({
+  const setFreezeAndActivityMutation = useMutation({
     mutationFn: updateJobSeekerStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -100,6 +105,7 @@ function ChatPage() {
   const [messageInput, setMessageInput] = useState('');
   const isFrozen = data.candidate.isFrozen;
   const [removeNoteId, setRemoveNoteId] = useState(0);
+  const [removeStageId, setRemoveStageId] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
   const handleCopy = async () => {
     const mailElement = document.getElementById('seeker-mail');
@@ -114,13 +120,21 @@ function ChatPage() {
     {
       text: 'Move Forward',
       className: 'bg-neutral-900 text-white',
-      onClick: () => console.log('Clicked Move Forward button'),
+      onClick: () =>
+        setFreezeAndActivityMutation.mutate({
+          jobId: jobIdNumeric,
+          candidateId: candidateIdNumeric,
+          isFrozen: isFrozen,
+          isActive: true,
+          stageId: data.stages[data.candidate.currentStage - 1].stageId,
+          nextStageId: data.stages[data.candidate.currentStage].stageId,
+        }),
     },
     {
       text: !isFrozen ? 'Freeze' : 'Unfreeze',
       className: 'bg-white text-current',
       onClick: () =>
-        setFreezeMutation.mutate({
+        setFreezeAndActivityMutation.mutate({
           jobId: jobIdNumeric,
           candidateId: candidateIdNumeric,
           isFrozen: !isFrozen,
@@ -130,7 +144,13 @@ function ChatPage() {
     {
       text: 'Reject',
       className: 'bg-white text-current',
-      onClick: () => console.log('Clicked Reject button'),
+      onClick: () =>
+        setFreezeAndActivityMutation.mutate({
+          jobId: jobIdNumeric,
+          candidateId: candidateIdNumeric,
+          isFrozen: !isFrozen,
+          isActive: false,
+        }),
     },
     {
       text: 'Alternative Roles',
@@ -160,11 +180,37 @@ function ChatPage() {
     100 - (data.candidate.responseTimeDays / RECRUITER_DAYS_TO_RESPOND) * 100;
   const inversePoint = 100 - splitPoint;
 
+  const [localStages, setLocalStages] = useState(data.stages);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      setLocalStages((items) => {
+        const oldIndex = items.findIndex((i) => i.stageId === active.id);
+        const newIndex = items.findIndex((i) => i.stageId === over.id);
+
+        const newArray = arrayMove(items, oldIndex, newIndex);
+
+        // TODO: In the future, trigger your updateStageIndexMutation here
+        // using newArray to get the new order
+        return newArray;
+      });
+    }
+  };
+
   return (
     <div className="grid w-full grid-flow-col grid-cols-[2fr_6fr_2fr] text-current">
       {/* Left sidebar */}
       <div className="flex flex-col gap-6 bg-white p-6 pt-10">
-        <Link to="/recruiter/jobs">
+        <Link to="/recruiter/jobs/$id" params={{ id: jobId }}>
           <div className="flex items-center space-x-2 justify-self-start text-lg">
             <ChevronLeft
               size="22"
@@ -189,17 +235,14 @@ function ChatPage() {
         </div>
         <div>
           <h2 className="text-2xl font-bold">{data.candidate.fullName}</h2>
-          <h3 className="mt-1 text-xl font-light text-neutral-500">
+          <h3 className="mt-1 text-lg text-neutral-500">
             {data.candidate.jobTitle}
           </h3>
-          <h3 className="text-xl font-light text-neutral-500">
+          <h3 className="text-lg text-neutral-500">
             {data.candidate.phoneNumber}
           </h3>
           <div className="flex w-full items-center justify-between">
-            <h3
-              id="seeker-mail"
-              className="text-xl font-light text-neutral-500"
-            >
+            <h3 id="seeker-mail" className="text-lg text-neutral-500">
               {data.candidate.emailAddress}
             </h3>
             <Copy
@@ -237,43 +280,49 @@ function ChatPage() {
             </button>
           ))}
         </div>
-        <div className="h-px w-full bg-neutral-200" />
-        <div className="relative flex h-24 w-full flex-col justify-between rounded-lg border border-neutral-900 bg-white px-3 py-2 text-lg font-medium text-current">
-          <div className="flex items-center justify-between">
-            <h3>Response time</h3>
-            <button
-              className="cursor-pointer space-x-2 text-base text-current"
-              onClick={() =>
-                setDaysToRespondMutation.mutate({
-                  jobId: jobIdNumeric,
-                  candidateId: candidateIdNumeric,
-                  isFrozen: isFrozen,
-                  isActive: true,
-                  daysToRespondDays: data.candidate.responseTimeDays,
-                })
-              }
-            >
-              <span>+</span>
-              <span className="underline underline-offset-2">Add 7 days</span>
-            </button>
-          </div>
-          <div className="space-y-1">
-            <div className="space-x-2">
-              <span className="text-xl font-extrabold">
-                {data.candidate.responseTimeDays}
-              </span>
-              <span className="text-base font-medium text-neutral-500">
-                days left
-              </span>
+        {!isFrozen && (
+          <>
+            <div className="h-px w-full bg-neutral-200" />
+            <div className="relative flex h-24 w-full flex-col justify-between rounded-lg border border-neutral-900 bg-white px-3 py-2 text-lg font-medium text-current">
+              <div className="flex items-center justify-between">
+                <h3>Response time</h3>
+                <button
+                  className="cursor-pointer space-x-2 text-base text-current"
+                  onClick={() =>
+                    setFreezeAndActivityMutation.mutate({
+                      jobId: jobIdNumeric,
+                      candidateId: candidateIdNumeric,
+                      isFrozen: isFrozen,
+                      isActive: true,
+                      daysToRespondDays: data.candidate.responseTimeDays,
+                    })
+                  }
+                >
+                  <span>+</span>
+                  <span className="underline underline-offset-2">
+                    Add 7 days
+                  </span>
+                </button>
+              </div>
+              <div className="space-y-1">
+                <div className="space-x-2">
+                  <span className="text-xl font-extrabold">
+                    {data.candidate.responseTimeDays}
+                  </span>
+                  <span className="text-base font-medium text-neutral-500">
+                    days left
+                  </span>
+                </div>
+                <div
+                  className="h-1.5 w-full rounded"
+                  style={{
+                    background: `linear-gradient(to right, #171717 ${inversePoint}%, #d4d4d4 ${inversePoint}%)`,
+                  }}
+                />
+              </div>
             </div>
-            <div
-              className="h-1.5 w-full rounded"
-              style={{
-                background: `linear-gradient(to right, #171717 ${inversePoint}%, #d4d4d4 ${inversePoint}%)`,
-              }}
-            />
-          </div>
-        </div>
+          </>
+        )}
       </div>
       {/* Main content */}
       <div className="flex flex-col justify-between space-y-4 p-4">
@@ -286,12 +335,28 @@ function ChatPage() {
             <div className="flex justify-between">
               <h2 className="text-xl font-bold text-current">
                 Interview Process
-                <InformationIcon
-                  size="22"
-                  strokeWidth="1.5"
-                  className="ml-2 inline text-neutral-600"
-                  onClick={() => console.log('information clicked')}
-                />
+                <Tooltip
+                  title="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                  slotProps={{
+                    popper: {
+                      modifiers: [
+                        {
+                          name: 'offset',
+                          options: {
+                            offset: [0, -6],
+                          },
+                        },
+                      ],
+                    },
+                  }}
+                >
+                  <InformationIcon
+                    size="22"
+                    strokeWidth="1.5"
+                    className="ml-2 inline text-neutral-600"
+                    onClick={() => console.log('information clicked')}
+                  />
+                </Tooltip>
               </h2>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2">
@@ -305,107 +370,118 @@ function ChatPage() {
                   pathClassName="fill-neutral-300"
                 />
                 <div className="flex items-center justify-between">
-                  <button className="space-x-1 text-base text-current">
+                  <button className="cursor-pointer space-x-1 text-base text-current">
                     <span>+</span>
-                    <span className="underline underline-offset-2">
+                    <span
+                      className="underline underline-offset-2"
+                      onClick={() =>
+                        console.log('TODO: add another stage popup')
+                      }
+                    >
                       Add another stage
                     </span>
                   </button>
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              {data.stages.map((s) => (
-                <Fragment key={s.stageId}>
-                  <div className="relative flex h-15 w-45 rounded-md border border-neutral-400">
-                    <div className="my-auto ms-2 flex items-center gap-2">
-                      <Ellipsis
-                        size="24"
-                        className="absolute top-0 right-1 text-neutral-500"
+            <div className="flex items-center gap-2">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={localStages.map((s) => s.stageId)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  {localStages.map((s, index) => (
+                    <Fragment key={s.stageId}>
+                      <SortableStage
+                        stage={s}
+                        currentStageNumber={data.candidate.currentStage}
+                        deleteStage={() => deleteStage({ stageId: s.stageId })}
+                        removeStageId={removeStageId}
+                        setRemoveStageId={setRemoveStageId}
+                        detailQueryKey={detailQueryKey}
                       />
-                      {s.numberInProcess <= data.candidate.currentStage ? (
-                        <div className="flex size-10 rounded-full bg-black">
-                          <Check
-                            size="24"
-                            strokeWidth="3"
-                            className="m-auto text-white"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex size-10 rounded-full border border-neutral-400 bg-white">
-                          <p className="m-auto text-xl text-current">
-                            {s.numberInProcess}
-                          </p>
-                        </div>
+                      {/* The line is now a static neighbor, not a child of the sortable */}
+                      {index < localStages.length - 1 && (
+                        <div className="h-0.5 w-14 shrink-0 rounded-md bg-neutral-300" />
                       )}
-                      <p className="max-w-20 text-base font-semibold">
-                        {s.name}
-                      </p>
-                    </div>
-                  </div>
-                  {s.numberInProcess < data.stages.length && (
-                    <div className="my-auto h-0.5 w-14 rounded-md bg-neutral-300" />
-                  )}
-                </Fragment>
-              ))}
+                    </Fragment>
+                  ))}
+                </SortableContext>
+              </DndContext>
             </div>
           </div>
           {/* Chat messages */}
-          <div className="space-y-4 px-4">
-            {data.messages.map((m, i) => (
-              <div
-                key={i}
-                className={twMerge(
-                  'mb-4 w-1/2',
-                  m.isRecruiter ? 'ms-auto' : 'me-auto', // Moves the 50% box to the right or left
-                )}
-              >
+          {!isFrozen ? (
+            <div className="space-y-4 px-4">
+              {data.messages.map((m, i) => (
                 <div
+                  key={i}
                   className={twMerge(
-                    'flex items-start justify-start gap-4',
-                    m.isRecruiter ? 'flex-row-reverse' : '',
+                    'mb-4 w-1/2',
+                    m.isRecruiter ? 'ms-auto' : 'me-auto', // Moves the 50% box to the right or left
                   )}
                 >
-                  <Avatar
-                    src={m.profileImageUrl}
-                    alt={`${m.senderFullName} image`}
-                    name={m.senderFullName}
-                    size="size-10"
-                  />
                   <div
                     className={twMerge(
-                      'w-full space-y-1 rounded-xl px-3 py-1',
-                      m.isRecruiter
-                        ? 'rounded-tr-none bg-neutral-200'
-                        : 'rounded-tl-none border bg-white shadow-md',
+                      'flex items-start justify-start gap-4',
+                      m.isRecruiter ? 'flex-row-reverse' : '',
                     )}
                   >
-                    <p className="text-current">{m.text}</p>
-                    <small
-                      className={
-                        m.isRecruiter ? 'text-current' : 'text-neutral-500'
-                      }
+                    <Avatar
+                      src={m.profileImageUrl}
+                      alt={`${m.senderFullName} image`}
+                      name={m.senderFullName}
+                      size="size-10"
+                    />
+                    <div
+                      className={twMerge(
+                        'w-full space-y-1 rounded-xl border px-3 py-1',
+                        m.isRecruiter
+                          ? 'rounded-tr-none bg-neutral-200'
+                          : 'rounded-tl-none bg-white shadow-md',
+                      )}
                     >
-                      {m.dateSentStr}
-                    </small>
+                      <p className="text-current">{m.text}</p>
+                      <small
+                        className={
+                          m.isRecruiter ? 'text-current' : 'text-neutral-500'
+                        }
+                      >
+                        {m.dateSentStr}
+                      </small>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <h1 className="text-center">
+              Unfreeze candidate to see chat again...
+            </h1>
+          )}
         </div>
 
-        <TextField
-          placeholder="Type a message..."
-          fieldClassName="w-full gap-0 border-none"
-          wrapperClassName="outline-neutral-400 rounded-xl bg-white"
-          value={messageInput}
-          endIcon={
-            <Send size="24" className="cursor-pointer" onClick={onEnterEvent} />
-          }
-          onChange={(e) => setMessageInput(e.target.value)}
-          onEnter={onEnterEvent}
-        />
+        {!isFrozen && (
+          <TextField
+            placeholder="Type a message..."
+            fieldClassName="w-full gap-0 border-none"
+            wrapperClassName="outline-neutral-400 rounded-xl bg-white"
+            value={messageInput}
+            endIcon={
+              <Send
+                size="24"
+                className="cursor-pointer"
+                onClick={onEnterEvent}
+              />
+            }
+            onChange={(e) => setMessageInput(e.target.value)}
+            onEnter={onEnterEvent}
+          />
+        )}
       </div>
       {/* Right sidebar */}
       <div className="w-full space-y-4 bg-white p-6">
@@ -420,12 +496,7 @@ function ChatPage() {
                 variables={{ noteId: n.noteId }}
                 mutationFn={deleteNote}
                 queryKeysToInvalidate={[
-                  [
-                    'chats',
-                    'detail',
-                    jobIdNumeric.toString(),
-                    candidateIdNumeric.toString(),
-                  ],
+                  detailQueryKey.map((x) => x.toString()),
                 ]}
                 isConfirmAction={removeNoteId === n.noteId}
                 title="Are you sure you want to delete this note?"
@@ -435,12 +506,7 @@ function ChatPage() {
                   {
                     id: 'delete',
                     label: 'Delete Forever',
-                    startIcon: (
-                      <Trash
-                        size="20"
-                        className="cursor-pointer text-neutral-400"
-                      />
-                    ),
+                    startIcon: <Trash size="20" className="cursor-pointer" />,
                     onClick: (noteId: number) => setRemoveNoteId(noteId),
                   },
                 ]}

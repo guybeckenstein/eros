@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef } from 'react';
 
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import { EllipsisVertical } from 'lucide-react';
+import { Ellipsis, EllipsisVertical } from 'lucide-react';
 
 import { ConfirmAction } from '@/components/jobs/ConfirmAction';
 import { DropdownOptions } from '@/components/jobs/DropdownOptions';
@@ -20,6 +20,7 @@ interface ChatPopoverProps<TVariables> extends ComponentPropsWithoutRef<'div'> {
 
   menuOptions: MenuOption[];
   attributeId: number;
+  ellipsisType?: 'Vertical' | 'Horizontal';
 }
 
 export function ChatPopover<TVariables>({
@@ -32,15 +33,20 @@ export function ChatPopover<TVariables>({
   onCancel,
   menuOptions,
   attributeId,
+  ellipsisType = 'Vertical',
   ...props
 }: ChatPopoverProps<TVariables>) {
   return (
     <Popover data-slot="dropdown" {...props}>
-      <PopoverButton aria-label="Open job row actions">
-        <EllipsisVertical
-          size="24"
-          className="cursor-pointer text-neutral-500"
-        />
+      <PopoverButton aria-label="Chat row actions">
+        {ellipsisType === 'Vertical' ? (
+          <EllipsisVertical
+            size="24"
+            className="cursor-pointer text-neutral-500"
+          />
+        ) : (
+          <Ellipsis size="24" className="cursor-pointer text-neutral-500" />
+        )}
       </PopoverButton>
 
       <PopoverPanel

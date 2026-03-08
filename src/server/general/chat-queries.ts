@@ -23,12 +23,16 @@ export async function updateJobSeekerStatus({
   isFrozen,
   isActive,
   daysToRespondDays,
+  stageId,
+  nextStageId,
 }: {
   jobId: number;
   candidateId: number;
   isFrozen: boolean;
   isActive: boolean;
   daysToRespondDays?: number;
+  stageId?: number;
+  nextStageId?: number;
 }) {
   let obj = {};
   if (daysToRespondDays) {
@@ -51,11 +55,55 @@ export async function updateJobSeekerStatus({
     };
   }
 
-  const { error } = await supabase
+  const { error: updateSeekerStatusError } = await supabase
     .from('job_seeker_status')
     .update(obj)
     .eq('job_id', jobId)
     .eq('seeker_id', candidateId);
+
+  if (updateSeekerStatusError) {
+    throw updateSeekerStatusError;
+  }
+
+  if (stageId) {
+    const { error: updateSeekerStageError } = await supabase
+      .from('job_seeker_stage')
+      .update({ is_pass: isActive })
+      .eq('job_id', jobId)
+      .eq('seeker_id', candidateId)
+      .eq('stage_id', stageId);
+
+    if (updateSeekerStageError) {
+      throw updateSeekerStageError;
+    }
+  }
+
+  if (nextStageId) {
+    const { error: insertError } = await supabase
+      .from('job_seeker_stage')
+      .insert({
+        job_id: jobId,
+        stage_id: nextStageId,
+        seeker_id: candidateId,
+        is_pass: null,
+        note: null,
+        date_created: new Date().toISOString(),
+      })
+      .eq('job_id', jobId)
+      .eq('seeker_id', candidateId)
+      .eq('stage_id', stageId);
+
+    if (insertError) {
+      throw insertError;
+    }
+  }
+}
+
+export async function deleteStage({ stageId }: { stageId: number }) {
+  const { error } = await supabase
+    .from('job_interview_stages')
+    .delete()
+    .eq('interview_stage_id', stageId);
 
   if (error) {
     throw error;
@@ -185,12 +233,7 @@ async function getSpecificChat(jobId: number, candidateId: number) {
           note, 
           interview_date, 
           recent_update,
-          job_seeker_stage (
-            is_pass, 
-            days_until_decision, 
-            note, 
-            date_created
-          )
+          job_seeker_stage (seeker_id)
         ),
         recruiter_seeker_swipes!inner (
           seekers!inner (
