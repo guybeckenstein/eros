@@ -176,9 +176,9 @@ function ChatPage() {
         </Link>
         <div className="flex justify-between">
           <Avatar
-            src={null}
-            alt={`Guy Beckenstein profile pic`}
-            name="Guy Beckenstein"
+            src={data.candidate.candidateProfileImageUrl}
+            alt={`${data.candidate.fullName} profile pic`}
+            name={data.candidate.fullName}
             size="size-16"
           />
           <SocialLink
