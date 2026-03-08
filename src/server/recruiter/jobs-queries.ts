@@ -1,8 +1,8 @@
 import { QueryClient, queryOptions } from '@tanstack/react-query';
 
 import {
-  CHAT_DAYS_TO_RESPOND,
   DATE_OPTIONS_NO_TIME,
+  RECRUITER_DAYS_TO_RESPOND,
 } from '@/shared/configurations/configuration';
 import { toRecruiterJobItem } from '@/shared/mapping/recruiter';
 import { CandidateJobDetails } from '@/shared/types/candidates';
@@ -187,7 +187,7 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         // Add the response window to the sent date
         const deadlineDate = new Date(
           sentDate.getTime() +
-            Number(CHAT_DAYS_TO_RESPOND) * 24 * 60 * 60 * 1000,
+            Number(RECRUITER_DAYS_TO_RESPOND) * 24 * 60 * 60 * 1000,
         );
 
         daysUntilRespond = daysBetweenDates(currentDate, deadlineDate);

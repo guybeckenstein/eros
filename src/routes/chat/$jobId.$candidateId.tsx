@@ -1,6 +1,5 @@
 import {
   useMutation,
-  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from '@tanstack/react-query';
@@ -15,20 +14,27 @@ import {
   Copy,
   Download,
   Ellipsis,
-  EllipsisVertical,
   Linkedin,
+  Send,
+  Trash,
 } from 'lucide-react';
 import { twMerge } from 'tailwind-merge';
 
 import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
+import { ChatPopover } from '@/components/chat/ChatPopover';
 import { SocialLink } from '@/components/discover/SocialLink';
 import { Avatar } from '@/components/profile/Avatar';
 import { InformationIcon } from '@/components/ui/icons';
 import { TextField } from '@/components/ui/inputs';
 import {
+  addMessage,
+  addNote,
   chatDetailQueryOptions,
+  deleteNote,
   fetchAlternativeRoles,
+  updateJobSeekerStatus,
 } from '@/server/general/chat-queries';
+import { RECRUITER_DAYS_TO_RESPOND } from '@/shared/configurations/configuration';
 import { calculateTimeDifference } from '@/shared/mapping/time';
 
 export const Route = createFileRoute('/chat/$jobId/$candidateId')({
@@ -40,26 +46,60 @@ function ChatPage() {
   const { jobId, candidateId } = Route.useParams();
   const jobIdNumeric = Number(jobId);
   const candidateIdNumeric = Number(candidateId);
+
+  const detailQueryKey = ['chats', 'detail', jobIdNumeric, candidateIdNumeric];
+  const listQueryKey = ['chat', 'list'];
+
   const { data } = useSuspenseQuery(
-    chatDetailQueryOptions(jobIdNumeric, candidateIdNumeric, ['chat', 'list']),
+    chatDetailQueryOptions(jobIdNumeric, candidateIdNumeric, listQueryKey),
   );
 
-  // const queryClient = useQueryClient();
-  // const bulkAddNoteMutation = useMutation({
-  //   mutationFn: addChatNote,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['notes'] });
-  //     setSelectedSeekerIds([]); // Clear selection after deletion
-  //   },
-  // });
-  // const bulkAddMessageMutation = useMutation({
-  //   mutationFn: addChatMessage,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ['notes'] });
-  //     setSelectedSeekerIds([]); // Clear selection after deletion
-  //   },
-  // });
+  const addNoteMutation = useMutation({
+    mutationFn: addNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: detailQueryKey,
+      });
+      queryClient.invalidateQueries({ queryKey: listQueryKey });
+      setNoteInput('');
+    },
+  });
 
+  const setFreezeMutation = useMutation({
+    mutationFn: updateJobSeekerStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: detailQueryKey,
+      });
+      queryClient.invalidateQueries({ queryKey: listQueryKey });
+    },
+  });
+
+  const setDaysToRespondMutation = useMutation({
+    mutationFn: updateJobSeekerStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: detailQueryKey,
+      });
+      queryClient.invalidateQueries({ queryKey: listQueryKey });
+    },
+  });
+
+  const addMessageMutation = useMutation({
+    mutationFn: addMessage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: detailQueryKey,
+      });
+      queryClient.invalidateQueries({ queryKey: listQueryKey });
+      setMessageInput('');
+    },
+  });
+
+  const [noteInput, setNoteInput] = useState('');
+  const [messageInput, setMessageInput] = useState('');
+  const isFrozen = data.candidate.isFrozen;
+  const [removeNoteId, setRemoveNoteId] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
   const handleCopy = async () => {
     const mailElement = document.getElementById('seeker-mail');
@@ -77,9 +117,15 @@ function ChatPage() {
       onClick: () => console.log('Clicked Move Forward button'),
     },
     {
-      text: 'Freeze',
+      text: !isFrozen ? 'Freeze' : 'Unfreeze',
       className: 'bg-white text-current',
-      onClick: () => console.log('Clicked Freeze button'),
+      onClick: () =>
+        setFreezeMutation.mutate({
+          jobId: jobIdNumeric,
+          candidateId: candidateIdNumeric,
+          isFrozen: !isFrozen,
+          isActive: true,
+        }),
     },
     {
       text: 'Reject',
@@ -98,6 +144,21 @@ function ChatPage() {
       },
     },
   ];
+
+  const onEnterEvent = () => {
+    if (!messageInput.trim()) {
+      return;
+    }
+    addMessageMutation.mutate({
+      jobId: jobIdNumeric,
+      text: messageInput,
+    });
+  };
+
+  // Percentage bar
+  const splitPoint =
+    100 - (data.candidate.responseTimeDays / RECRUITER_DAYS_TO_RESPOND) * 100;
+  const inversePoint = 100 - splitPoint;
 
   return (
     <div className="grid w-full grid-flow-col grid-cols-[2fr_6fr_2fr] text-current">
@@ -180,19 +241,37 @@ function ChatPage() {
         <div className="relative flex h-24 w-full flex-col justify-between rounded-lg border border-neutral-900 bg-white px-3 py-2 text-lg font-medium text-current">
           <div className="flex items-center justify-between">
             <h3>Response time</h3>
-            <button className="space-x-2 text-base text-current">
+            <button
+              className="cursor-pointer space-x-2 text-base text-current"
+              onClick={() =>
+                setDaysToRespondMutation.mutate({
+                  jobId: jobIdNumeric,
+                  candidateId: candidateIdNumeric,
+                  isFrozen: isFrozen,
+                  isActive: true,
+                  daysToRespondDays: data.candidate.responseTimeDays,
+                })
+              }
+            >
               <span>+</span>
               <span className="underline underline-offset-2">Add 7 days</span>
             </button>
           </div>
           <div className="space-y-1">
             <div className="space-x-2">
-              <span className="text-xl font-extrabold">7</span>
+              <span className="text-xl font-extrabold">
+                {data.candidate.responseTimeDays}
+              </span>
               <span className="text-base font-medium text-neutral-500">
                 days left
               </span>
             </div>
-            <div className="h-1.5 w-full rounded bg-neutral-900"></div>
+            <div
+              className="h-1.5 w-full rounded"
+              style={{
+                background: `linear-gradient(to right, #171717 ${inversePoint}%, #d4d4d4 ${inversePoint}%)`,
+              }}
+            />
           </div>
         </div>
       </div>
@@ -320,6 +399,12 @@ function ChatPage() {
           placeholder="Type a message..."
           fieldClassName="w-full gap-0 border-none"
           wrapperClassName="outline-neutral-400 rounded-xl bg-white"
+          value={messageInput}
+          endIcon={
+            <Send size="24" className="cursor-pointer" onClick={onEnterEvent} />
+          }
+          onChange={(e) => setMessageInput(e.target.value)}
+          onEnter={onEnterEvent}
         />
       </div>
       {/* Right sidebar */}
@@ -331,9 +416,36 @@ function ChatPage() {
             className="relative rounded-xl bg-neutral-100 px-2 py-1 text-start text-lg"
           >
             <div className="w-5/6 space-y-2">
-              <EllipsisVertical
-                size="20"
-                className="absolute top-2 right-2 cursor-pointer text-neutral-400"
+              <ChatPopover
+                variables={{ noteId: n.noteId }}
+                mutationFn={deleteNote}
+                queryKeysToInvalidate={[
+                  [
+                    'chats',
+                    'detail',
+                    jobIdNumeric.toString(),
+                    candidateIdNumeric.toString(),
+                  ],
+                ]}
+                isConfirmAction={removeNoteId === n.noteId}
+                title="Are you sure you want to delete this note?"
+                idPrefix="delete"
+                onCancel={() => setRemoveNoteId(0)}
+                menuOptions={[
+                  {
+                    id: 'delete',
+                    label: 'Delete Forever',
+                    startIcon: (
+                      <Trash
+                        size="20"
+                        className="cursor-pointer text-neutral-400"
+                      />
+                    ),
+                    onClick: (noteId: number) => setRemoveNoteId(noteId),
+                  },
+                ]}
+                attributeId={n.noteId}
+                className="absolute top-2 right-2"
               />
               <p>{n.text}</p>
               <small className="text-neutral-700">
@@ -342,10 +454,24 @@ function ChatPage() {
             </div>
           </div>
         ))}
+        {addNoteMutation.isPending
+          ? 'Adding note'
+          : addNoteMutation.isError && 'Failed to add note... Try again later'}
         <TextField
           placeholder="Add a note..."
           fieldClassName="w-full gap-0"
-          wrapperClassName="outline-neutral-400 rounded-xl"
+          wrapperClassName="outline-neutral-400 rounded-xl bg-white"
+          value={noteInput}
+          onChange={(e) => setNoteInput(e.target.value)}
+          onEnter={() => {
+            if (!noteInput.trim()) {
+              return;
+            }
+            addNoteMutation.mutate({
+              candidateId: candidateIdNumeric,
+              text: noteInput,
+            });
+          }}
         />
       </div>
     </div>

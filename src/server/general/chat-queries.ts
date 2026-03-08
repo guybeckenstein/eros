@@ -1,7 +1,10 @@
 import { QueryClient, queryOptions } from '@tanstack/react-query';
 
 import { DATE_OPTIONS_WITH_TIME } from '@/shared/configurations/configuration';
-import { getVerboseTimeDifference } from '@/shared/mapping/time';
+import {
+  getTimeDifference,
+  getVerboseTimeDifference,
+} from '@/shared/mapping/time';
 import { CandidateInChat } from '@/shared/types/candidates';
 import {
   Message,
@@ -13,6 +16,105 @@ import { AlternativeJobs } from '@/shared/types/jobs';
 import { supabase } from '@/utils/supabase';
 
 const queryClient = new QueryClient();
+
+export async function updateJobSeekerStatus({
+  jobId,
+  candidateId,
+  isFrozen,
+  isActive,
+  daysToRespondDays,
+}: {
+  jobId: number;
+  candidateId: number;
+  isFrozen: boolean;
+  isActive: boolean;
+  daysToRespondDays?: number;
+}) {
+  let obj = {};
+  if (daysToRespondDays) {
+    if (daysToRespondDays >= 7) {
+      daysToRespondDays = 14;
+    } else {
+      daysToRespondDays += 7;
+    }
+    const date = new Date();
+    date.setDate(date.getDate() + daysToRespondDays);
+    obj = {
+      is_frozen: isFrozen,
+      is_active: isActive,
+      response_time_date: date.toISOString(),
+    };
+  } else {
+    obj = {
+      is_frozen: isFrozen,
+      is_active: isActive,
+    };
+  }
+
+  const { error } = await supabase
+    .from('job_seeker_status')
+    .update(obj)
+    .eq('job_id', jobId)
+    .eq('seeker_id', candidateId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function deleteNote({ noteId }: { noteId: number }) {
+  const { error } = await supabase
+    .from('recruiter_seeker_notes')
+    .delete()
+    .eq('note_id', noteId);
+
+  if (error) {
+    throw error;
+  }
+}
+
+// TODO: insert with REAL user_id, not hardcoded
+export async function addMessage({
+  jobId,
+  text,
+}: {
+  jobId: number;
+  text: string;
+}) {
+  const { error } = await supabase
+    .from('recruiter_seeker_chat_messages')
+    .insert({
+      user_id: '28ccb868-809a-4b02-91f3-ee400da115a7',
+      job_id: jobId,
+      is_recruiter: true,
+      message_text: text,
+      message_date: new Date().toISOString(),
+      is_read: false,
+    });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function addNote({
+  candidateId,
+  text,
+}: {
+  candidateId: number;
+  text: string;
+}) {
+  const { error } = await supabase.from('recruiter_seeker_notes').insert({
+    recruiter_id: 1,
+    seeker_id: candidateId,
+    note_text: text,
+    note_date: new Date().toISOString(),
+  });
+
+  if (error) {
+    throw error;
+  }
+}
 
 async function getAlternativeJobs(jobId: number) {
   const { data, error } = await supabase
@@ -42,7 +144,7 @@ async function getAlternativeJobs(jobId: number) {
   const companyJobs = data?.companies?.jobs || [];
 
   return companyJobs.map(
-    (j: typeof data.companies[0].jobs) =>
+    (j) =>
       ({
         jobId: j.job_id,
         title: j.job_titles_ref?.title,
@@ -107,7 +209,8 @@ async function getSpecificChat(jobId: number, candidateId: number) {
               note_id, 
               note_text, 
               note_date
-            )
+            ),
+            job_seeker_status!inner (is_frozen, is_active, response_time_date)
           )
         ),
         recruiter_seeker_chat_messages!inner (
@@ -128,6 +231,7 @@ async function getSpecificChat(jobId: number, candidateId: number) {
       'eq',
       candidateId,
     )
+    .eq('recruiter_seeker_swipes.seekers.job_seeker_status.is_active', true)
     .single();
 
   if (error) {
@@ -211,6 +315,10 @@ async function getSpecificChat(jobId: number, candidateId: number) {
       : ''
   }`;
 
+  const { days } = getTimeDifference(
+    (seeker as any).job_seeker_status[0].response_time_date,
+  );
+
   return {
     chatId: `${data.job_id}_${(seeker as any).seeker_id}`,
     dateOpened: messages.length > 0 ? new Date() : data.date_uploaded,
@@ -239,6 +347,8 @@ async function getSpecificChat(jobId: number, candidateId: number) {
       phoneNumber: user.phone_number,
       emailAddress: user.email_address,
       resumeId: 0, // TODO: add resume ID logic
+      isFrozen: (seeker as any).job_seeker_status[0].is_frozen,
+      responseTimeDays: days * -1,
     } as CandidateInChat,
     messages: messages,
     firstMessageDate: firstMessageResponse,

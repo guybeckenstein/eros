@@ -51,8 +51,8 @@ export function getVerboseTimeDifference(inputTime: string) {
   };
 }
 
-function getTimeDifference(inputTime: string) {
-  const now = new Date().getTime();
+export function getTimeDifference(inputTime: string) {
+  const now = Date.now();
   const input = new Date(inputTime).getTime();
   const diffInMs = now - input;
 

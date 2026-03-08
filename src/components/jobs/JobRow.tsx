@@ -6,7 +6,7 @@ import { VerticalDividerIcon } from '@/assets/icons/VerticalDividerIcon';
 import { JobsPopover } from '@/components/jobs/JobsPopover';
 import { deleteOrUpdateJob } from '@/server/recruiter/jobs-queries';
 
-export type JobMenuOption = {
+export type MenuOption = {
   id: string;
   label: string;
   startIcon: React.ReactNode;
@@ -23,7 +23,7 @@ type JobRowProps = {
   job: MinimalJob;
   isConfirmingDelete: boolean;
   onCancelDelete: () => void;
-  menuOptions: JobMenuOption[];
+  menuOptions: MenuOption[];
   children?: React.ReactNode;
 };
 

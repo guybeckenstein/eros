@@ -6,8 +6,8 @@ import {
   ListboxOption,
   ListboxOptions,
 } from '@headlessui/react';
-import clsx from 'clsx';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
+import { twMerge } from 'tailwind-merge';
 
 export interface Option {
   value: string;
@@ -48,7 +48,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         ref={ref}
       >
         <ListboxButton
-          className={clsx(
+          className={twMerge(
             'inline-flex cursor-pointer items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
             inputClassName,
           )}
@@ -61,7 +61,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 {suffix}
               </div>
               <ChevronDownIcon
-                className={clsx(
+                className={twMerge(
                   'transition-transform duration-400',
                   open && 'rotate-180',
                 )}
@@ -71,7 +71,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </ListboxButton>
         <ListboxOptions
           anchor="bottom"
-          className={clsx(
+          className={twMerge(
             'z-50 mt-2 w-(--button-width) self-stretch rounded-lg bg-white p-6 shadow-[0px_4px_15px_1px_rgba(0,0,0,0.09)] outline-none',
             dropdownClassName,
           )}

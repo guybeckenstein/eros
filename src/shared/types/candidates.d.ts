@@ -66,4 +66,6 @@ export interface CandidateInChat {
   phoneNumber: string;
   emailAddress: string;
   resumeId: number;
+  isFrozen: boolean;
+  responseTimeDays: number;
 }

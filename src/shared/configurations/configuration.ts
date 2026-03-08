@@ -11,4 +11,4 @@ export const DATE_OPTIONS_WITH_TIME: Intl.DateTimeFormatOptions = {
   minute: '2-digit',
   second: '2-digit',
 };
-export const CHAT_DAYS_TO_RESPOND = 14;
+export const RECRUITER_DAYS_TO_RESPOND = 14;

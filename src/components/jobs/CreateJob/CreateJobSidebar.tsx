@@ -1,6 +1,6 @@
-import { CreateJobSteps } from './CreateJob';
+import { twMerge } from 'tailwind-merge';
 
-import { cn } from '../../../lib/utils';
+import { CreateJobSteps } from './CreateJob';
 
 export interface CreateJobSidebarProps {
   currentStep: CreateJobSteps;
@@ -15,8 +15,8 @@ function StepIndicator({
 }) {
   return (
     <div
-      className={cn(
-        'flex h-[35px] w-[35px] items-center justify-center rounded-full text-center',
+      className={twMerge(
+        'flex size-8.75 items-center justify-center rounded-full text-center',
         isActive
           ? 'bg-black font-medium text-white'
           : 'border-2 border-gray-300 bg-white font-normal text-black',
@@ -44,7 +44,7 @@ function StepItem({
     <div className="relative flex flex-col">
       {/* Connecting line */}
       {!isLast && (
-        <div className="absolute top-[35px] left-1/2 h-[40px] w-px -translate-x-1/2 bg-gray-300" />
+        <div className="absolute top-8.75 left-1/2 h-10 w-px -translate-x-1/2 bg-gray-300" />
       )}
 
       {/* Step content */}
@@ -52,7 +52,7 @@ function StepItem({
         <StepIndicator number={number} isActive={isActive} />
         <div className="flex flex-col justify-center pt-1">
           <p
-            className={cn(
+            className={twMerge(
               'text-sm font-semibold',
               isActive ? 'text-black' : 'text-gray-600',
             )}
@@ -60,15 +60,13 @@ function StepItem({
             {title}
           </p>
           {isActive && (
-            <p className="mt-1 w-[140px] text-xs text-gray-500">
-              {description}
-            </p>
+            <p className="mt-1 w-35 text-xs text-gray-500">{description}</p>
           )}
         </div>
       </div>
 
       {/* Spacing between steps */}
-      <div className="h-[40px]" />
+      <div className="h-10" />
     </div>
   );
 }
