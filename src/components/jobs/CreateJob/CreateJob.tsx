@@ -1,9 +1,8 @@
 import { useState } from 'react';
 
+import { CreateJobSidebar } from '@/components/jobs/CreateJob/CreateJobSidebar';
+import { JobDetailsStep } from '@/components/jobs/CreateJob/steps/JobDetailsStep';
 import { Button } from '@/components/ui/buttons';
-
-import { CreateJobSidebar } from './CreateJobSidebar';
-import { JobDetailsStep } from './steps/JobDetailsStep';
 
 export enum CreateJobSteps {
   JobDetails = 'Job Details',

@@ -13,7 +13,7 @@ import { ChevronRight, Search, Trash } from 'lucide-react';
 import { CandidateJobCard } from '@/components/jobs/CandidateJobCard';
 import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
 import { PdfPreview } from '@/components/seekers/PdfPreview';
-import { Button } from '@/components/ui/buttons/Button';
+import { Button } from '@/components/ui/buttons';
 import { Select } from '@/components/ui/inputs/Select';
 import { TextField } from '@/components/ui/inputs/TextField';
 import { Modal } from '@/components/ui/overylays/Modal';
