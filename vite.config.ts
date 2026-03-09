@@ -3,6 +3,7 @@ import { URL, fileURLToPath } from 'node:url';
 import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
+import netlify from '@netlify/vite-plugin-tanstack-start';
 import tailwindcss from '@tailwindcss/vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
@@ -25,6 +26,7 @@ export default defineConfig({
     }),
     tailwindcss(),
     tanstackStart(),
+    netlify(),
     viteReact(),
     svgr(),
   ],

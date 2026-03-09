@@ -46,6 +46,7 @@
     "@emotion/styled": "^11.14.1",
     "@faker-js/faker": "^10.2.0",
     "@mui/material": "^7.3.8",
+    "@netlify/vite-plugin-tanstack-start": "^1.2.18",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@supabase/ssr": "^0.8.0",
     "@tanstack/devtools-vite": "^0.3.11",
