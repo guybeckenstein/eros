@@ -132,7 +132,7 @@ export async function addMessage({
   const { error } = await supabase
     .from('recruiter_seeker_chat_messages')
     .insert({
-      user_id: '28ccb868-809a-4b02-91f3-ee400da115a7',
+      sender_user_id: '28ccb868-809a-4b02-91f3-ee400da115a7',
       job_id: jobId,
       is_recruiter: true,
       message_text: text,
@@ -260,7 +260,11 @@ async function getSpecificChat(jobId: number, candidateId: number) {
           message_text,
           message_date,
           is_recruiter,
-          users!inner (first_name, last_name, profile_pic_url)
+          users!recruiter_seeker_chat_messages_sender_user_id_fkey (
+            first_name, 
+            last_name, 
+            profile_pic_url
+          )
         )
       `,
     )
@@ -360,6 +364,7 @@ async function getSpecificChat(jobId: number, candidateId: number) {
 
   const { days } = getTimeDifference(
     (seeker as any).job_seeker_status[0].response_time_date,
+    'input',
   );
 
   return {
@@ -391,7 +396,7 @@ async function getSpecificChat(jobId: number, candidateId: number) {
       emailAddress: user.email_address,
       resumeId: 0, // TODO: add resume ID logic
       isFrozen: (seeker as any).job_seeker_status[0].is_frozen,
-      responseTimeDays: days * -1,
+      responseTimeDays: days,
     } as CandidateInChat,
     messages: messages,
     firstMessageDate: firstMessageResponse,

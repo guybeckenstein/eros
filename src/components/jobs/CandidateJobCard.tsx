@@ -5,6 +5,7 @@ import { Briefcase, Lightbulb, MapPin, Timer, User } from 'lucide-react';
 import { JobsPopover } from '@/components/jobs/JobsPopover';
 import { Avatar } from '@/components/profile/Avatar';
 import { ResumeIcon } from '@/components/ui/icons/ResumeIcon';
+import { ClickShield } from '@/components/ui/utils/ClickShield';
 import { removeCandidateFromJob } from '@/server/recruiter/jobs-queries';
 import { CandidateJobDetails } from '@/shared/types/candidates';
 
@@ -75,58 +76,69 @@ export function CandidateJobCard({
         </div>
 
         <div className="flex max-w-110 flex-col gap-1">
-          <p className="space-x-1">
-            <b className="cursor-auto">{candidate.fullName}</b>
-            <small className="cursor-auto text-neutral-500">
-              {candidate.jobTitle}
-            </small>
-          </p>
-          <div className="flex items-center space-x-1 text-xs text-neutral-400">
-            <MapPin size="14" />{' '}
-            <span className="cursor-auto">{candidate.city}</span>
-            <Briefcase size="14" />{' '}
-            <span className="cursor-auto">{candidate.jobType}</span>
-            <Lightbulb size="14" />{' '}
-            <span className="cursor-auto">
-              {candidate.yearsOfExperience} years exp.
-            </span>
-          </div>
-          {candidate.totalChatMessages && (
-            <div className="flex cursor-auto items-center justify-between rounded-tl-xl rounded-r-lg bg-neutral-200 px-2 py-1 text-xs">
-              <span>{candidate.recentChatMessage}</span>
-              <span className="flex size-5 place-items-center justify-center rounded-full bg-neutral-300 text-sm font-semibold">
-                {candidate.totalChatMessages}
+          <ClickShield>
+            <p className="space-x-1">
+              <b className="cursor-auto">{candidate.fullName}</b>
+              <small className="cursor-auto text-neutral-500">
+                {candidate.jobTitle}
+              </small>
+            </p>
+          </ClickShield>
+          <ClickShield>
+            <div className="flex items-center space-x-1 text-xs text-neutral-400">
+              <MapPin size="14" />
+              <span className="cursor-auto">{candidate.city}</span>
+              <Briefcase size="14" />
+              <span className="cursor-auto">{candidate.jobType}</span>
+              <Lightbulb size="14" />
+              <span className="cursor-auto">
+                {candidate.yearsOfExperience} years exp.
               </span>
             </div>
+          </ClickShield>
+          {candidate.totalChatMessages > 0 && (
+            <ClickShield>
+              <div className="flex min-w-30 cursor-auto items-center justify-between rounded-tl-xl rounded-r-lg bg-neutral-200 px-2 py-1 text-xs">
+                <span>{candidate.recentChatMessage}</span>
+                <span className="flex size-5 place-items-center justify-center rounded-full bg-neutral-300 text-sm font-semibold">
+                  {candidate.totalChatMessages}
+                </span>
+              </div>
+            </ClickShield>
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="w-30 space-y-1 text-sky-950">
-          <p className="cursor-auto text-sm font-medium">
-            STAGE {candidate.currentStage}/{stages}
-          </p>
-          <div className="flex h-2 w-full items-center gap-2">
-            {Array.from({ length: stages }).map((_, i) => (
-              <div
-                key={i}
-                className={`h-full flex-1 rounded-lg ${i < candidate.currentStage ? 'bg-sky-950' : 'bg-gray-200'}`}
-              />
-            ))}
-          </div>
-        </div>
-        {candidate.totalChatMessages && !isNaN(candidate.daysUntilRespond) && (
-          <div className="w-30 space-y-1 text-emerald-600">
-            <div className="flex items-center gap-2">
-              <Timer size="14" strokeWidth="3" />
-              <p className="cursor-auto text-sm font-bold">
-                {candidate.daysUntilRespond} days left
-              </p>
+        <ClickShield>
+          <div className="w-30 space-y-1 text-sky-950">
+            <p className="cursor-auto text-sm font-medium">
+              STAGE {candidate.currentStage}/{stages}
+            </p>
+            <div className="flex h-2 w-full items-center gap-2">
+              {Array.from({ length: stages }).map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-full flex-1 rounded-lg ${i < candidate.currentStage ? 'bg-sky-950' : 'bg-gray-200'}`}
+                />
+              ))}
             </div>
-            <div className="h-2 w-full rounded-lg bg-emerald-600" />
           </div>
-        )}
+        </ClickShield>
+        {candidate.totalChatMessages > 0 &&
+          !isNaN(candidate.daysUntilRespond) && (
+            <ClickShield>
+              <div className="w-30 space-y-1 text-emerald-600">
+                <div className="flex items-center gap-2">
+                  <Timer size="14" strokeWidth="3" />
+                  <p className="cursor-auto text-sm font-bold">
+                    {candidate.daysUntilRespond} days left
+                  </p>
+                </div>
+                <div className="h-2 w-full rounded-lg bg-emerald-600" />
+              </div>
+            </ClickShield>
+          )}
       </div>
 
       <div className="relative z-100 flex gap-2 justify-self-end">

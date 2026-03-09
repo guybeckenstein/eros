@@ -35,6 +35,7 @@ function RouteComponent() {
   const { data } = useSuspenseQuery(
     jobDetailQueryOptions(jobId, ['jobs', 'list', { text: '', sort: 'desc' }]),
   );
+  console.log(data);
   const queryClient = useQueryClient();
   const bulkRemoveMutation = useMutation({
     mutationFn: removeCandidateFromJob,
@@ -78,7 +79,6 @@ function RouteComponent() {
 
   const CANDIDATE_DROPDOWN_OPTIONS = [
     {
-      id: 'remove',
       startIcon: <Trash size="22" className="text-current" />,
       label: 'Remove Candidate',
       onClick: (candidateId: number) => setRemoveCandidateId(candidateId),

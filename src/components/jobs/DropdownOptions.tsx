@@ -68,7 +68,7 @@ export const DropdownOptions: React.FC<DropdownOptionsProps> = React.memo(
       <div role={role} className={className}>
         {options.map((o) => (
           <div
-            key={`${attributeId}_${o.id}`}
+            key={`${attributeId}_${o.label}`}
             role={role === 'menu' ? 'menuitem' : undefined}
             tabIndex={0}
             className={twMerge(baseItemClass, itemClassName)}

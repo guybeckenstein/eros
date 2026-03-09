@@ -79,24 +79,11 @@ function JobsPage() {
 
   const JOB_DROPDOWN_OPTIONS = [
     {
-      id: 'candidates',
-      startIcon: <Users size="22" className="text-current" />,
-      label: 'Candidates',
-      onClick: (jobId: number) => {
-        navigate({
-          to: '/recruiter/jobs/$id',
-          params: { id: jobId.toString() },
-        });
-      },
-    },
-    {
-      id: 'edit',
       startIcon: <SquarePen size="22" className="text-current" />,
       label: 'Edit',
       onClick: (jobId: number) => setEditModalOpen(jobId),
     },
     {
-      id: 'delete',
       startIcon: <Trash size="22" className="text-current" />,
       label: 'Delete',
       onClick: (jobId: number) => setDeleteConfirmJobId(jobId),
@@ -121,6 +108,7 @@ function JobsPage() {
               }
               wrapperClassName="bg-white"
               className="w-96"
+              fieldClassName="block"
             />
             <Select
               inputClassName="bg-white"
@@ -159,8 +147,7 @@ function JobsPage() {
                 onCancelDelete={() => setDeleteConfirmJobId(0)}
                 menuOptions={JOB_DROPDOWN_OPTIONS}
               >
-                {/* Pass the extra data specific to this page here */}
-                <div className="flex gap-16 font-medium">
+                <div className="flex w-max gap-16 font-medium">
                   <DataColumn header="Status:">
                     <StatusButton isActive={job.isActive} />
                   </DataColumn>

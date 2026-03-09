@@ -51,10 +51,13 @@ export function getVerboseTimeDifference(inputTime: string) {
   };
 }
 
-export function getTimeDifference(inputTime: string) {
+export function getTimeDifference(
+  inputTime: string,
+  whichLarger: 'now' | 'input' = 'now',
+) {
   const now = Date.now();
   const input = new Date(inputTime).getTime();
-  const diffInMs = now - input;
+  const diffInMs = whichLarger === 'now' ? now - input : input - now;
 
   // Conversion constants
   const seconds = Math.floor(diffInMs / 1000);
