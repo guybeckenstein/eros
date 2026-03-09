@@ -1,3 +1,8 @@
 [build]
   command = "vite build"
-  publish = ".output/client"
+  publish = ".output/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/handler"
+  status = 200
