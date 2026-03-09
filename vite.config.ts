@@ -30,4 +30,15 @@ export default defineConfig({
     viteReact(),
     svgr(),
   ],
+  ssr: {
+    external: [
+      '@tanstack/react-query',
+      '@tanstack/react-form',
+      '@headlessui/react',
+      'framer-motion',
+      '@mui/material',
+      '@mui/utils',
+      '@mui/system',
+    ],
+  },
 });
