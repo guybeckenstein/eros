@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/Buttons';
+import { Button } from '@/components/ui/buttons';
 
 import { CreateJobSidebar } from './CreateJobSidebar';
 import { JobDetailsStep } from './steps/JobDetailsStep';

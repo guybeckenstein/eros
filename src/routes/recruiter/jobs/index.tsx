@@ -11,7 +11,7 @@ import { DataColumn } from '@/components/jobs/DataColumn';
 import { EditJob } from '@/components/jobs/EditJob';
 import { JobRow } from '@/components/jobs/JobRow';
 import { NoJobs } from '@/components/jobs/NoJobs';
-import { Button, StatusButton } from '@/components/ui/Buttons';
+import { Button, StatusButton } from '@/components/ui/buttons';
 import { Select, TextField } from '@/components/ui/inputs';
 import { Modal } from '@/components/ui/overylays/Modal';
 import { jobsQueryOptions } from '@/server/recruiter/jobs-queries';
