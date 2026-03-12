@@ -1,3 +1,5 @@
+import { DescriptionStep } from './steps/DescriptionStep.tsx';
+import { InterviewStagesStep } from './steps/InterviewStagesStep';
 import { JobDetailsStep } from './steps/JobDetailsStep';
 import { RequirementsStep } from './steps/RequirementsStep';
 
@@ -22,6 +24,14 @@ export const steps: CreateJobStepsItemProps[] = [
   {
     step: CreateJobSteps.Requirements,
     Component: RequirementsStep,
+  },
+  {
+    step: CreateJobSteps.Description,
+    Component: DescriptionStep,
+  },
+  {
+    step: CreateJobSteps.InterviewStages,
+    Component: InterviewStagesStep,
   },
 ];
 

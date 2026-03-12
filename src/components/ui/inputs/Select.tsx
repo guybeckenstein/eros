@@ -49,7 +49,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       >
         <ListboxButton
           className={twMerge(
-            'inline-flex cursor-pointer items-center justify-between self-stretch rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
+            'flex w-full cursor-pointer items-center justify-between rounded-lg px-6 py-2.5 outline-1 -outline-offset-1 outline-black',
             inputClassName,
           )}
         >
