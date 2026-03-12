@@ -1,28 +1,9 @@
 import { steps } from '.';
 
-import { CreateJobSidebar } from '@/components/jobs/CreateJob/CreateJobSidebar';
-import { JobDetailsStep } from '@/components/jobs/CreateJob/steps/JobDetailsStep';
 import { Button } from '@/components/ui/buttons';
 
-export enum CreateJobSteps {
-  JobDetails = 'Job Details',
-  Requirements = 'Requirements',
-  Description = 'Description',
-  InterviewStages = 'Interview Stages',
-  ReviewSubmit = 'Review & Submit',
-}
-
-interface CreateJobStepsItemProps {
-  step: CreateJobSteps;
-  Component: React.ComponentType;
-}
-
-const steps: CreateJobStepsItemProps[] = [
-  {
-    step: CreateJobSteps.JobDetails,
-    Component: JobDetailsStep,
-  },
-];
+import { CreateJobSidebar } from './CreateJobSidebar';
+import { useCreateJobContext } from './useCreateJobContext';
 
 export function CreateJob() {
   const { currentStep, setCurrentStep } = useCreateJobContext();

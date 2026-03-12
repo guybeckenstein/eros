@@ -1,6 +1,5 @@
+import { CreateJobSteps } from '.';
 import { twMerge } from 'tailwind-merge';
-
-import { CreateJobSteps } from './CreateJob';
 
 export interface CreateJobSidebarProps {
   currentStep: CreateJobSteps;
