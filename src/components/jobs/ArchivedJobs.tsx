@@ -31,20 +31,17 @@ export function ArchivedJobs() {
 
   const JOB_DROPDOWN_OPTIONS = [
     {
-      id: 'edit',
       startIcon: <SquarePen size="22" className="text-current" />,
       label: 'Edit',
       onClick: (jobId: number) => setEditModalOpen(jobId),
     },
     {
-      id: 'restore',
       startIcon: <SquarePen size="22" className="text-current" />,
       label: 'Restore',
       onClick: (jobId: number) =>
         updateJobMutation.mutate({ jobId, isArchived: false }),
     },
     {
-      id: 'delete',
       startIcon: <Trash size="22" className="text-current" />,
       label: 'Delete forever',
       onClick: (jobId: number) => setDeleteConfirmJobId(jobId),

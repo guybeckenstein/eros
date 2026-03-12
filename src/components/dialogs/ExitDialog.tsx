@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react';
 
-import { ClickableButton } from '@/components/ui/Buttons/ClickableButton';
+import { ClickableButton } from '@/components/ui/buttons';
 import { classNames } from '@/helpers/functions';
 
 export default function ExitDialog({

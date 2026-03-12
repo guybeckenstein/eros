@@ -1,15 +1,12 @@
 import { QueryClient, queryOptions } from '@tanstack/react-query';
 
-import {
-  CHAT_DAYS_TO_RESPOND,
-  DATE_OPTIONS,
-} from '@/shared/configurations/configuration';
+import { DATE_OPTIONS_NO_TIME } from '@/shared/configurations/configuration';
 import { toRecruiterJobItem } from '@/shared/mapping/recruiter';
+import { getTimeDifference } from '@/shared/mapping/time';
 import { CandidateJobDetails } from '@/shared/types/candidates';
 import { Experience } from '@/shared/types/general';
 import { DeleteJob, JobSearch, UpdateJob } from '@/shared/types/jobs';
 import { RawJobRow, SpecificJobFlattened } from '@/shared/types/recruiter';
-import { daysBetweenDates } from '@/utils/helpers';
 import { supabase } from '@/utils/supabase';
 
 const queryClient = new QueryClient();
@@ -63,20 +60,15 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         job_titles_ref!inner (title),
         recruiter_seeker_swipes!inner (
           seekers!inner (
+            user_id,
             seeker_id,
             users!inner (
               first_name, 
               last_name, 
-              profile_pic_url,
-              recruiter_seeker_chat_messages (
-                message_text,
-                message_date,
-                is_recruiter,
-                job_id
-              )
+              profile_pic_url
             ),
             job_seeker_stage!inner (count),
-            job_seeker_status!inner (is_frozen),
+            job_seeker_status!inner (is_frozen, response_time_date),
             job_titles_ref!inner (
               title,
               job_types_ref!inner (type)
@@ -96,6 +88,14 @@ async function getSpecificJob(jobId: number, isArchived = false) {
             linkedin_link,
             website_link
           )
+        ),
+        recruiter_seeker_chat_messages (
+          message_text,
+          message_date,
+          is_recruiter,
+          job_id,
+          sender_user_id,
+          recipient_user_id
         )
       `,
     )
@@ -104,11 +104,7 @@ async function getSpecificJob(jobId: number, isArchived = false) {
     .eq('is_active', true)
     .eq('recruiter_seeker_swipes.seekers.job_seeker_stage.job_id', jobId)
     .eq('recruiter_seeker_swipes.seekers.job_seeker_status.job_id', jobId)
-    .eq('recruiter_seeker_swipes.seekers.job_seeker_status.is_active', true)
-    .eq(
-      'recruiter_seeker_swipes.seekers.users.recruiter_seeker_chat_messages.job_id',
-      jobId,
-    );
+    .eq('recruiter_seeker_swipes.seekers.job_seeker_status.is_active', true);
 
   if (error) {
     throw error;
@@ -118,7 +114,6 @@ async function getSpecificJob(jobId: number, isArchived = false) {
   }
 
   const jobRecord = data[0];
-  const currentDate = new Date();
   const candidates: CandidateJobDetails[] =
     jobRecord.recruiter_seeker_swipes.map((swipe: any) => {
       const seeker = swipe.seekers;
@@ -155,7 +150,12 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         return acc + diffInMonths / 12;
       }, 0);
 
-      const messages = user.recruiter_seeker_chat_messages || [];
+      const messages =
+        jobRecord.recruiter_seeker_chat_messages.filter(
+          (msg: any) =>
+            msg.sender_user_id === seeker.user_id ||
+            msg.recipient_user_id === seeker.user_id,
+        ) || [];
 
       // 1. Sort messages to find the most recent one
       // We sort descending: index 0 is the newest
@@ -170,28 +170,15 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         ? latestMessage.message_text
         : 'No messages yet';
 
-      // 2. Days until respond logic
-      // Find the latest message sent BY THE CANDIDATE
-      const isLastCandidateMessage = sortedMessages.find(
-        (m) => m.is_recruiter === false,
-      );
-
       const currentStage = (seeker.job_seeker_stage as any[]).reduce(
         (sum, x) => sum + (x?.count ?? 0),
         0,
       );
 
-      let daysUntilRespond = Number.NaN;
-      if (isLastCandidateMessage) {
-        const sentDate = new Date(isLastCandidateMessage.message_date);
-        // Add the response window to the sent date
-        const deadlineDate = new Date(
-          sentDate.getTime() +
-            Number(CHAT_DAYS_TO_RESPOND) * 24 * 60 * 60 * 1000,
-        );
-
-        daysUntilRespond = daysBetweenDates(currentDate, deadlineDate);
-      }
+      const { days } = getTimeDifference(
+        seeker.job_seeker_status[0].response_time_date,
+        'input',
+      );
 
       return {
         id: seeker.seeker_id,
@@ -210,7 +197,7 @@ async function getSpecificJob(jobId: number, isArchived = false) {
         totalChatMessages: messages.length,
         isMessagesUnread: !recentChatMessage.is_read,
         currentStage: currentStage,
-        daysUntilRespond: daysUntilRespond,
+        daysUntilRespond: days,
         isFrozen: seeker.job_seeker_status[0].is_frozen,
       };
     });
@@ -220,7 +207,7 @@ async function getSpecificJob(jobId: number, isArchived = false) {
     jobId: jobRecord.job_id,
     dateUploaded: new Date(jobRecord.date_uploaded).toLocaleDateString(
       'en-IL',
-      DATE_OPTIONS,
+      DATE_OPTIONS_NO_TIME,
     ),
     stages: (jobRecord.job_interview_stages as any[]).reduce(
       (sum, x) => sum + (x?.count ?? 0),

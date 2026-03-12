@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export type DropdownOption = {
   id: string;
@@ -68,10 +68,10 @@ export const DropdownOptions: React.FC<DropdownOptionsProps> = React.memo(
       <div role={role} className={className}>
         {options.map((o) => (
           <div
-            key={`${attributeId}_${o.id}`}
+            key={`${attributeId}_${o.label}`}
             role={role === 'menu' ? 'menuitem' : undefined}
             tabIndex={0}
-            className={clsx(baseItemClass, itemClassName)}
+            className={twMerge(baseItemClass, itemClassName)}
             onClick={() => handleClick(o)}
             onKeyDown={handleKeyDown(o)}
           >

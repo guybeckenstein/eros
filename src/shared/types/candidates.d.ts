@@ -57,3 +57,15 @@ export interface CandidateJobDetails {
   daysUntilRespond: number;
   isFrozen: boolean;
 }
+
+export interface CandidateInChat {
+  fullName: string;
+  currentStage: number;
+  candidateProfileImageUrl: string;
+  jobTitle: string;
+  phoneNumber: string;
+  emailAddress: string;
+  resumeId: number;
+  isFrozen: boolean;
+  responseTimeDays: number;
+}

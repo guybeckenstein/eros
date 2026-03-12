@@ -16,3 +16,8 @@ export type CandidateSearch = {
   text: string;
   filter?: 'All' | 'New' | 'Frozen' | 'Unread';
 };
+
+export type AlternativeJobs = {
+  jobId: number;
+  title: string;
+};

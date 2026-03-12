@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "build": "vite build",
+    "build": "netlify deploy --prod",
     "preview": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
@@ -40,10 +40,14 @@
     "vite-tsconfig-paths": "^6.0.2"
   },
   "devDependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@faker-js/faker": "^10.2.0",
     "@mui/material": "^7.3.8",
+    "@netlify/vite-plugin-tanstack-start": "^1.2.18",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@supabase/ssr": "^0.8.0",
     "@tanstack/devtools-vite": "^0.3.11",

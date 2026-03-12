@@ -1,4 +1,4 @@
-import { DATE_OPTIONS } from '../configurations/configuration';
+import { DATE_OPTIONS_NO_TIME } from '../configurations/configuration';
 import { RawJobRow, RecruiterJobItem } from '../types/recruiter';
 
 export function toRecruiterJobItem(row: RawJobRow): RecruiterJobItem {
@@ -26,7 +26,10 @@ export function toRecruiterJobItem(row: RawJobRow): RecruiterJobItem {
 
   return {
     jobId: row.job_id,
-    dateUploaded: dateUploaded.toLocaleDateString('en-IL', DATE_OPTIONS),
+    dateUploaded: dateUploaded.toLocaleDateString(
+      'en-IL',
+      DATE_OPTIONS_NO_TIME,
+    ),
     isActive: row.is_active,
     title,
     seekersNumber: seekers_number,

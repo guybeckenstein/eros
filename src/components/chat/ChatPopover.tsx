@@ -1,11 +1,13 @@
+import { ComponentPropsWithoutRef } from 'react';
+
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import { EllipsisVertical } from 'lucide-react';
+import { Ellipsis, EllipsisVertical } from 'lucide-react';
 
 import { ConfirmAction } from '@/components/jobs/ConfirmAction';
 import { DropdownOptions } from '@/components/jobs/DropdownOptions';
 import { MenuOption } from '@/components/jobs/JobRow';
 
-interface JobsPopoverProps<TVariables> {
+interface ChatPopoverProps<TVariables> extends ComponentPropsWithoutRef<'div'> {
   // Data & Logic
   variables: TVariables;
   mutationFn: (variables: TVariables) => Promise<any>;
@@ -18,9 +20,10 @@ interface JobsPopoverProps<TVariables> {
 
   menuOptions: MenuOption[];
   attributeId: number;
+  ellipsisType?: 'Vertical' | 'Horizontal';
 }
 
-export function JobsPopover<TVariables>({
+export function ChatPopover<TVariables>({
   variables,
   mutationFn,
   queryKeysToInvalidate,
@@ -30,14 +33,20 @@ export function JobsPopover<TVariables>({
   onCancel,
   menuOptions,
   attributeId,
-}: JobsPopoverProps<TVariables>) {
+  ellipsisType = 'Vertical',
+  ...props
+}: ChatPopoverProps<TVariables>) {
   return (
-    <Popover data-slot="dropdown">
-      <PopoverButton aria-label="Open job row actions">
-        <EllipsisVertical
-          size="24"
-          className="cursor-pointer text-neutral-500"
-        />
+    <Popover data-slot="dropdown" {...props}>
+      <PopoverButton aria-label="Chat row actions">
+        {ellipsisType === 'Vertical' ? (
+          <EllipsisVertical
+            size="24"
+            className="cursor-pointer text-neutral-500"
+          />
+        ) : (
+          <Ellipsis size="24" className="cursor-pointer text-neutral-500" />
+        )}
       </PopoverButton>
 
       <PopoverPanel

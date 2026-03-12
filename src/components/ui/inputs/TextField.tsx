@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 
 import { Field, Input as HeadlessInput, Label } from '@headlessui/react';
-// import { cn } from '@/lib/utils';
 import { twMerge } from 'tailwind-merge';
 
 export type TextFieldProps = React.ComponentProps<'input'> & {
@@ -12,6 +11,7 @@ export type TextFieldProps = React.ComponentProps<'input'> & {
   wrapperClassName?: string;
   label?: string;
   required?: boolean;
+  onEnter?: () => void;
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
@@ -24,10 +24,22 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
       wrapperClassName,
       label,
       required,
+      onEnter,
+      onKeyDown,
       ...props
     },
     ref,
   ) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && onEnter) {
+        e.preventDefault();
+        e.stopPropagation();
+        onEnter();
+      } else {
+        onKeyDown?.(e);
+      }
+    };
+
     return (
       <Field
         className={twMerge(
@@ -48,6 +60,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
           {startIcon}
           <HeadlessInput
             ref={ref}
+            onKeyDown={handleKeyDown}
             className={twMerge('flex-1 self-stretch outline-0', className)}
             {...props}
           />

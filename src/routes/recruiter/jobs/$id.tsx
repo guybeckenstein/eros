@@ -13,7 +13,7 @@ import { ChevronRight, Search, Trash } from 'lucide-react';
 import { CandidateJobCard } from '@/components/jobs/CandidateJobCard';
 import { CandidateDetailsWrapper } from '@/components/seekers/CandidateWrapper';
 import { PdfPreview } from '@/components/seekers/PdfPreview';
-import { Button } from '@/components/ui/Buttons/Button';
+import { Button } from '@/components/ui/buttons';
 import { Select } from '@/components/ui/inputs/Select';
 import { TextField } from '@/components/ui/inputs/TextField';
 import { Modal } from '@/components/ui/overylays/Modal';
@@ -30,12 +30,13 @@ export const Route = createFileRoute('/recruiter/jobs/$id')({
 });
 
 function RouteComponent() {
-  const queryClient = useQueryClient();
   const { id } = Route.useParams();
   const jobId = Number(id);
   const { data } = useSuspenseQuery(
     jobDetailQueryOptions(jobId, ['jobs', 'list', { text: '', sort: 'desc' }]),
   );
+  console.log(data);
+  const queryClient = useQueryClient();
   const bulkRemoveMutation = useMutation({
     mutationFn: removeCandidateFromJob,
     onSuccess: () => {
@@ -78,7 +79,6 @@ function RouteComponent() {
 
   const CANDIDATE_DROPDOWN_OPTIONS = [
     {
-      id: 'remove',
       startIcon: <Trash size="22" className="text-current" />,
       label: 'Remove Candidate',
       onClick: (candidateId: number) => setRemoveCandidateId(candidateId),

@@ -3,15 +3,15 @@ import { URL, fileURLToPath } from 'node:url';
 import { devtools } from '@tanstack/devtools-vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
+import netlify from '@netlify/vite-plugin-tanstack-start';
 import tailwindcss from '@tailwindcss/vite';
 import viteReact from '@vitejs/plugin-react';
 import { nitro } from 'nitro/vite';
 import { defineConfig } from 'vite';
-import svgr from "vite-plugin-svgr";
+import svgr from 'vite-plugin-svgr';
 import viteTsConfigPaths from 'vite-tsconfig-paths';
 
-
-const config = defineConfig({
+export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -26,9 +26,19 @@ const config = defineConfig({
     }),
     tailwindcss(),
     tanstackStart(),
+    netlify(),
     viteReact(),
     svgr(),
   ],
+  ssr: {
+    external: [
+      '@tanstack/react-query',
+      '@tanstack/react-form',
+      '@headlessui/react',
+      'framer-motion',
+      '@mui/material',
+      '@mui/utils',
+      '@mui/system',
+    ],
+  },
 });
-
-export default config;
