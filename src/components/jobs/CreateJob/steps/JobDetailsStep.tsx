@@ -1,11 +1,10 @@
-import { useAppForm } from '@/components/hooks/useAppForm';
-import { RangeSlider } from '@/components/ui/inputs';
+import { useCreateJobContext } from '../useCreateJobContext';
 
 export function JobDetailsStep() {
-  const form = useAppForm({});
+  const { form } = useCreateJobContext();
 
   return (
-    <form className="flex flex-col gap-9.5">
+    <section className="flex flex-col gap-9.5">
       <form.AppField
         name="jobTitle"
         children={(field) => (
@@ -13,7 +12,17 @@ export function JobDetailsStep() {
         )}
       />
 
-      <RangeSlider label="Years of Experience" min={0} max={10} step={1} />
+      <form.AppField
+        name="yearsExperience"
+        children={(field) => (
+          <field.RangeSlider
+            label="Years of Experience"
+            min={0}
+            max={10}
+            step={1}
+          />
+        )}
+      />
 
       <form.AppField
         name="location"
@@ -71,6 +80,35 @@ export function JobDetailsStep() {
         <div className="flex flex-col gap-2 pl-2">
           <form.AppField
             name="workPlaceOnSite"
+            validators={{
+              onChange: ({ fieldApi }) => {
+                const hasWorkPlaceSelection =
+                  Boolean(fieldApi.form.getFieldValue('workPlaceOnSite')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceHybrid')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceRemote')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceInternship'));
+
+                return hasWorkPlaceSelection
+                  ? undefined
+                  : 'Please select at least one workplace option.';
+              },
+              onChangeListenTo: [
+                'workPlaceHybrid',
+                'workPlaceRemote',
+                'workPlaceInternship',
+              ],
+              onSubmit: ({ fieldApi }) => {
+                const hasWorkPlaceSelection =
+                  Boolean(fieldApi.form.getFieldValue('workPlaceOnSite')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceHybrid')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceRemote')) ||
+                  Boolean(fieldApi.form.getFieldValue('workPlaceInternship'));
+
+                return hasWorkPlaceSelection
+                  ? undefined
+                  : 'Please select at least one workplace option.';
+              },
+            }}
             children={(field) => <field.Checkbox label="On-Site" />}
           />
           <form.AppField
@@ -85,6 +123,23 @@ export function JobDetailsStep() {
             name="workPlaceInternship"
             children={(field) => <field.Checkbox label="Internship" />}
           />
+
+          <form.AppField
+            name="workPlaceOnSite"
+            children={(field) => {
+              const error = field.state.meta.errors[0];
+              const errorMessage =
+                typeof error === 'string'
+                  ? error
+                  : error
+                    ? 'Invalid value'
+                    : '';
+
+              return errorMessage ? (
+                <p className="text-sm text-red-600">{errorMessage}</p>
+              ) : null;
+            }}
+          />
         </div>
       </div>
       <form.AppField
@@ -96,6 +151,6 @@ export function JobDetailsStep() {
           />
         )}
       />
-    </form>
+    </section>
   );
 }

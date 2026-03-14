@@ -1,8 +1,9 @@
-import { CreateJobSteps } from '.';
+import { CreateJobSteps, steps } from '.';
 import { twMerge } from 'tailwind-merge';
 
 export interface CreateJobSidebarProps {
   currentStep: CreateJobSteps;
+  onStepClick: (step: CreateJobSteps) => void;
 }
 
 function StepIndicator({
@@ -31,12 +32,16 @@ function StepItem({
   title,
   description,
   isActive,
+  isClickable,
+  onClick,
   isLast,
 }: {
   number: number;
   title: string;
   description: string;
   isActive: boolean;
+  isClickable: boolean;
+  onClick: () => void;
   isLast: boolean;
 }) {
   return (
@@ -47,7 +52,15 @@ function StepItem({
       )}
 
       {/* Step content */}
-      <div className="flex gap-3">
+      <button
+        type="button"
+        disabled={!isClickable}
+        onClick={onClick}
+        className={twMerge(
+          'flex gap-3 text-left',
+          isClickable ? 'cursor-pointer' : 'cursor-default',
+        )}
+      >
         <StepIndicator number={number} isActive={isActive} />
         <div className="flex flex-col justify-center pt-1">
           <p
@@ -62,7 +75,7 @@ function StepItem({
             <p className="mt-1 w-35 text-xs text-gray-500">{description}</p>
           )}
         </div>
-      </div>
+      </button>
 
       {/* Spacing between steps */}
       <div className="h-10" />
@@ -70,35 +83,10 @@ function StepItem({
   );
 }
 
-export function CreateJobSidebar({ currentStep }: CreateJobSidebarProps) {
-  const steps = [
-    {
-      step: CreateJobSteps.JobDetails,
-      title: 'Job Details',
-      description: 'Define the interview process for this position',
-    },
-    {
-      step: CreateJobSteps.Requirements,
-      title: 'Requirements',
-      description: 'Set required skills and qualifications',
-    },
-    {
-      step: CreateJobSteps.Description,
-      title: 'Description',
-      description: 'Provide detailed job description',
-    },
-    {
-      step: CreateJobSteps.InterviewStages,
-      title: 'Interview Stages',
-      description: 'Configure interview process',
-    },
-    {
-      step: CreateJobSteps.ReviewSubmit,
-      title: 'Review & Submit',
-      description: 'Review and publish the job',
-    },
-  ];
-
+export function CreateJobSidebar({
+  currentStep,
+  onStepClick,
+}: CreateJobSidebarProps) {
   return (
     <div className="flex h-full w-72 flex-col bg-[#EAEAEA]/60 p-6">
       <div className="flex flex-col gap-0">
@@ -109,6 +97,8 @@ export function CreateJobSidebar({ currentStep }: CreateJobSidebarProps) {
             title={item.title}
             description={item.description}
             isActive={currentStep === item.step}
+            isClickable={item.step < currentStep}
+            onClick={() => onStepClick(item.step)}
             isLast={index === steps.length - 1}
           />
         ))}

@@ -14,7 +14,7 @@ export interface Option {
   label: string | React.ReactNode;
 }
 
-type SelectProps = React.ComponentProps<'select'> & {
+export type SelectProps = React.ComponentProps<'select'> & {
   options: Option[];
   dropdownClassName?: string;
   inputClassName?: string;

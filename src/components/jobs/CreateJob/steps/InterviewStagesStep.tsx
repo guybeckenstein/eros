@@ -1,5 +1,3 @@
-import { useRef, useState } from 'react';
-
 import {
   DndContext,
   type DragEndEvent,
@@ -20,19 +18,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/buttons';
-import { Select } from '@/components/ui/inputs';
 
-interface InterviewStage {
-  id: number;
-  interviewType: string;
-  interviewer: string;
-}
+import { useCreateJobContext } from '../useCreateJobContext';
 
 interface SortableInterviewStageProps {
-  stage: InterviewStage;
+  stageId: number;
   index: number;
-  setStageInterviewType: (id: number, interviewType: string) => void;
-  setStageInterviewer: (id: number, interviewer: string) => void;
+  form: ReturnType<typeof useCreateJobContext>['form'];
 }
 
 const INTERVIEW_TYPE_OPTIONS = [
@@ -44,10 +36,9 @@ const INTERVIEW_TYPE_OPTIONS = [
 ];
 
 function SortableInterviewStage({
-  stage,
+  stageId,
   index,
-  setStageInterviewType,
-  setStageInterviewer,
+  form,
 }: SortableInterviewStageProps) {
   const {
     attributes,
@@ -57,7 +48,7 @@ function SortableInterviewStage({
     transition,
     isDragging,
   } = useSortable({
-    id: stage.id,
+    id: stageId,
   });
 
   const style = {
@@ -94,13 +85,22 @@ function SortableInterviewStage({
           <label className="text-[15px] font-medium tracking-[0.6px] text-black">
             Interview Type*
           </label>
-          <Select
-            className="w-full"
-            value={stage.interviewType}
-            onChange={(value) => setStageInterviewType(stage.id, String(value))}
-            options={INTERVIEW_TYPE_OPTIONS}
-            inputClassName="h-12 w-full rounded-lg border border-black px-3.5 py-2.5 text-lg tracking-[0.72px] text-[#B5B5B5] outline-none"
-            dropdownClassName="rounded-lg border border-[#E5E7EB] p-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          <form.AppField
+            name={`stage${stageId}InterviewType` as any}
+            validators={{
+              onChange: ({ value }) =>
+                value ? undefined : 'Interview type is required.',
+              onSubmit: ({ value }) =>
+                value ? undefined : 'Interview type is required.',
+            }}
+            children={(field) => (
+              <field.Select
+                className="w-full"
+                options={INTERVIEW_TYPE_OPTIONS}
+                inputClassName="h-12 w-full rounded-lg border border-black px-3.5 py-2.5 text-lg tracking-[0.72px] text-[#B5B5B5] outline-none"
+                dropdownClassName="rounded-lg border border-[#E5E7EB] p-2 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+              />
+            )}
           />
         </div>
 
@@ -108,13 +108,15 @@ function SortableInterviewStage({
           <label className="text-base font-medium tracking-wide text-black">
             Interviewer
           </label>
-          <input
-            className="h-12 w-full rounded-lg border border-black px-2.5 py-2.5 text-lg tracking-[0.72px] text-black outline-none placeholder:text-[#B5B5B5]"
-            placeholder="e.g. John Smith"
-            value={stage.interviewer}
-            onChange={(event) =>
-              setStageInterviewer(stage.id, event.target.value)
-            }
+          <form.AppField
+            name={`stage${stageId}Interviewer` as any}
+            children={(field) => (
+              <field.TextField
+                className="px-0.5"
+                wrapperClassName="h-12 w-full rounded-lg border border-black px-2.5 py-2.5"
+                placeholder="e.g. John Smith"
+              />
+            )}
           />
         </div>
       </div>
@@ -123,25 +125,7 @@ function SortableInterviewStage({
 }
 
 export function InterviewStagesStep() {
-  const nextIdRef = useRef(2);
-  const [stages, setStages] = useState<InterviewStage[]>([
-    {
-      id: 1,
-      interviewType: '',
-      interviewer: '',
-    },
-  ]);
-
-  const addStage = () => {
-    setStages((prev) => [
-      ...prev,
-      {
-        id: nextIdRef.current++,
-        interviewType: '',
-        interviewer: '',
-      },
-    ]);
-  };
+  const { form, stages, addStage, setStages } = useCreateJobContext();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -169,22 +153,6 @@ export function InterviewStagesStep() {
     });
   };
 
-  const setStageInterviewType = (id: number, interviewType: string) => {
-    setStages((prev) =>
-      prev.map((stage) =>
-        stage.id === id ? { ...stage, interviewType } : stage,
-      ),
-    );
-  };
-
-  const setStageInterviewer = (id: number, interviewer: string) => {
-    setStages((prev) =>
-      prev.map((stage) =>
-        stage.id === id ? { ...stage, interviewer } : stage,
-      ),
-    );
-  };
-
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
@@ -198,6 +166,7 @@ export function InterviewStagesStep() {
         </div>
 
         <Button
+          type="button"
           className="h-9 border border-[#E4E4E7] bg-white px-3.25 py-0.5 text-sm font-medium text-[#09090B]"
           onClick={addStage}
         >
@@ -219,10 +188,9 @@ export function InterviewStagesStep() {
             {stages.map((stage, index) => (
               <SortableInterviewStage
                 key={stage.id}
-                stage={stage}
+                stageId={stage.id}
                 index={index}
-                setStageInterviewType={setStageInterviewType}
-                setStageInterviewer={setStageInterviewer}
+                form={form}
               />
             ))}
           </div>
